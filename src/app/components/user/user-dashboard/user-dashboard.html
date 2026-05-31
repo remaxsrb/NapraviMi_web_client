@@ -1,0 +1,15 @@
+<body>
+  <div class="header">
+    <h1>NapraviMi</h1>
+  </div>
+  <nav>
+    <p-menubar>
+
+      <!-- RIGHT -->
+      <ng-template pTemplate="end">
+        <p-button label="Moj profil" icon="pi pi-user" routerLink="/user-profile"/>
+        <p-button label="Odjavi se" icon="pi pi-sign-in" (onClick)="logout()"/>
+      </ng-template>
+    </p-menubar>
+  </nav>
+</body>

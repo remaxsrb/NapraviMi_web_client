@@ -1,0 +1,50 @@
+<body>
+  <div class="header">
+    <h1>NapraviMi</h1>
+  </div>
+  <div class="center-page">
+    <p-card [style]="{ width: '450px' }">
+      <ng-template pTemplate="header">
+        <div class="login-header">Prijavi se</div>
+      </ng-template>
+
+      @if (loginError) {
+        <div class="mb-3">
+          <p-message severity="error">{{ loginErrorMessage }}</p-message>
+        </div>
+      }
+
+      <form [formGroup]="loginForm" (ngSubmit)="submit()" class="p-fluid">
+        <!-- Username -->
+        <div class="field flex flex-column">
+          <label for="username">Korisničko ime</label>
+          <input pInputText id="username" formControlName="username" />
+        </div>
+
+        <!-- Password -->
+        <div class="field flex flex-column">
+          <label for="password">Lozinka</label>
+          <p-password
+            id="password"
+            formControlName="password"
+            [toggleMask]="true"
+            [inputStyle]="{ width: '100%' }"
+            [feedback]="false"
+          >
+          </p-password>
+        </div>
+
+        <!-- Submit -->
+        <div class="w-full mt-4">
+          <button
+            pButton
+            type="submit"
+            label="Prijavi se"
+            [disabled]="loginForm.invalid"
+            style="width: 100%"
+          ></button>
+        </div>
+      </form>
+    </p-card>
+  </div>
+</body>

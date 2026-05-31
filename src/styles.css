@@ -1,1 +1,37 @@
-/* You can add global styles to this file, and also import other style files */
+/* Ensure the radio button component doesn't stretch to 100% width */
+.p-radiobutton {
+    width: auto !important;
+}
+
+h1 {
+    text-align: center;
+}
+
+/* Ensure the field helper doesn't break the flex-row */
+.field.flex-row {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+}
+
+.field {
+  margin-bottom: 1rem;
+}
+
+/* Only apply column layout to things specifically marked as columns */
+.flex-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.field > label {
+  display: block;
+}
+
+.center-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;   /* full screen height */
+  width: 100%;    /* full screen width */
+}

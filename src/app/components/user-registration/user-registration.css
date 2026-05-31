@@ -1,0 +1,31 @@
+.registration-header {
+  text-align: center;
+  width: 100%;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.gender-field {
+  text-align: center;
+}
+
+.gender-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.gender-group {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2.5rem;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.gender-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}

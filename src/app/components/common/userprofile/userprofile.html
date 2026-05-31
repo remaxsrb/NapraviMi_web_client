@@ -1,0 +1,25 @@
+<body>
+  <div class="header">
+    <h1>NapraviMi</h1>
+  </div>
+  <nav>
+    <p-menubar>
+      <!-- RIGHT -->
+      <ng-template pTemplate="end">
+        <p-button label="Odjavi se" icon="pi pi-sign-in" (onClick)="logout()" />
+      </ng-template>
+    </p-menubar>
+  </nav>
+  <div class="grid">
+    <div class="flex-row">
+      <div class="col-4">
+         <div class="mb-4 p-8">
+            <p-card>
+                <p-image src="{{user.profile_picture}}"></p-image>
+            </p-card>
+        </div>
+      </div>
+      <div class="col-8"></div>
+    </div>
+  </div>
+</body>

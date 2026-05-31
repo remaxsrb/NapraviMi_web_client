@@ -1,0 +1,21 @@
+<body>
+  <div class="header">
+    <h1>NapraviMi</h1>
+  </div>
+  <nav>
+    <p-menubar>
+      <!-- CENTER -->
+      <ng-template pTemplate="start">
+        <div class="center-menu">
+          <button pButton label="Postani Zanatlija" class="p-button-text" routerLink="craftsman-apply"></button>
+          <button pButton label="Postani korisnik" class="p-button-text" routerLink="user-registration"></button>
+        </div>
+      </ng-template>
+
+      <!-- RIGHT -->
+      <ng-template pTemplate="end">
+        <button pButton label="Prijavi se" icon="pi pi-sign-in" routerLink="login"></button>
+      </ng-template>
+    </p-menubar>
+  </nav>
+</body>

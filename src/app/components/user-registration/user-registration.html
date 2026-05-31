@@ -1,0 +1,116 @@
+<body>
+  <div class="header">
+    <h1>NapraviMi</h1>
+  </div>
+
+  <div class="center-page">
+    <p-card [style]="{ width: '450px' }">
+      <ng-template pTemplate="header">
+        <div class="registration-header">Registruj se</div>
+      </ng-template>
+
+      @if (submissionError) {
+        <div class="mb-3">
+          <p-message severity="error">{{ submissionErrorMessage }}</p-message>
+        </div>
+      }
+
+      <form [formGroup]="signUpForm" (ngSubmit)="submit()" class="p-fluid">
+        <!-- Username -->
+        <div class="field flex flex-column">
+          <label for="username">Korisničko ime</label>
+          <input pInputText id="username" formControlName="username" />
+        </div>
+
+        <!-- Email -->
+        <div class="field flex flex-column">
+          <label for="email">Email</label>
+          <input pInputText id="email" type="email" formControlName="email" />
+        </div>
+
+        <!-- Password -->
+        <div class="field flex flex-column">
+          <label for="password">Lozinka</label>
+          <p-password
+            id="password"
+            formControlName="password"
+            [toggleMask]="true"
+            [inputStyle]="{ width: '100%' }"
+          >
+          </p-password>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="field flex flex-column">
+          <label for="passwordConfirm">Potvrdi lozinku</label>
+          <p-password
+            id="passwordConfirm"
+            formControlName="passwordConfirm"
+            [feedback]="false"
+            [toggleMask]="true"
+            [inputStyle]="{ width: '100%' }"
+          >
+          </p-password>
+        </div>
+
+        <!-- Name fields -->
+        <div class="formgrid grid">
+          <div class="field col flex flex-column">
+            <label for="firstName">Ime</label>
+            <input pInputText id="firstName" formControlName="firstName" />
+          </div>
+
+          <div class="field col flex flex-column">
+            <label for="lastName">Prezime</label>
+            <input pInputText id="lastName" formControlName="lastName" />
+          </div>
+        </div>
+
+        <!-- Date of birth -->
+        <div class="field flex flex-column">
+          <label for="date_of_birth">Datum rođenja</label>
+          <p-datepicker formControlName="date_of_birth" [showIcon]="true" appendTo="body">
+          </p-datepicker>
+        </div>
+
+        <!-- Gender -->
+        <div class="field gender-field">
+          <label class="gender-label">Pol</label>
+
+          <div class="gender-group">
+            <div class="gender-option">
+              <p-radioButton
+                name="gender"
+                value="male"
+                formControlName="gender"
+                inputId="male"
+              ></p-radioButton>
+              <label for="male">Muškarac</label>
+            </div>
+
+            <div class="gender-option">
+              <p-radioButton
+                name="gender"
+                value="female"
+                formControlName="gender"
+                inputId="female"
+              ></p-radioButton>
+              <label for="female">Žena</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="w-full mt-4">
+          <button
+            pButton
+            type="submit"
+            label="Registruj se"
+            [disabled]="signUpForm.invalid"
+            style="width: 100%"
+          ></button>
+        </div>
+      </form>
+    </p-card>
+  </div>
+</body>
