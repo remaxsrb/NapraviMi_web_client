@@ -1,0 +1,11 @@
+.page-top-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.page-top-actions button,
+.page-top-actions p-button {
+  min-width: 150px;
+}

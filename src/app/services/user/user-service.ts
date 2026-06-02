@@ -26,4 +26,11 @@ export class UserService {
     );
   }
 
+  changePassword(data: any): Observable<any> {
+    return this.http.patch<any>(
+      `${this.apiUrl}/change-password`,
+      data
+    );
+  }
+
 }

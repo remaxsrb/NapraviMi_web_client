@@ -1,25 +1,33 @@
 <body>
   <div class="header">
     <h1>NapraviMi</h1>
+    <div class="user-actions">
+      <p-avatar [image]="user.profile_picture" [icon]="user.profile_picture ? undefined : 'pi pi-user'" styleClass="avatar-icon" (click)="userMenu.toggle($event)"></p-avatar>
+      <p-menu #userMenu [model]="menuItems" popup="true" appendTo="body"></p-menu>
+    </div>
   </div>
+
   <nav>
-    <p-menubar>
-      <!-- RIGHT -->
-      <ng-template pTemplate="end">
-        <p-button label="Odjavi se" icon="pi pi-sign-in" (onClick)="logout()" />
-      </ng-template>
-    </p-menubar>
+    <p-menubar></p-menubar>
   </nav>
   <div class="grid">
     <div class="flex-row">
       <div class="col-4">
-         <div class="mb-4 p-8">
-            <p-card>
-                <p-image src="{{user.profile_picture}}"></p-image>
-            </p-card>
+        <div class="mb-4 p-8">
+          <p-card>
+            <p-image src="{{ user.profile_picture }}"></p-image>
+          </p-card>
         </div>
       </div>
-      <div class="col-8"></div>
+      <div class="col-8">
+        <div class="mb-4 p-8">
+          <p-card>
+            <h2>{{ user.first_name }} {{ user.last_name }}</h2>
+            <p>{{ user.username }}</p>
+            <p>{{ user.email }}</p>
+          </p-card>
+        </div>
+      </div>
     </div>
   </div>
 </body>

@@ -7,12 +7,14 @@ import { UserDashboard } from './components/user/user-dashboard/user-dashboard';
 import { authGuard } from './guards/auth-guard';
 import { Userprofile } from './components/common/userprofile/userprofile';
 import { roleGuard } from './guards/role-guard';
+import { ChangePassword } from './components/user/change-password/change-password';
 
 export const routes: Routes = [
   { path: '', component: Homepage },
   { path: 'craftsman-apply', component: CraftsmanApplication },
   { path: 'user-registration', component: UserRegistration },
   { path: 'login', component: Signin },
+  { path: 'change-password', component: ChangePassword},
   {
     path: 'user',
     component: UserDashboard,

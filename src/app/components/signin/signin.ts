@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
@@ -22,6 +22,7 @@ import { AuthService } from '../../services/utils/auth-service';
     PasswordModule,
     ButtonModule,
     CardModule,
+    RouterLink,
   ],
   templateUrl: './signin.html',
   styleUrl: './signin.css',
@@ -59,7 +60,7 @@ export class Signin implements OnInit {
     this.userService.login(this.loginForm.value).subscribe({
       next: (response) => {
         localStorage.setItem(this.authService.TOKEN_KEY, response.access_token);
-        localStorage.setItem('userData', JSON.parse(response.user));
+        localStorage.setItem('userData', JSON.stringify(response.user));
         const payload = this.authService.decode_token(response.access_token);
         const userRole = payload?.role;
         console.log('User role from token payload:', userRole);
