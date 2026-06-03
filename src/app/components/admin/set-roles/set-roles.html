@@ -1,0 +1,45 @@
+<div class="set-roles-page">
+  <h2>Postavljanje uloga</h2>
+
+  <p-table
+    [value]="displayedUsers"
+    [paginator]="true"
+    [first]="first"
+    [rows]="backendLimit"
+    [totalRecords]="totalRecords"
+    [lazy]="true"
+    (onLazyLoad)="pageChange($event)"
+    [rowsPerPageOptions]="[5, 10, 15]"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th>ID</th>
+        <th>Email</th>
+        <th>Uloga</th>
+        <th>Datum pridruženja</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-user>
+      <tr>
+        <td>{{ user.id }}</td>
+        <td>{{ user.email }}</td>
+        <td>
+          <p-select
+            [options]="roleOptions"
+            optionLabel="label"
+            optionValue="value"
+            [(ngModel)]="user.newRole"
+            placeholder="Izaberi ulogu"
+          >
+            <ng-template let-selectedItem pTemplate="selectedItem">
+              <span>
+                {{ selectedItem?.label || (user.role | titlecase) }}
+              </span>
+            </ng-template>
+          </p-select>
+        </td>
+        <td>{{ user.createdAt | date: 'short' }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

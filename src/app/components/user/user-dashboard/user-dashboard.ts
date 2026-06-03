@@ -48,8 +48,6 @@ export class UserDashboard implements OnInit {
         return 'Korisnik';
       case 'craftsman':
         return 'Zanatlija';
-      case 'admin':
-        return 'Administrator';
       default:
         return 'Nepoznata uloga';
     }

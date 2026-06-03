@@ -7,7 +7,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
     const url = req.url;
 
-    const isRoleRequest = url.startsWith('/admin') || url.startsWith('/craftsman') || url.startsWith('/user');
+    const isRoleRequest = url.includes('/admin') || url.includes('/craftsman') || url.includes('/user');
 
    if (authToken && isRoleRequest) {
       const cloned = req.clone({

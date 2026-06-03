@@ -33,7 +33,7 @@ bootstrapApplication(App, {
       JwtModule.forRoot({
         config: {
           tokenGetter: () => localStorage.getItem('authToken'),
-          allowedDomains: ["http://localhost:8080"], // Change to your API domain
+          allowedDomains: ["http://localhost:8080"], 
           disallowedRoutes: [],
         },
       })
