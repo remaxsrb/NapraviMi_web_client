@@ -1,5 +1,68 @@
-<p>Na ovoj stranici ce korisnici slati prijave da postanu zanatlije putem postojeceg korisnickog imena</p>
-<p>Ideja je da zanatlije ujedno mogu i biti korisnici usluga drugih zanatlija</p>
-<p>Iz tog razloga nece biti duple registracije vec ce admin prilikom odobravanja prijave dodati tom korisniku odgovarajucu ulogu - craftsman</p>
+  <div class="header">
+    <h1>NapraviMi</h1>
+  </div>
+
+  <div class="center-page">
+    <div class="form-wrapper flex flex-column">
+      <div class="mb-3">
+        <p-message
+          severity="info"
+          [text]="messageText"
+          escape="false"
+        ></p-message>
+      </div>
+
+      <div class="mb-3" *ngIf="statusMessage">
+        <p-message
+          [severity]="statusSeverity"
+          [text]="statusMessage"
+        ></p-message>
+      </div>
+
+      <p-card [style]="{ width: '520px' }">
+        <ng-template pTemplate="header">
+          <div class="application-header">Prijava za zanatliju</div>
+        </ng-template>
+
+        <form [formGroup]="applicationForm" (ngSubmit)="onSubmit()" class="p-fluid">
+        <div class="field flex flex-column">
+          <label for="email">Email</label>
+          <input pInputText id="email" type="email" formControlName="email" />
+        </div>
+
+        <div class="field flex flex-column">
+          <label for="resumeUpload">Rezime (PDF)</label>
+          <p-fileUpload
+            name="resume"
+            accept="application/pdf"
+            customUpload="true"
+            chooseLabel="Izaberi PDF"
+            [showUploadButton]="false"
+            [showCancelButton]="true"
+            [auto]="false"
+            (onSelect)="onResumeSelected($event)"
+            (onRemove)="onResumeRemoved()"
+          ></p-fileUpload>
+        </div>
+
+        @if (selectedResumeName) {
+          <div class="field">
+            <small>Izabrani fajl: {{ selectedResumeName }}</small>
+          </div>
+        }
+
+        <div class="w-full mt-4">
+          <button
+            pButton
+            type="submit"
+            label="Pošalji prijavu"
+            [disabled]="!resumeFile || applicationForm.invalid"
+            style="width: 100%"
+          ></button>
+        </div>
+      </form>
+    </p-card>
+    </div>
+  </div>
 
 

@@ -33,4 +33,11 @@ export class UserService {
     );
   }
 
+  applyForCraftsman(data: any): Observable<any> {
+    return this.http.post<any>(
+      `${this.apiUrl}/apply-for-craftsman`,
+      data
+    );
+  }
+
 }
