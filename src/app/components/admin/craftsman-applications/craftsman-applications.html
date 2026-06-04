@@ -1,1 +1,48 @@
-<p>craftsman-applications works!</p>
+<p-confirmDialog></p-confirmDialog>
+<div class="craftsman-applications-page">
+  <h2>Zahtevi za ulogu zanatlije</h2>
+
+  <p-table
+    [value]="displayedApplications"
+    [paginator]="true"
+    [first]="first"
+    [rows]="backendLimit"
+    [totalRecords]="totalRecords"
+    [lazy]="true"
+    (onLazyLoad)="pageChange($event)"
+    [rowsPerPageOptions]="[5, 10, 15]"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th>ID</th>
+        <th>Email</th>
+        <th>Status</th>
+        <th>Datum podnošenja</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-app>
+      <tr>
+        <td>{{ app.id }}</td>
+        <td>{{ app.email }}</td>
+        <td>
+          <p-select
+            [options]="statusOptions"
+            optionLabel="label"
+            optionValue="value"
+            [(ngModel)]="app.newStatus"
+            placeholder="Izaberi status"
+            appendTo="body"
+            (onChange)="onStatusChange($event, app)"
+          >
+            <ng-template let-selectedItem pTemplate="selectedItem">
+              <span>
+                {{ selectedItem?.label || (app.status | titlecase) }}
+              </span>
+            </ng-template>
+          </p-select>
+        </td>
+        <td>{{ app.createdAt | date: 'short' }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
