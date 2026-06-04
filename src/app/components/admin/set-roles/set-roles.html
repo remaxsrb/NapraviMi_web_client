@@ -20,7 +20,7 @@
         <th>Datum pridruženja</th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-user let-rowIndex="rowIndex">
+    <ng-template pTemplate="body" let-user>
       <tr>
         <td>{{ user.id }}</td>
         <td>{{ user.email }}</td>
@@ -31,7 +31,7 @@
             optionValue="value"
             [(ngModel)]="user.newRole"
             placeholder="Izaberi ulogu"
-            (onChange)="onRoleChange($event,user, rowIndex)"
+            (onChange)="onRoleChange($event,user)"
           >
             <ng-template let-selectedItem pTemplate="selectedItem">
               <span>

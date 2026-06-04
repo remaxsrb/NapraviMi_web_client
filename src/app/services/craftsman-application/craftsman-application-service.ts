@@ -11,6 +11,15 @@ export class CraftsmanApplicationService {
   constructor(private http: HttpClient) {}
 
   all(data: any): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/all`, data);
+    return this.http.get<any>(`${this.apiUrl}/all`, { params: data });
+  }
+
+  
+  approveCA(data:any): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/approve`, data);
+  }
+
+  rejectCA(data:any): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/reject`, data);
   }
 }

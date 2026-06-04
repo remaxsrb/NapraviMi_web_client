@@ -121,7 +121,7 @@ export class SetRoles {
     };
   }
 
-  onRoleChange(event: any, user: UserRoleRow, rowIndex: number): void {
+  onRoleChange(event: any, user: UserRoleRow): void {
     const newRole = event.value;
     if (newRole === user.role) {
       return;
