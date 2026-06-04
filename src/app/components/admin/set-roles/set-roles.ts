@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { UserService } from '../../../services/user/user-service';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 interface ApiUser {
   id: number;
@@ -40,7 +42,8 @@ interface GetAllResponse {
 @Component({
   selector: 'app-set-roles',
   standalone: true,
-  imports: [CommonModule, FormsModule, TableModule, ButtonModule, SelectModule],
+  imports: [CommonModule, FormsModule, TableModule, ButtonModule, SelectModule, ConfirmDialogModule],
+  providers: [ConfirmationService, MessageService, UserService],
   templateUrl: './set-roles.html',
   styleUrls: ['./set-roles.css'],
 })
@@ -58,7 +61,11 @@ export class SetRoles {
     { label: 'Admin', value: 'admin' },
   ];
 
-  constructor(private userService: UserService, private cdr: ChangeDetectorRef) {}
+  private userService: UserService = inject(UserService);
+  private confirmationService: ConfirmationService = inject(ConfirmationService);
+  private messageService: MessageService = inject(MessageService);
+
+  constructor(private cdr: ChangeDetectorRef) {}
 
   pageChange(event: any): void {
     const skip = event.first ?? 0;
@@ -112,6 +119,45 @@ export class SetRoles {
       newRole: currentRole,
       createdAt: new Date(user.created_at),
     };
+  }
+
+  onRoleChange(event: any, user: UserRoleRow, rowIndex: number): void {
+    const newRole = event.value;
+    if (newRole === user.role) {
+      return;
+    }
+
+    const roleLabel = this.roleOptions.find((r) => r.value === newRole)?.label ?? newRole;
+
+    this.confirmationService.confirm({
+      message: `Da li ste sigurni da želite da promenite ulogu korisnika <b>${user.email}</b> na <b>${roleLabel}</b>?`,
+      header: 'Potvrda promene uloge',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Da',
+      rejectLabel: 'Ne',
+      accept: () => {
+        const requestData = {
+          username: user.username,
+          role:newRole,
+        };
+        this.userService.setRole(requestData).subscribe({
+          next: () => {
+            user.role = newRole;
+            user.newRole = newRole;
+            this.messageService.add({ severity: 'success', summary: 'Uspeh', detail: `Uloga korisnika ${user.email} je uspešno promenjena na ${roleLabel}.` });
+            this.cdr.detectChanges();
+          },
+          error: () => {
+            user.newRole = user.role;
+            this.messageService.add({ severity: 'error', summary: 'Greška', detail: `Došlo je do greške prilikom promene uloge korisnika ${user.email}.` });
+            this.cdr.detectChanges();
+          },
+        });
+      },
+      reject: () => {
+        user.newRole = user.role;
+      },
+    });
   }
 
 }

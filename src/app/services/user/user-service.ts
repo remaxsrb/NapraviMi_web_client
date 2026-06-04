@@ -68,4 +68,11 @@ export class UserService {
     };
   }
 
+  setRole(data: any): Observable<any> {
+    return this.http.patch<any>(
+      `${this.apiUrl}/set-role`,
+      data
+    );
+  }
+
 }
