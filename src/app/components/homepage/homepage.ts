@@ -12,4 +12,17 @@ import { RouterLink } from "@angular/router";
   styleUrl: './homepage.css',
 })
 
-export class Homepage {}
+export class Homepage {
+  homeMenuItems: MenuItem[] = [
+    {
+      label: 'Postani Zanatlija',
+      icon: 'pi pi-list',
+      routerLink: 'craftsman-apply',
+    },
+    {
+      label: 'Postani korisnik',
+      icon: 'pi pi-user-edit',
+      routerLink: 'user-registration',
+    },
+  ];
+}

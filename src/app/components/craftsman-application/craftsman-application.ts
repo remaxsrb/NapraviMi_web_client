@@ -6,6 +6,7 @@ import { CardModule } from 'primeng/card';
 import { FileUploadModule } from 'primeng/fileupload';
 import { MessageModule } from 'primeng/message';
 import { InputTextModule } from 'primeng/inputtext';
+import { SelectModule } from 'primeng/select';
 import { FileService } from '../../services/utils/file-service';
 import { UserService } from '../../services/user/user-service';
 
@@ -20,11 +21,20 @@ import { UserService } from '../../services/user/user-service';
     MessageModule,
     InputTextModule,
     ButtonModule,
+    SelectModule,
   ],
   templateUrl: './craftsman-application.html',
   styleUrls: ['./craftsman-application.css'],
 })
 export class CraftsmanApplication {
+  craftOptions = [
+    { label: 'Kovač', value: 'blacksmith' },
+    { label: 'Duborezac', value: 'woodcarver' },
+    { label: 'Obućar', value: 'shoemaker' },
+    { label: 'Grnčar', value: 'potter' },
+    { label: 'Bačvar', value: 'cooper' },
+  ];
+
   applicationForm!: FormGroup;
   selectedResumeName = '';
   resumeFile?: File;
@@ -53,6 +63,7 @@ export class CraftsmanApplication {
   initForm(): void {
     this.applicationForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
+      craft: [null, Validators.required],
     });
   }
 
@@ -85,6 +96,7 @@ export class CraftsmanApplication {
       next: () => {
         const applicationData = {
           email: this.applicationForm.value.email,
+          craft: this.applicationForm.value.craft,
         };
 
         this.userService.applyForCraftsman(applicationData).subscribe({

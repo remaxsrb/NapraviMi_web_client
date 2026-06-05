@@ -8,11 +8,13 @@ import { TableModule } from 'primeng/table';
 import { CraftsmanApplicationService } from '../../../services/craftsman-application/craftsman-application-service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { CraftsmanService } from '../../../services/craftsman/craftsman-service';
 
 interface ApiApplication {
   id: number;
   email: string;
   status: string;
+  craft: string;
   created_at: string;
   resolved_at?: string;
 }
@@ -25,6 +27,8 @@ interface StatusOption {
 interface ApplicationRow {
   id: number;
   email: string;
+  craft: string;
+  craftLabel: string;
   status: string;
   newStatus: string;
   createdAt: Date;
@@ -42,7 +46,7 @@ interface GetAllResponse {
   selector: 'app-craftsman-applications',
   standalone: true,
   imports: [CommonModule, FormsModule, TableModule, ButtonModule, SelectModule, ConfirmDialogModule, ToastModule],
-  providers: [ConfirmationService, MessageService, CraftsmanApplicationService],
+  providers: [ConfirmationService, MessageService, CraftsmanApplicationService, CraftsmanService],
   templateUrl: './craftsman-applications.html',
   styleUrl: './craftsman-applications.css',
 })
@@ -60,10 +64,18 @@ export class CraftsmanApplications {
     { label: 'Odobri', value: 'approved' },
   ];
 
+  craftOptions: StatusOption[] = [
+    { label: 'Kovač', value: 'blacksmith' },
+    { label: 'Duborezac', value: 'woodcarver' },
+    { label: 'Obućar', value: 'shoemaker' },
+    { label: 'Grnčar', value: 'potter' },
+    { label: 'Bačvar', value: 'cooper' },
+  ];
+
   private craftsmanApplicationService = inject(CraftsmanApplicationService);
   private confirmationService = inject(ConfirmationService);
   private messageService = inject(MessageService);
-
+  private craftsmanService = inject(CraftsmanService);
   constructor(private cdr: ChangeDetectorRef) {}
 
   pageChange(event: any): void {
@@ -107,6 +119,8 @@ export class CraftsmanApplications {
     return {
       id: application.id,
       email: application.email,
+      craft: application.craft,
+      craftLabel: this.craftOptions.find((c) => c.value === application.craft)?.label ?? application.craft,
       status: application.status,
       newStatus: application.status,
       createdAt: new Date(application.created_at),
@@ -137,6 +151,21 @@ export class CraftsmanApplications {
             next: () => {
               this.messageService.add({ severity: 'success', summary: 'Uspeh', detail: `Zahtev odobren.` });
               this.loadPage(this.first, this.backendLimit);
+
+              const craftsmanData = {
+                email: app.email,
+                craft: app.craft,
+              };
+
+              this.craftsmanService.createCraftsman(craftsmanData).subscribe({
+                next: () => {
+                  // Optionally handle success of craftsman creation
+                },
+                error: () => {
+                  this.messageService.add({ severity: 'error', summary: 'Greška', detail: `Došlo je do greške prilikom kreiranja zanatlije nakon odobrenja zahteva.` });
+                },
+              });
+
             },
             error: () => {
               this.messageService.add({ severity: 'error', summary: 'Greška', detail: `Došlo je do greške prilikom odobravanja zahteva.` });
