@@ -9,6 +9,7 @@ import { CraftsmanApplicationService } from '../../../services/craftsman-applica
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { CraftsmanService } from '../../../services/craftsman/craftsman-service';
+import { CRAFT_OPTIONS, craftLabel } from '../../../constants/craft-options';
 
 interface ApiApplication {
   id: number;
@@ -64,13 +65,7 @@ export class CraftsmanApplications {
     { label: 'Odobri', value: 'approved' },
   ];
 
-  craftOptions: StatusOption[] = [
-    { label: 'Kovač', value: 'blacksmith' },
-    { label: 'Duborezac', value: 'woodcarver' },
-    { label: 'Obućar', value: 'shoemaker' },
-    { label: 'Grnčar', value: 'potter' },
-    { label: 'Bačvar', value: 'cooper' },
-  ];
+  craftOptions = CRAFT_OPTIONS;
 
   private craftsmanApplicationService = inject(CraftsmanApplicationService);
   private confirmationService = inject(ConfirmationService);
@@ -120,7 +115,7 @@ export class CraftsmanApplications {
       id: application.id,
       email: application.email,
       craft: application.craft,
-      craftLabel: this.craftOptions.find((c) => c.value === application.craft)?.label ?? application.craft,
+      craftLabel: craftLabel(application.craft),
       status: application.status,
       newStatus: application.status,
       createdAt: new Date(application.created_at),
