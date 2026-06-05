@@ -7,7 +7,7 @@
     <p>Nema zanatlija za prikaz.</p>
   } @else {
     <div class="craftsmen-grid">
-      @for (craftsman of craftsmen; track craftsman.id) {
+      @for (craftsman of pagedCraftsmen; track craftsman.id) {
         <p-card styleClass="craftsman-card">
           <div class="craftsman-card-content">
             <img
@@ -31,5 +31,12 @@
         </p-card>
       }
     </div>
+    <p-paginator
+      [rows]="pageSize"
+      [totalRecords]="craftsmen.length"
+      [first]="first"
+      [rowsPerPageOptions]="[6, 12, 24]"
+      (onPageChange)="onPageChange($event)"
+    ></p-paginator>
   }
 </div>
