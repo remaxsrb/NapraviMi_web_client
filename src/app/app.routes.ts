@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 import { Homepage } from './components/homepage/homepage';
+import { HomepageWelcome } from './components/homepage-welcome/homepage-welcome';
+import { CraftsmenOverview } from './components/craftsmen-overview/craftsmen-overview';
 import { CraftsmanApplication } from './components/craftsman-application/craftsman-application';
 import { UserRegistration } from './components/user-registration/user-registration';
 import { Signin } from './components/signin/signin';
@@ -14,7 +16,14 @@ import { CraftsmanApplications } from './components/admin/craftsman-applications
 import { SetRoles } from './components/admin/set-roles/set-roles';
 
 export const routes: Routes = [
-  { path: '', component: Homepage },
+  {
+    path: '',
+    component: Homepage,
+    children: [
+      { path: '', component: HomepageWelcome },
+      { path: 'craftsmen', component: CraftsmenOverview },
+    ],
+  },
   { path: 'craftsman-apply', component: CraftsmanApplication },
   { path: 'user-registration', component: UserRegistration },
   { path: 'login', component: Signin },

@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges, SimpleChanges, inject } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges, inject } from '@angular/core';
 import { RatingModule } from 'primeng/rating';
 import { CardModule } from 'primeng/card';
 import { PaginatorModule } from 'primeng/paginator';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { CraftsmanService } from '../../services/craftsman/craftsman-service';
 import { CRAFT_OPTIONS, craftLabel } from '../../constants/craft-options';
 
@@ -28,7 +29,7 @@ interface ApiCraftsman {
   templateUrl: './craftsmen-overview.html',
   styleUrl: './craftsmen-overview.css',
 })
-export class CraftsmenOverview implements OnChanges {
+export class CraftsmenOverview implements OnInit, OnChanges {
   @Input() craft: string | null = null;
 
   craftsmen: ApiCraftsman[] = [];
@@ -40,6 +41,17 @@ export class CraftsmenOverview implements OnChanges {
   craftLabel = craftLabel;
 
   private craftsmanService = inject(CraftsmanService);
+  private route = inject(ActivatedRoute);
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe((params) => {
+      const routeCraft = params['craftsmen'] ?? null;
+      if (routeCraft !== this.craftsmen) {
+        this.craft = routeCraft;
+        this.loadCraftsmen();
+      }
+    });
+  }
 
   ngOnChanges(_changes: SimpleChanges): void {
     this.loadCraftsmen();
@@ -72,3 +84,4 @@ export class CraftsmenOverview implements OnChanges {
     });
   }
 }
+

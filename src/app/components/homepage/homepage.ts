@@ -5,24 +5,21 @@ import { MenubarModule } from 'primeng/menubar';
 import { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { RouterLink } from '@angular/router';
-import { HomepageWelcome } from '../homepage-welcome/homepage-welcome';
-import { CraftsmenOverview } from '../craftsmen-overview/craftsmen-overview';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { CRAFT_OPTIONS } from '../../constants/craft-options';
 
 @Component({
   selector: 'app-homepage',
   standalone: true,
-  imports: [CommonModule, FormsModule, MenubarModule, ButtonModule, InputTextModule, RouterLink, HomepageWelcome, CraftsmenOverview],
+  imports: [CommonModule, FormsModule, MenubarModule, ButtonModule, InputTextModule, RouterLink, RouterOutlet],
   templateUrl: './homepage.html',
   styleUrl: './homepage.css',
 })
 export class Homepage implements OnInit {
   homeMenuItems: MenuItem[] = [];
-
   searchQuery = '';
-  currentView: 'welcome' | 'craftsmen' = 'welcome';
-  activeCraftFilter: string | null = null;
+
+  constructor(private router: Router) {}
 
   ngOnInit(): void {
     this.homeMenuItems = [
@@ -40,9 +37,8 @@ export class Homepage implements OnInit {
         label: 'Pregled zanatlija',
         icon: 'pi pi-users',
         command: () => {
-          this.activeCraftFilter = null;
-          this.currentView = 'craftsmen';
           this.searchQuery = '';
+          this.router.navigate(['craftsmen']);
         },
       },
     ];
@@ -51,18 +47,15 @@ export class Homepage implements OnInit {
   onSearch(): void {
     const q = this.searchQuery.trim().toLowerCase();
     if (!q) {
-      this.currentView = 'welcome';
-      this.activeCraftFilter = null;
+      this.router.navigate(['']);
       return;
     }
 
     const match = CRAFT_OPTIONS.find((c) => c.keywords.some((kw) => kw.includes(q) || q.includes(kw)));
     if (match) {
-      this.activeCraftFilter = match.value;
-      this.currentView = 'craftsmen';
+      this.router.navigate(['craftsmen'], { queryParams: { craft: match.value } });
     } else {
-      this.currentView = 'welcome';
-      this.activeCraftFilter = null;
+      this.router.navigate(['']);
     }
   }
 }
