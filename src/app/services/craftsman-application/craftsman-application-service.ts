@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class CraftsmanApplicationService {
   private apiUrl = 'http://localhost:8080/craftsman-applications';
+  
 
   constructor(private http: HttpClient) {}
 
@@ -22,4 +23,6 @@ export class CraftsmanApplicationService {
   rejectCA(data:any): Observable<any> {
     return this.http.patch<any>(`${this.apiUrl}/reject`, data);
   }
+
+
 }

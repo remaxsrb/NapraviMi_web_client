@@ -6,14 +6,6 @@
     </div>
   </div>
   <nav>
-    <p-menubar>
-      <!-- CENTER -->
-      <ng-template pTemplate="start">
-        <div class="center-menu">
-          <button pButton label="Postani Zanatlija" class="p-button-text" routerLink="craftsman-apply"></button>
-          <button pButton label="Postani korisnik" class="p-button-text" routerLink="user-registration"></button>
-        </div>
-      </ng-template>
-    </p-menubar>
+    <p-menubar [model]="homeMenuItems"></p-menubar>
   </nav>
 </body>

@@ -17,6 +17,7 @@
       <tr>
         <th>ID</th>
         <th>Email</th>
+        <th>Zanat</th>
         <th>Status</th>
         <th>Datum podnošenja</th>
       </tr>
@@ -25,6 +26,7 @@
       <tr>
         <td>{{ app.id }}</td>
         <td>{{ app.email }}</td>
+        <td>{{ app.craftLabel }}</td>
         <td>
           <p-select
             [options]="statusOptions"

@@ -31,6 +31,19 @@
         </div>
 
         <div class="field flex flex-column">
+          <label for="craft">Zanat</label>
+          <p-select
+            id="craft"
+            [options]="craftOptions"
+            optionLabel="label"
+            optionValue="value"
+            formControlName="craft"
+            placeholder="Izaberi zanat"
+            appendTo="body"
+          ></p-select>
+        </div>
+
+        <div class="field flex flex-column">
           <label for="resumeUpload">Rezime (PDF)</label>
           <p-fileUpload
             name="resume"
