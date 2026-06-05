@@ -1,0 +1,35 @@
+<div class="craftsmen-overview">
+  <h2>{{ craft ? craftLabel(craft) + ' - Zanatlije' : 'Pregled zanatlija' }}</h2>
+
+  @if (isLoading) {
+    <p>Učitavanje...</p>
+  } @else if (craftsmen.length === 0) {
+    <p>Nema zanatlija za prikaz.</p>
+  } @else {
+    <div class="craftsmen-grid">
+      @for (craftsman of craftsmen; track craftsman.id) {
+        <p-card styleClass="craftsman-card">
+          <div class="craftsman-card-content">
+            <img
+              [src]="craftsman.profile_picture"
+              [alt]="craftsman.first_name + ' ' + craftsman.last_name"
+              class="craftsman-avatar"
+            />
+            <div class="craftsman-info">
+              <div class="craftsman-name">{{ craftsman.first_name }} {{ craftsman.last_name }}</div>
+              <div class="craftsman-email">{{ craftsman.email }}</div>
+              <div class="craftsman-craft">{{ craftLabel(craftsman.craftsman.craft) }}</div>
+              <div class="craftsman-rating">
+                <p-rating
+                  [(ngModel)]="craftsman.craftsman.rating"
+                  [readonly]="true"
+                ></p-rating>
+                <span class="rating-count">({{ craftsman.craftsman.number_of_ratings }})</span>
+              </div>
+            </div>
+          </div>
+        </p-card>
+      }
+    </div>
+  }
+</div>

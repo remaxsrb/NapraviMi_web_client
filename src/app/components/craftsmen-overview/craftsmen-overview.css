@@ -1,0 +1,55 @@
+.craftsmen-overview {
+  padding: 1rem;
+}
+
+.craftsmen-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+.craftsman-card-content {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.craftsman-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.craftsman-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.craftsman-name {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.craftsman-email {
+  font-size: 0.875rem;
+  opacity: 0.7;
+}
+
+.craftsman-craft {
+  font-size: 0.875rem;
+}
+
+.craftsman-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.25rem;
+}
+
+.rating-count {
+  font-size: 0.8rem;
+  opacity: 0.65;
+}
