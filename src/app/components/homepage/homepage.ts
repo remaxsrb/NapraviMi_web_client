@@ -1,28 +1,76 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { MenubarModule } from 'primeng/menubar';
 import { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
-import { RouterLink } from "@angular/router";
+import { InputTextModule } from 'primeng/inputtext';
+import { RouterLink } from '@angular/router';
+import { HomepageWelcome } from '../homepage-welcome/homepage-welcome';
+import { CraftsmenOverview } from '../craftsmen-overview/craftsmen-overview';
+
+const CRAFT_OPTIONS = [
+  { label: 'Kovač', value: 'blacksmith', keywords: ['kovač', 'kovac', 'blacksmith'] },
+  { label: 'Duborezac', value: 'woodcarver', keywords: ['duborezac', 'woodcarver'] },
+  { label: 'Obućar', value: 'shoemaker', keywords: ['obucar', 'obućar', 'shoemaker'] },
+  { label: 'Grnčar', value: 'potter', keywords: ['grncar', 'grnčar', 'potter'] },
+  { label: 'Bačvar', value: 'cooper', keywords: ['bacvar', 'bačvar', 'cooper'] },
+];
+
 @Component({
   selector: 'app-homepage',
   standalone: true,
-  imports: [CommonModule, MenubarModule, ButtonModule, RouterLink],
+  imports: [CommonModule, FormsModule, MenubarModule, ButtonModule, InputTextModule, RouterLink, HomepageWelcome, CraftsmenOverview],
   templateUrl: './homepage.html',
   styleUrl: './homepage.css',
 })
+export class Homepage implements OnInit {
+  homeMenuItems: MenuItem[] = [];
 
-export class Homepage {
-  homeMenuItems: MenuItem[] = [
-    {
-      label: 'Postani Zanatlija',
-      icon: 'pi pi-list',
-      routerLink: 'craftsman-apply',
-    },
-    {
-      label: 'Postani korisnik',
-      icon: 'pi pi-user-edit',
-      routerLink: 'user-registration',
-    },
-  ];
+  searchQuery = '';
+  currentView: 'welcome' | 'craftsmen' = 'welcome';
+  activeCraftFilter: string | null = null;
+
+  ngOnInit(): void {
+    this.homeMenuItems = [
+      {
+        label: 'Postani Zanatlija',
+        icon: 'pi pi-list',
+        routerLink: 'craftsman-apply',
+      },
+      {
+        label: 'Postani korisnik',
+        icon: 'pi pi-user-edit',
+        routerLink: 'user-registration',
+      },
+      {
+        label: 'Pregled zanatlija',
+        icon: 'pi pi-users',
+        command: () => {
+          this.activeCraftFilter = null;
+          this.currentView = 'craftsmen';
+          this.searchQuery = '';
+        },
+      },
+    ];
+  }
+
+  onSearch(): void {
+    const q = this.searchQuery.trim().toLowerCase();
+    if (!q) {
+      this.currentView = 'welcome';
+      this.activeCraftFilter = null;
+      return;
+    }
+
+    const match = CRAFT_OPTIONS.find((c) => c.keywords.some((kw) => kw.includes(q) || q.includes(kw)));
+    if (match) {
+      this.activeCraftFilter = match.value;
+      this.currentView = 'craftsmen';
+    } else {
+      this.currentView = 'welcome';
+      this.activeCraftFilter = null;
+    }
+  }
 }
+
