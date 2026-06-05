@@ -7,6 +7,7 @@ import { FileUploadModule } from 'primeng/fileupload';
 import { MessageModule } from 'primeng/message';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
+import { CRAFT_OPTIONS } from '../../constants/craft-options';
 import { FileService } from '../../services/utils/file-service';
 import { UserService } from '../../services/user/user-service';
 
@@ -27,13 +28,7 @@ import { UserService } from '../../services/user/user-service';
   styleUrls: ['./craftsman-application.css'],
 })
 export class CraftsmanApplication {
-  craftOptions = [
-    { label: 'Kovač', value: 'blacksmith' },
-    { label: 'Duborezac', value: 'woodcarver' },
-    { label: 'Obućar', value: 'shoemaker' },
-    { label: 'Grnčar', value: 'potter' },
-    { label: 'Bačvar', value: 'cooper' },
-  ];
+  craftOptions = CRAFT_OPTIONS;
 
   applicationForm!: FormGroup;
   selectedResumeName = '';

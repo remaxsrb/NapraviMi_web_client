@@ -8,14 +8,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { RouterLink } from '@angular/router';
 import { HomepageWelcome } from '../homepage-welcome/homepage-welcome';
 import { CraftsmenOverview } from '../craftsmen-overview/craftsmen-overview';
-
-const CRAFT_OPTIONS = [
-  { label: 'Kovač', value: 'blacksmith', keywords: ['kovač', 'kovac', 'blacksmith'] },
-  { label: 'Duborezac', value: 'woodcarver', keywords: ['duborezac', 'woodcarver'] },
-  { label: 'Obućar', value: 'shoemaker', keywords: ['obucar', 'obućar', 'shoemaker'] },
-  { label: 'Grnčar', value: 'potter', keywords: ['grncar', 'grnčar', 'potter'] },
-  { label: 'Bačvar', value: 'cooper', keywords: ['bacvar', 'bačvar', 'cooper'] },
-];
+import { CRAFT_OPTIONS } from '../../constants/craft-options';
 
 @Component({
   selector: 'app-homepage',

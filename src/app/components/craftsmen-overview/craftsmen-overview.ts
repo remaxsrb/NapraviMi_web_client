@@ -4,14 +4,7 @@ import { RatingModule } from 'primeng/rating';
 import { CardModule } from 'primeng/card';
 import { FormsModule } from '@angular/forms';
 import { CraftsmanService } from '../../services/craftsman/craftsman-service';
-
-const CRAFT_OPTIONS = [
-  { label: 'Kovač', value: 'blacksmith' },
-  { label: 'Duborezac', value: 'woodcarver' },
-  { label: 'Obućar', value: 'shoemaker' },
-  { label: 'Grnčar', value: 'potter' },
-  { label: 'Bačvar', value: 'cooper' },
-];
+import { CRAFT_OPTIONS, craftLabel } from '../../constants/craft-options';
 
 interface ApiCraftsman {
   id: number;
@@ -40,14 +33,12 @@ export class CraftsmenOverview implements OnChanges {
   craftsmen: ApiCraftsman[] = [];
   isLoading = false;
 
+  craftLabel = craftLabel;
+
   private craftsmanService = inject(CraftsmanService);
 
   ngOnChanges(_changes: SimpleChanges): void {
     this.loadCraftsmen();
-  }
-
-  craftLabel(value: string): string {
-    return CRAFT_OPTIONS.find((c) => c.value === value)?.label ?? value;
   }
 
   private loadCraftsmen(): void {
