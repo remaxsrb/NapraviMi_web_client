@@ -28,7 +28,7 @@ export class UserActions {
       {
         label: 'Podešavanja',
         icon: 'pi pi-cog',
-        routerLink: '/change-password',
+        routerLink: '/settings',
       },
       {
         label: 'Odjavi se',

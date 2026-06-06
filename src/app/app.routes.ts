@@ -14,6 +14,7 @@ import { AdminDashboard } from './components/admin/admin-dashboard/admin-dashboa
 import { AdminLogin } from './components/admin/admin-login/admin-login';
 import { CraftsmanApplications } from './components/admin/craftsman-applications/craftsman-applications';
 import { SetRoles } from './components/admin/set-roles/set-roles';
+import { ProfileSettings } from './components/common/profile-settings/profile-settings';
 
 export const routes: Routes = [
   {
@@ -28,6 +29,7 @@ export const routes: Routes = [
   { path: 'user-registration', component: UserRegistration },
   { path: 'login', component: Signin },
   { path: 'change-password', component: ChangePassword},
+  { path: 'settings', component: ProfileSettings, canActivate: [authGuard] },
   {
     path: 'user',
     component: UserDashboard,

@@ -1,0 +1,96 @@
+<body>
+  <div class="header">
+    <h1>
+      <a [routerLink]="dashboardLink" style="text-decoration: none; color: inherit;">NapraviMi</a>
+    </h1>
+  </div>
+
+  <div class="center-page">
+    <div class="settings-container">
+      <!-- Change Password Form -->
+      <p-card [style]="{ marginBottom: '2rem' }">
+        <ng-template pTemplate="header">
+          <div style="padding: 1rem; font-size: 1.2rem; font-weight: bold;">Promena lozinke</div>
+        </ng-template>
+
+        <div *ngIf="passwordErrorMessage" class="mb-3">
+          <p-message severity="error">{{ passwordErrorMessage }}</p-message>
+        </div>
+        <div *ngIf="passwordSuccessMessage" class="mb-3">
+          <p-message severity="success">{{ passwordSuccessMessage }}</p-message>
+        </div>
+
+        <form [formGroup]="passwordForm" (ngSubmit)="submitPasswordChange()" class="p-fluid">
+          <div class="field flex flex-column">
+            <label for="new_password">Nova lozinka</label>
+            <p-password
+              id="new_password"
+              formControlName="new_password"
+              [toggleMask]="true"
+            ></p-password>
+          </div>
+
+          <div class="field flex flex-column">
+            <label for="confirm_password">Potvrdite novu lozinku</label>
+            <p-password
+              id="confirm_password"
+              formControlName="confirm_password"
+              [toggleMask]="true"
+              [feedback]="false"
+            ></p-password>
+            <div *ngIf="passwordForm.errors?.['passwordsMismatch']" class="p-error">
+              Lozinke se ne poklapaju.
+            </div>
+          </div>
+
+          <div class="w-full mt-4">
+            <button
+              pButton
+              type="submit"
+              label="Izmeni lozinku"
+              [disabled]="passwordForm.invalid || passwordSubmitting"
+              [loading]="passwordSubmitting"
+              style="width: 100%"
+            ></button>
+          </div>
+        </form>
+      </p-card>
+
+      <!-- Change Profile Picture Form -->
+      <p-card>
+        <ng-template pTemplate="header">
+          <div style="padding: 1rem; font-size: 1.2rem; font-weight: bold;">Promena profilne slike</div>
+        </ng-template>
+
+        <div *ngIf="fileUploadError" class="mb-3">
+          <p-message severity="error">{{ fileUploadError }}</p-message>
+        </div>
+        <div *ngIf="fileUploadMessage" class="mb-3">
+          <p-message severity="success">{{ fileUploadMessage }}</p-message>
+        </div>
+
+        <div class="field">
+          <label>Izaberite sliku</label>
+          <p-fileUpload
+            name="profile-picture"true
+            customUpload=""
+            [multiple]="false"
+            accept="image/*"
+            [showUploadButton]="true"
+            [showCancelButton]="false"
+            [auto]="false"
+            (onSelect)="onFileSelect($event)"
+            (uploadHandler)="onFileUpload()"
+            [disabled]="uploadingFile"
+            chooseLabel="Odaberite sliku"
+          ></p-fileUpload>
+        </div>
+
+        <div *ngIf="uploadingFile" class="mt-4 text-center">
+          <p-progressSpinner [style]="{ width: '50px', height: '50px', marginRight: '2rem' }"></p-progressSpinner>
+          <span>Učitavanje...</span>
+        </div>
+      </p-card>
+    </div>
+  </div>
+</body>
