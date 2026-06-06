@@ -1,10 +1,7 @@
 <body>
   <div class="header">
     <h1>NapraviMi</h1>
-    <div class="user-actions">
-      <p-avatar [image]="user.profile_picture" [icon]="user.profile_picture ? undefined : 'pi pi-user'" styleClass="avatar-icon" (click)="userMenu.toggle($event)"></p-avatar>
-      <p-menu #userMenu [model]="menuItems" popup="true" appendTo="body"></p-menu>
-    </div>
+    <app-user-actions [user]="user"></app-user-actions>
   </div>
   <div class="user-role">Uloga: {{ role }}</div>
   <nav>

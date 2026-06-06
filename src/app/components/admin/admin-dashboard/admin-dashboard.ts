@@ -1,36 +1,22 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { MenuItem } from 'primeng/api';
-import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
-import { MenuModule } from 'primeng/menu';
 import { MenubarModule } from 'primeng/menubar';
 import { User } from '../../../models/user';
 import { AuthService } from '../../../services/utils/auth-service';
+import { UserActions } from '../../common/user-actions/user-actions';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, MenubarModule, ButtonModule, AvatarModule, MenuModule, RouterLink, RouterOutlet],
+  imports: [CommonModule, MenubarModule, ButtonModule, RouterOutlet, UserActions],
   templateUrl: './admin-dashboard.html',
   styleUrl: './admin-dashboard.css',
 })
 export class AdminDashboard implements OnInit {
    user: User = new User();
-
-  menuItems: MenuItem[] = [
-    {
-      label: 'Moj profil',
-      icon: 'pi pi-user',
-      routerLink: '/user-profile',
-    },
-    {
-      label: 'Odjavi se',
-      icon: 'pi pi-sign-in',
-      command: () => this.logout(),
-    },
-  ];
 
   adminMenuItems: MenuItem[] = [
     {
@@ -59,7 +45,4 @@ export class AdminDashboard implements OnInit {
 
   }
 
-   logout() {
-    this.authService.logout();
-  }
 }
