@@ -89,7 +89,7 @@ export class CraftsmanApplication {
   }
 
   onSubmit(): void {
-    this.fileService.uploadFile(this.resumeFile!).subscribe({
+    this.fileService.uploadFile(this.resumeFile!, 'resume').subscribe({
       next: () => {
         const applicationData = {
           email: this.applicationForm.value.email,

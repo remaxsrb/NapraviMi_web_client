@@ -12,10 +12,11 @@ export class FileService {
 
   private apiUrl = 'http://localhost:8080/files';
 
-   uploadFile(file:any) {
+   uploadFile(file:File, purpose: string) {
 
     const formData = new FormData();
     formData.append('file', file, file.name);
+    formData.append('purpose', purpose);
 
     return this.http.post<any>(`${this.apiUrl}/upload`, formData);
   }
