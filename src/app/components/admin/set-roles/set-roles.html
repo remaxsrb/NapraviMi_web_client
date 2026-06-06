@@ -32,6 +32,7 @@
             [(ngModel)]="user.newRole"
             placeholder="Izaberi ulogu"
             (onChange)="onRoleChange($event,user)"
+            appendTo="body"
           >
             <ng-template let-selectedItem pTemplate="selectedItem">
               <span>

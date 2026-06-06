@@ -10,6 +10,7 @@ import { SelectModule } from 'primeng/select';
 import { CRAFT_OPTIONS } from '../../constants/craft-options';
 import { FileService } from '../../services/utils/file-service';
 import { UserService } from '../../services/user/user-service';
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-craftsman-application',
@@ -23,7 +24,8 @@ import { UserService } from '../../services/user/user-service';
     InputTextModule,
     ButtonModule,
     SelectModule,
-  ],
+    RouterLink
+],
   templateUrl: './craftsman-application.html',
   styleUrls: ['./craftsman-application.css'],
 })
