@@ -33,6 +33,13 @@ export class UserService {
     );
   }
 
+  setProfilePicture(data: any): Observable<any> {
+    return this.http.patch<any>(
+      `${this.apiUrl}/set-profile-picture`,
+      data
+    );
+  }
+
   applyForCraftsman(data: any): Observable<any> {
     return this.http.post<any>(
       `${this.apiUrl}/apply-for-craftsman`,
