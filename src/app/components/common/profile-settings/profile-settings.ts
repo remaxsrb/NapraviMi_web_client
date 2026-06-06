@@ -117,7 +117,7 @@ export class ProfileSettings implements OnInit {
     this.fileUploadError = '';
     this.fileUploadMessage = '';
 
-    this.fileService.uploadFile(file).subscribe({
+    this.fileService.uploadFile(file, 'avatars').subscribe({
       next: (response) => {
         const profilePictureUrl = response?.data?.url || response?.url || '';
         if (!profilePictureUrl) {
@@ -135,9 +135,14 @@ export class ProfileSettings implements OnInit {
           next: () => {
             this.uploadingFile = false;
             this.fileUploadMessage = 'Profilna slika je uspešno izmenjena.';
-            setTimeout(() => {
-              this.fileUploadMessage = '';
-            }, 3000);
+            
+            const currentDataString = localStorage.getItem('userData') || '{}';
+
+            const currentDataObject = JSON.parse(currentDataString);
+
+            currentDataObject.profilePicture = profilePictureUrl;
+
+            localStorage.setItem('userData', JSON.stringify(currentDataObject));
           },
           error: (err) => {
             this.uploadingFile = false;
