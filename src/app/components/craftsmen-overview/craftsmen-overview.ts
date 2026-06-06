@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges, OnInit, SimpleChanges, inject } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, OnDestroy, SimpleChanges, inject } from '@angular/core';
 import { RatingModule } from 'primeng/rating';
 import { CardModule } from 'primeng/card';
 import { PaginatorModule } from 'primeng/paginator';
@@ -7,19 +7,19 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { CraftsmanService } from '../../services/craftsman/craftsman-service';
 import { CRAFT_OPTIONS, craftLabel } from '../../constants/craft-options';
+import { Subject } from 'rxjs';
+import { skip, takeUntil } from 'rxjs/operators';
 
 interface ApiCraftsman {
   id: number;
   username: string;
   email: string;
-  first_name: string;
-  last_name: string;
+  firstname: string;
+  lastname: string;
   profile_picture: string;
-  craftsman: {
-    craft: string;
-    rating: number;
-    number_of_ratings: number;
-  };
+  craft: string;
+  rating: number;
+  number_of_ratings: number;
 }
 
 @Component({
@@ -33,49 +33,46 @@ export class CraftsmenOverview implements OnInit, OnChanges {
   @Input() craft: string | null = null;
 
   craftsmen: ApiCraftsman[] = [];
-  pagedCraftsmen: ApiCraftsman[] = [];
   isLoading = false;
   pageSize = 6;
   first = 0;
-
-  craftLabel = craftLabel;
+  totalRecords = 0;
 
   private craftsmanService = inject(CraftsmanService);
-  private route = inject(ActivatedRoute);
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
-      const routeCraft = params['craftsmen'] ?? null;
-      if (routeCraft !== this.craftsmen) {
-        this.craft = routeCraft;
-        this.loadCraftsmen();
-      }
-    });
-  }
-
-  ngOnChanges(_changes: SimpleChanges): void {
     this.loadCraftsmen();
   }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['craft'] && !changes['craft'].firstChange) {
+      this.first  = 0;
+      this.loadCraftsmen();
+    }
+  }
+
 
   onPageChange(event: any): void {
     this.first = event.first;
     this.pageSize = event.rows;
-    this.pagedCraftsmen = this.craftsmen.slice(this.first, this.first + this.pageSize);
+    this.loadCraftsmen();
   }
 
   private loadCraftsmen(): void {
     this.isLoading = true;
-    const params: any = {};
+    const params: any = {
+        limit: this.pageSize,
+        skip: this.first,
+    };
     if (this.craft) {
       params['craft'] = this.craft;
     }
 
     this.craftsmanService.all(params).subscribe({
       next: (response: any) => {
-        this.craftsmen = response?.data?.craftsmen ?? response?.craftsmen ?? [];
-        this.first = 0;
-        this.pagedCraftsmen = this.craftsmen.slice(0, this.pageSize);
+        this.craftsmen = response?.data?.craftsmen || [];
         this.isLoading = false;
+        this.totalRecords = response?.data?.total || 0;
       },
       error: () => {
         this.craftsmen = [];
@@ -84,4 +81,3 @@ export class CraftsmenOverview implements OnInit, OnChanges {
     });
   }
 }
-

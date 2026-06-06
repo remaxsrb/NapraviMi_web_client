@@ -1,30 +1,28 @@
 <div class="craftsmen-overview">
-  <h2>{{ craft ? craftLabel(craft) + ' - Zanatlije' : 'Pregled zanatlija' }}</h2>
+  <h2>{{ craft ? craft + ' - Zanatlije' : 'Pregled zanatlija' }}</h2>
 
   @if (isLoading) {
-    <p>Učitavanje...</p>
+    <p>Učitavanje zanatlija...</p>
   } @else if (craftsmen.length === 0) {
     <p>Nema zanatlija za prikaz.</p>
   } @else {
     <div class="craftsmen-grid">
-      @for (craftsman of pagedCraftsmen; track craftsman.id) {
+      @for (craftsman of craftsmen; track craftsman.email) {
         <p-card styleClass="craftsman-card">
           <div class="craftsman-card-content">
             <img
               [src]="craftsman.profile_picture"
-              [alt]="craftsman.first_name + ' ' + craftsman.last_name"
+              [alt]="craftsman.firstname + ' ' + craftsman.lastname"
+              loading="lazy"
               class="craftsman-avatar"
             />
             <div class="craftsman-info">
-              <div class="craftsman-name">{{ craftsman.first_name }} {{ craftsman.last_name }}</div>
+              <div class="craftsman-name">{{ craftsman.firstname }} {{ craftsman.lastname }}</div>
               <div class="craftsman-email">{{ craftsman.email }}</div>
-              <div class="craftsman-craft">{{ craftLabel(craftsman.craftsman.craft) }}</div>
+              <div class="craftsman-craft">{{ craftsman.craft }}</div>
               <div class="craftsman-rating">
-                <p-rating
-                  [(ngModel)]="craftsman.craftsman.rating"
-                  [readonly]="true"
-                ></p-rating>
-                <span class="rating-count">({{ craftsman.craftsman.number_of_ratings }})</span>
+                <p-rating [(ngModel)]="craftsman.rating" [readonly]="true"></p-rating>
+                <span class="rating-count">({{ craftsman.number_of_ratings }})</span>
               </div>
             </div>
           </div>
@@ -33,7 +31,7 @@
     </div>
     <p-paginator
       [rows]="pageSize"
-      [totalRecords]="craftsmen.length"
+      [totalRecords]="totalRecords"
       [first]="first"
       [rowsPerPageOptions]="[6, 12, 24]"
       (onPageChange)="onPageChange($event)"
