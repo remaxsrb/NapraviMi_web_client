@@ -2,6 +2,47 @@
   padding: 1rem;
 }
 
+.overview-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.overview-header h2 {
+  margin: 0;
+}
+
+.active-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--p-primary-color, #6366f1);
+  color: var(--p-primary-contrast-color, #fff);
+  border-radius: 1rem;
+  padding: 0.2rem 0.75rem 0.2rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.filter-label {
+  white-space: nowrap;
+}
+
+.clear-filter-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0 0.15rem;
+  opacity: 0.85;
+}
+
+.clear-filter-btn:hover {
+  opacity: 1;
+}
 .craftsmen-grid {
   display: flex;
   flex-wrap: wrap;
