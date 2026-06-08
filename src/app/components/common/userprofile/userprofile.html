@@ -1,10 +1,12 @@
 <body>
-  <div class="header">
-    <h1>NapraviMi</h1>
-    @if (!isGuestView) {
+  @if (isGuestView) {
+    <app-public-header></app-public-header>
+  } @else {
+    <div class="header">
+      <h1>NapraviMi</h1>
       <app-user-actions [user]="user"></app-user-actions>
-    }
-  </div>
+    </div>
+  }
 
   <nav>
     <p-menubar></p-menubar>
@@ -14,7 +16,7 @@
       <div class="col-4">
         <div class="mb-4 p-8">
           <p-card>
-            <p-image [src]="user.profilePicture"></p-image>
+            <p-image src="{{ user.profilePicture }}"></p-image>
           </p-card>
         </div>
       </div>

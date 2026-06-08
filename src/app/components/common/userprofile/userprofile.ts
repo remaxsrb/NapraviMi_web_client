@@ -7,12 +7,13 @@ import { CardModule } from 'primeng/card';
 import { ImageModule } from 'primeng/image';
 import { User } from '../../../models/user';
 import { UserActions } from '../user-actions/user-actions';
+import { PublicHeader } from '../public-header/public-header';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../../services/user/user-service';
 
 @Component({
   selector: 'app-userprofile',
-  imports: [CommonModule, MenubarModule, ButtonModule, CardModule, ImageModule, UserActions],
+  imports: [CommonModule, MenubarModule, ButtonModule, CardModule, ImageModule, UserActions, PublicHeader],
   templateUrl: './userprofile.html',
   styleUrl: './userprofile.css',
 })

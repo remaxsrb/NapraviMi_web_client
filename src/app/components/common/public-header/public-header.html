@@ -1,0 +1,15 @@
+<div class="header">
+  <h1 routerLink="/">NapraviMi</h1>
+  <div class="page-top-actions">
+    <div class="search-wrapper">
+      <input
+        pInputText
+        [(ngModel)]="searchQuery"
+        placeholder="Pretraži zanatlije..."
+        (keyup.enter)="onSearch()"
+      />
+      <button pButton label="Pretraži" icon="pi pi-search" (click)="onSearch()"></button>
+    </div>
+    <button pButton label="Prijavi se" icon="pi pi-sign-in" routerLink="/login"></button>
+  </div>
+</div>

@@ -4,20 +4,18 @@ import { FormsModule } from '@angular/forms';
 import { MenubarModule } from 'primeng/menubar';
 import { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
-import { CRAFT_OPTIONS } from '../../constants/craft-options';
+import { PublicHeader } from '../common/public-header/public-header';
 
 @Component({
   selector: 'app-homepage',
   standalone: true,
-  imports: [CommonModule, FormsModule, MenubarModule, ButtonModule, InputTextModule, RouterLink, RouterOutlet],
+  imports: [CommonModule, FormsModule, MenubarModule, ButtonModule, RouterOutlet, PublicHeader],
   templateUrl: './homepage.html',
   styleUrl: './homepage.css',
 })
 export class Homepage implements OnInit {
   homeMenuItems: MenuItem[] = [];
-  searchQuery = '';
 
   constructor(private router: Router) {}
 
@@ -37,26 +35,10 @@ export class Homepage implements OnInit {
         label: 'Pregled zanatlija',
         icon: 'pi pi-users',
         command: () => {
-          this.searchQuery = '';
           this.router.navigate(['craftsmen']);
         },
       },
     ];
-  }
-
-  onSearch(): void {
-    const q = this.searchQuery.trim().toLowerCase();
-    if (!q) {
-      this.router.navigate(['']);
-      return;
-    }
-
-    const match = CRAFT_OPTIONS.find((c) => c.keywords.some((kw) => kw.includes(q) || q.includes(kw)));
-    if (match) {
-      this.router.navigate(['craftsmen'], { queryParams: { craft: match.value } });
-    } else {
-      this.router.navigate(['']);
-    }
   }
 }
 
