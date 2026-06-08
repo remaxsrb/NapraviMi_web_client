@@ -14,7 +14,7 @@
       <div class="col-4">
         <div class="mb-4 p-8">
           <p-card>
-            <p-image src="{{ user.profilePicture }}"></p-image>
+            <p-image [src]="user.profilePicture"></p-image>
           </p-card>
         </div>
       </div>
@@ -22,8 +22,7 @@
         <div class="mb-4 p-8">
           <p-card>
             <h2>{{ user.firstname }} {{ user.lastname }}</h2>
-            <p>{{ user.craft }}</p>
-            
+            <p>{{ user.craft }}</p>           
             <p>{{ user.email }}</p>
           </p-card>
         </div>

@@ -20,4 +20,8 @@ export class CraftsmanService {
     return this.http.get<any>(`${this.apiUrl}/all`, { params: data });
   }
 
+    getByCraft(craft: string, skip: number, limit: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/craft/${craft}?skip=${skip}&limit=${limit}`);
+  }
+
 }
