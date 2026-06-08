@@ -4,7 +4,7 @@ import { RatingModule } from 'primeng/rating';
 import { CardModule } from 'primeng/card';
 import { PaginatorModule } from 'primeng/paginator';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CraftsmanService } from '../../services/craftsman/craftsman-service';
 import { CRAFT_OPTIONS, craftLabel } from '../../constants/craft-options';
 import { Subject } from 'rxjs';
@@ -16,16 +16,16 @@ interface ApiCraftsman {
   email: string;
   firstname: string;
   lastname: string;
-  profile_picture: string;
+  profilePicture: string;
   craft: string;
   rating: number;
-  number_of_ratings: number;
+  numberOfRatings: number;
 }
 
 @Component({
   selector: 'app-craftsmen-overview',
   standalone: true,
-  imports: [CommonModule, FormsModule, CardModule, RatingModule, PaginatorModule],
+  imports: [CommonModule, FormsModule, CardModule, RatingModule, PaginatorModule, RouterLink],
   templateUrl: './craftsmen-overview.html',
   styleUrl: './craftsmen-overview.css',
 })

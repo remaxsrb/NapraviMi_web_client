@@ -41,6 +41,13 @@ export class AuthService {
     return decodedToken.role;
   }
 
+  get_id(): string {
+    const token = this.get_token();
+    if (!token) return '';
+    const decodedToken = this.decode_token(token);
+    return decodedToken.id ?? decodedToken.sub ?? '';
+  }
+
   decode_token(token: string): any {
     return this.jwtHelper.decodeToken(token);
   }

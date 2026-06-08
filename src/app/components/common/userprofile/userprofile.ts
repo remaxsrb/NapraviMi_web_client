@@ -7,6 +7,8 @@ import { CardModule } from 'primeng/card';
 import { ImageModule } from 'primeng/image';
 import { User } from '../../../models/user';
 import { UserActions } from '../user-actions/user-actions';
+import { ActivatedRoute, Router } from '@angular/router';
+import { UserService } from '../../../services/user/user-service';
 
 @Component({
   selector: 'app-userprofile',
@@ -15,16 +17,46 @@ import { UserActions } from '../user-actions/user-actions';
   styleUrl: './userprofile.css',
 })
 export class Userprofile implements OnInit {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private userService: UserService,
+  ) {}
 
   user: User = new User();
+  isGuestView = false;
 
   ngOnInit() {
-    const userData = localStorage.getItem('userData');
-    if (userData) {
-      this.user = JSON.parse(userData);
-      
+    const usernameParam = this.route.snapshot.paramMap.get('username');
+
+    if (usernameParam) {
+      this.isGuestView = true;
+      this.userService.getByUsername(usernameParam).subscribe({
+        next: (response: any) => {
+          const profileData = response?.data ?? response;
+          if (profileData?.role === 'admin') {
+            const currentId = this.authService.get_id();
+            const currentRole = this.authService.get_role();
+            if (currentRole !== 'admin' || String(currentId) !== String(profileData.id)) {
+              this.router.navigate(['/']);
+              return;
+            }
+          }
+          this.user = profileData;
+          console.log('User data loaded in Userprofile component:', this.user);
+        },
+        error: () => {
+          this.router.navigate(['/']);
+        },
+      });
+    } else {
+      const userData = localStorage.getItem('userData');
+      if (userData) {
+        this.user = JSON.parse(userData);
+      }
+      console.log('User data loaded in Userprofile component:', this.user);
     }
-    console.log('User data loaded in Userprofile component:', this.user);
   }
 }
+

@@ -82,4 +82,8 @@ export class UserService {
     );
   }
 
+  getByUsername(username: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/username/${username}`);
+  }
+
 }

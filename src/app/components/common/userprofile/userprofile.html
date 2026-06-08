@@ -1,7 +1,9 @@
 <body>
   <div class="header">
     <h1>NapraviMi</h1>
-    <app-user-actions [user]="user"></app-user-actions>
+    @if (!isGuestView) {
+      <app-user-actions [user]="user"></app-user-actions>
+    }
   </div>
 
   <nav>
@@ -12,15 +14,16 @@
       <div class="col-4">
         <div class="mb-4 p-8">
           <p-card>
-            <p-image src="{{ user.profile_picture }}"></p-image>
+            <p-image src="{{ user.profilePicture }}"></p-image>
           </p-card>
         </div>
       </div>
       <div class="col-8">
         <div class="mb-4 p-8">
           <p-card>
-            <h2>{{ user.first_name }} {{ user.last_name }}</h2>
-            <p>{{ user.username }}</p>
+            <h2>{{ user.firstname }} {{ user.lastname }}</h2>
+            <p>{{ user.craft }}</p>
+            
             <p>{{ user.email }}</p>
           </p-card>
         </div>
