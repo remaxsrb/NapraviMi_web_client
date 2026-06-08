@@ -2,11 +2,13 @@
 export class User {
     id : string = '';
     username : string = '';
-    first_name : string = '';
-    last_name : string = '';
+    firstname : string = '';
+    lastname : string = '';
     date_of_birth : string = '';
-    profile_picture : string = '';
+    profilePicture : string = '';
     rating : number = 0;
-    number_of_ratings : number = 0;
+    numberOfRatings : number = 0;
     email : string = '';
+    craft: any;
+    
 }

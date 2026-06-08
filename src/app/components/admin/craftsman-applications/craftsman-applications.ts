@@ -154,7 +154,7 @@ export class CraftsmanApplications {
 
               this.craftsmanService.createCraftsman(craftsmanData).subscribe({
                 next: () => {
-                  // Optionally handle success of craftsman creation
+                  
                 },
                 error: () => {
                   this.messageService.add({ severity: 'error', summary: 'Greška', detail: `Došlo je do greške prilikom kreiranja zanatlije nakon odobrenja zahteva.` });

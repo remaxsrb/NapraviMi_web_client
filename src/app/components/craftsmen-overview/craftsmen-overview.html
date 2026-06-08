@@ -11,18 +11,18 @@
         <p-card styleClass="craftsman-card">
           <div class="craftsman-card-content">
             <img
-              [src]="craftsman.profile_picture"
+              [src]="craftsman.profilePicture"
               [alt]="craftsman.firstname + ' ' + craftsman.lastname"
               loading="lazy"
               class="craftsman-avatar"
             />
             <div class="craftsman-info">
-              <div class="craftsman-name">{{ craftsman.firstname }} {{ craftsman.lastname }}</div>
+              <a class="craftsman-name" [routerLink]="['/profile', craftsman.username]">{{ craftsman.firstname }} {{ craftsman.lastname }}</a>
               <div class="craftsman-email">{{ craftsman.email }}</div>
               <div class="craftsman-craft">{{ craftsman.craft }}</div>
               <div class="craftsman-rating">
                 <p-rating [(ngModel)]="craftsman.rating" [readonly]="true"></p-rating>
-                <span class="rating-count">({{ craftsman.number_of_ratings }})</span>
+                <span class="rating-count">({{ craftsman.numberOfRatings }})</span>
               </div>
             </div>
           </div>

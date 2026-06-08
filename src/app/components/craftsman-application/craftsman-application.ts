@@ -101,6 +101,10 @@ export class CraftsmanApplication {
             this.applicationForm.reset();
             this.onResumeRemoved();
             this.setStatus('success', 'Prijava je uspešno kreirana. Pratite email za dalji postupak.');
+            setTimeout(() => {
+              this.statusMessage = '';
+              
+            }, 3000);
           },
           error: () => {
             this.setStatus('error', 'Došlo je do greške prilikom kreiranja prijave. Molimo pokušajte ponovo.');

@@ -68,4 +68,8 @@ export const routes: Routes = [
     canActivate: [authGuard, roleGuard],
     data: { expected_role: 'craftsman' },
   },
+  {
+    path: 'profile/:username',
+    component: Userprofile,
+  },
 ];
