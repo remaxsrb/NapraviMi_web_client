@@ -13,6 +13,7 @@ import { UserService } from '../../../services/user/user-service';
 import { FileService } from '../../../services/utils/file-service';
 import { AuthService } from '../../../services/utils/auth-service';
 import { RegexPatterns } from '../../../regexPatterns';
+import { DividerModule } from 'primeng/divider';
 
 @Component({
   selector: 'app-profile-settings',
@@ -28,6 +29,7 @@ import { RegexPatterns } from '../../../regexPatterns';
     FileUploadModule,
     ProgressSpinnerModule,
     RouterLink,
+    DividerModule,
   ],
   templateUrl: './profile-settings.html',
   styleUrl: './profile-settings.css',
@@ -43,6 +45,8 @@ export class ProfileSettings implements OnInit {
   username: string = '';
   userRole: string = '';
   dashboardLink: string = '';
+  deletingAccount = false;
+  deleteAccountError = '';
 
   selectedFile: File | null = null;
 
@@ -135,7 +139,7 @@ export class ProfileSettings implements OnInit {
           next: () => {
             this.uploadingFile = false;
             this.fileUploadMessage = 'Profilna slika je uspešno izmenjena.';
-            
+
             const currentDataString = localStorage.getItem('userData') || '{}';
 
             const currentDataObject = JSON.parse(currentDataString);
@@ -154,6 +158,18 @@ export class ProfileSettings implements OnInit {
       error: (err) => {
         this.uploadingFile = false;
         this.fileUploadError = err?.error?.message || 'Došlo je do greške pri uploadu fajla.';
+      },
+    });
+  }
+
+  onDeleteAccount() {
+    this.userService.deleteAccount(this.username).subscribe({
+      next: () => {
+        this.authService.logout();
+        this.router.navigate(['/']);
+      },
+      error: (err) => {
+        this.deleteAccountError = err?.error?.message || 'Došlo je do greške pri brisanju naloga.';
       },
     });
   }
