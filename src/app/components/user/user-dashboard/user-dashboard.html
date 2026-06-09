@@ -5,6 +5,11 @@
   </div>
   <div class="user-role">Uloga: {{ userRole }}</div>
   <nav>
-    <p-menubar></p-menubar>
+    <p-menubar [model]="menuItems"></p-menubar>
   </nav>
+  @if (showAddProduct) {
+    <div class="add-product-section">
+      <app-add-product></app-add-product>
+    </div>
+  }
 </body>
