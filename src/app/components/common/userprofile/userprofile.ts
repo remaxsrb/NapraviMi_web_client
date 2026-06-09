@@ -10,6 +10,7 @@ import { UserActions } from '../user-actions/user-actions';
 import { PublicHeader } from '../public-header/public-header';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../../services/user/user-service';
+import { MenuItem } from 'primeng/api';
 
 @Component({
   selector: 'app-userprofile',
@@ -24,6 +25,8 @@ export class Userprofile implements OnInit {
     private router: Router,
     private userService: UserService,
   ) {}
+
+  craftsmanMenuItems: MenuItem[] = [];
 
   user: User = new User();
   isGuestView = false;
@@ -44,6 +47,7 @@ export class Userprofile implements OnInit {
               return;
             }
           }
+
           this.user = profileData;
           console.log('User data loaded in Userprofile component:', this.user);
         },

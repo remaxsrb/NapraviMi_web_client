@@ -60,9 +60,16 @@ export class Signin implements OnInit {
     this.userService.login(this.loginForm.value).subscribe({
       next: (response) => {
         localStorage.setItem(this.authService.TOKEN_KEY, response.access_token);
-        localStorage.setItem('userData', JSON.stringify(response.user));
+        var userData = response.user
         const payload = this.authService.decode_token(response.access_token);
         const userRole = payload?.role;
+        if (userRole === 'craftsman') {
+          userData.craftsman_id = String(userData?.craftsman_id);
+          userData.rating = String(userData?.rating);
+          userData.numberOfRatings = String(userData?.numberOfRatings);
+
+        }
+        localStorage.setItem('userData', JSON.stringify(userData));
         console.log('User role from token payload:', userRole);
         if (userRole === 'user') {
           this.router.navigate(['/user']);

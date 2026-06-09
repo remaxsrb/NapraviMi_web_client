@@ -1,0 +1,61 @@
+<p-card header="Dodaj proizvod">
+  <div class="flex-column">
+    
+    <div class="field">
+      <label for="product-name">Naziv</label>
+      <input 
+        type="text" 
+        pInputText 
+        id="product-name" 
+        name="productName" 
+        [(ngModel)]="name" 
+        placeholder="Naziv proizvoda" 
+        fluid />
+    </div>
+
+    <div class="field">
+      <label for="product-desc">Opis</label>
+      <textarea 
+        pInputTextarea 
+        id="product-desc" 
+        name="productDesc" 
+        [(ngModel)]="description" 
+        rows="4" 
+        placeholder="Opis proizvoda" 
+        fluid></textarea>
+    </div>
+
+    <div class="field">
+      <label for="material-price">Cena materijala</label>
+      <p-inputnumber 
+        id="material-price" 
+        name="materialPrice" 
+        [(ngModel)]="materialPrice" 
+        placeholder="Cena materijala" 
+        [min]="0" 
+        mode="decimal" 
+        fluid />
+    </div>
+
+    <div class="field">
+      <label for="labor-price">Cena rada</label>
+      <p-inputnumber 
+        id="labor-price" 
+        name="laborPrice" 
+        [(ngModel)]="laborPrice" 
+        placeholder="Cena rada" 
+        [min]="0" 
+        mode="decimal" 
+        fluid />
+    </div>
+
+    <p-button label="Dodaj proizvod" icon="pi pi-plus" (onClick)="onSubmit()" />
+    
+    @if (successMessage) {
+      <p-message severity="success" [text]="successMessage" />
+    }
+    @if (errorMessage) {
+      <p-message severity="error" [text]="errorMessage" />
+    }
+  </div>
+</p-card>
