@@ -1,3 +1,83 @@
 p-card {
-  max-width: 480px;
+  max-width: 540px;
+}
+
+.drop-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  border: 2px dashed var(--p-primary-color, #6366f1);
+  border-radius: 8px;
+  padding: 1.5rem 1rem;
+  cursor: pointer;
+  text-align: center;
+  color: inherit;
+  transition: background 0.15s, border-color 0.15s;
+  user-select: none;
+}
+
+.drop-zone:hover,
+.drop-zone.drag-over {
+  background: color-mix(in srgb, var(--p-primary-color, #6366f1) 8%, transparent);
+  border-color: var(--p-primary-color, #6366f1);
+}
+
+.drop-zone small {
+  opacity: 0.6;
+  font-size: 0.78rem;
+}
+
+.drop-zone-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.file-list {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.5rem;
+  border-radius: 6px;
+  background: color-mix(in srgb, currentColor 5%, transparent);
+  font-size: 0.875rem;
+}
+
+.file-icon {
+  flex-shrink: 0;
+  font-size: 1rem;
+}
+
+.file-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.remove-btn {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.6;
+  font-size: 0.85rem;
+  padding: 0 0.2rem;
+  line-height: 1;
+}
+
+.remove-btn:hover {
+  opacity: 1;
+  color: #e53935;
 }
