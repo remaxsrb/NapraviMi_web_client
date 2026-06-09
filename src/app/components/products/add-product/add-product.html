@@ -49,7 +49,48 @@
         fluid />
     </div>
 
-    <p-button label="Dodaj proizvod" icon="pi pi-plus" (onClick)="onSubmit()" />
+    <div class="field">
+      <label>Slike i videi</label>
+
+      <!-- hidden native file input -->
+      <input
+        #fileInput
+        type="file"
+        accept="image/*,video/*"
+        multiple
+        style="display:none"
+        (change)="onFileInputChange($event)"
+      />
+
+      <!-- drop zone -->
+      <div
+        class="drop-zone"
+        [class.drag-over]="isDragging"
+        (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave($event)"
+        (drop)="onDrop($event)"
+        (click)="openFilePicker()"
+      >
+        <span class="drop-zone-icon">&#128247;</span>
+        <span>Prevuci slike/videe ovde ili <strong>klikni da odabereš</strong></span>
+        <small>Dozvoljeni formati: slike i videi</small>
+      </div>
+
+      <!-- file list -->
+      @if (allFiles.length > 0) {
+        <ul class="file-list">
+          @for (file of allFiles; track file.name + file.size; let i = $index) {
+            <li class="file-item">
+              <span class="file-icon">{{ file.type.startsWith('image/') ? '🖼️' : '🎬' }}</span>
+              <span class="file-name" [title]="file.name">{{ file.name }}</span>
+              <button class="remove-btn" type="button" (click)="removeFile(i)" title="Ukloni">✕</button>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+
+    <p-button label="Dodaj proizvod" icon="pi pi-plus" (onClick)="onSubmit()" [loading]="isSubmitting" />
     
     @if (successMessage) {
       <p-message severity="success" [text]="successMessage" />
