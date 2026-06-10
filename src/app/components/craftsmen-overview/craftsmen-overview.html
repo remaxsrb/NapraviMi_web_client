@@ -6,11 +6,7 @@
         <span class="filter-label"
           >Filtar: <strong>{{ activeCraftLabel }}</strong></span
         >
-        <button
-          class="clear-filter-btn"
-          (click)="clearFilter()"
-          title="Ukloni filtar"
-        >✕</button>
+        <button class="clear-filter-btn" (click)="clearFilter()" title="Ukloni filtar">✕</button>
       </div>
     }
   </div>
@@ -31,9 +27,14 @@
               class="craftsman-avatar"
             />
             <div class="craftsman-info">
-              <a class="craftsman-name" [routerLink]="['/profile', craftsman.username]"
-                >{{ craftsman.firstname }} {{ craftsman.lastname }}</a
+              <a
+                class="craftsman-name"
+                (click)="onSelectCraftsman(craftsman)"
+                style="cursor: pointer"
               >
+                {{ craftsman.firstname }} {{ craftsman.lastname }}
+              </a>
+              
               <div class="craftsman-email">{{ craftsman.email }}</div>
               <div class="craftsman-craft">{{ craftsman.craft }}</div>
               <div class="craftsman-rating">
