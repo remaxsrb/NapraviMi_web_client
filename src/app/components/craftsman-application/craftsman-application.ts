@@ -11,6 +11,7 @@ import { CRAFT_OPTIONS } from '../../constants/craft-options';
 import { FileService } from '../../services/utils/file-service';
 import { UserService } from '../../services/user/user-service';
 import { RouterLink } from "@angular/router";
+import { CraftsmanApplicationService } from '../../services/craftsman-application/craftsman-application-service';
 
 @Component({
   selector: 'app-craftsman-application',
@@ -47,7 +48,7 @@ export class CraftsmanApplication {
   constructor(
     private fb: FormBuilder,
     private fileService: FileService,
-    private userService: UserService,
+    private caService: CraftsmanApplicationService,
   ) {
     this.initForm();
   }
@@ -96,7 +97,7 @@ export class CraftsmanApplication {
           craft: this.applicationForm.value.craft,
         };
 
-        this.userService.applyForCraftsman(applicationData).subscribe({
+        this.caService.create(applicationData).subscribe({
           next: () => {
             this.applicationForm.reset();
             this.onResumeRemoved();
