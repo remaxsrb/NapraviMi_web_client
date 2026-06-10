@@ -121,7 +121,7 @@ export class ProfileSettings implements OnInit {
     this.fileUploadError = '';
     this.fileUploadMessage = '';
 
-    this.fileService.uploadFile(file, 'avatars').subscribe({
+    this.fileService.uploadFile(file, 'avatar').subscribe({
       next: (response) => {
         const profilePictureUrl = response?.data?.url || response?.url || '';
         if (!profilePictureUrl) {

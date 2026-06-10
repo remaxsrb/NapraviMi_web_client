@@ -63,7 +63,7 @@ export const routes: Routes = [
     data: { expected_role: 'craftsman' },
   },
     {
-    path: 'craftsman-profile',
+    path: 'profile',
     component: Userprofile,
     canActivate: [authGuard, roleGuard],
     data: { expected_role: 'craftsman' },
