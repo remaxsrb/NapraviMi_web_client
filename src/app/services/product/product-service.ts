@@ -11,12 +11,6 @@ export class ProductService {
   constructor(private http: HttpClient) {}
 
   create(data: any): Observable<any> {
-    const token = localStorage.getItem('authToken');
-
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-    });
-    return this.http.post<any>(`${this.apiUrl}/create`, data, { headers });
     return this.http.post<any>(`${this.apiUrl}/create`, data);
   }
 
