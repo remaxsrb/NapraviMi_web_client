@@ -1,21 +1,18 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 
+const publicEndpoints = ['/users/login', '/users/register'];
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  const authToken = localStorage.getItem('authToken');
+  const isPublic = publicEndpoints.some((url) => req.url.endsWith(url));
 
-    const authToken = localStorage.getItem('authToken');
+  if (!authToken || isPublic) {
+    return next(req);
+  }
 
-    const url = req.url;
-
-    const isRoleRequest = url.includes('/admin') || url.includes('/craftsman') || url.includes('/user');
-
-   if (authToken && isRoleRequest) {
-      const cloned = req.clone({
-        headers: req.headers.set('Authorization', `Bearer ${authToken}`),
-      });
-      return next(cloned);
-    } else {
-      return next(req);
-    }
-
+  return next(
+    req.clone({
+      headers: req.headers.set('Authorization', `Bearer ${authToken}`),
+    }),
+  );
 };
