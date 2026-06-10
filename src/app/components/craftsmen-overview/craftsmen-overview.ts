@@ -11,7 +11,7 @@ import { craftLabel } from '../../constants/craft-options';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserService } from '../../services/user/user-service';
-import { Craftsman } from '../../models/user';
+import { User } from '../../models/user';
 
 @Component({
   selector: 'app-craftsmen-overview',
@@ -29,7 +29,7 @@ import { Craftsman } from '../../models/user';
   styleUrl: './craftsmen-overview.css',
 })
 export class CraftsmenOverview implements OnInit, OnDestroy {
-  craftsmen: Craftsman[] = [];
+  craftsmen: User[] = [];
   isLoading = false;
   pageSize = 6;
   first = 0;
@@ -69,12 +69,8 @@ export class CraftsmenOverview implements OnInit, OnDestroy {
   }
 
   // Inside CraftsmenOverview
-  onSelectCraftsman(craftsman: Craftsman): void {
+  onSelectCraftsman(craftsman: User): void {
     this.userService.setPreviewUser(craftsman);
-
-    this.router.navigate(['/profile'], {
-      queryParams: { username: craftsman.username },
-    });
   }
 
   private loadCraftsmen(): void {

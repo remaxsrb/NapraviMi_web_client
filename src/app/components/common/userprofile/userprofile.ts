@@ -14,7 +14,15 @@ import { MenuItem } from 'primeng/api';
 
 @Component({
   selector: 'app-userprofile',
-  imports: [CommonModule, MenubarModule, ButtonModule, CardModule, ImageModule, UserActions, PublicHeader],
+  imports: [
+    CommonModule,
+    MenubarModule,
+    ButtonModule,
+    CardModule,
+    ImageModule,
+    UserActions,
+    PublicHeader,
+  ],
   templateUrl: './userprofile.html',
   styleUrl: './userprofile.css',
 })
@@ -28,40 +36,21 @@ export class Userprofile implements OnInit {
 
   craftsmanMenuItems: MenuItem[] = [];
 
-  user: User = new User();
-  isGuestView = false;
+  user: User = new User();  isGuestView = false;
+
+  userRole = '';
 
   ngOnInit() {
     const usernameParam = this.route.snapshot.paramMap.get('username');
 
     if (usernameParam) {
       this.isGuestView = true;
-      this.userService.getByUsername(usernameParam).subscribe({
-        next: (response: any) => {
-          const profileData = response?.data ?? response;
-          if (profileData?.role === 'admin') {
-            const currentId = this.authService.get_id();
-            const currentRole = this.authService.get_role();
-            if (currentRole !== 'admin' || String(currentId) !== String(profileData.id)) {
-              this.router.navigate(['/']);
-              return;
-            }
-          }
-
-          this.user = profileData;
-          console.log('User data loaded in Userprofile component:', this.user);
-        },
-        error: () => {
-          this.router.navigate(['/']);
-        },
-      });
+      this.user = this.userService.getPreviewUser();
     } else {
       const userData = localStorage.getItem('userData');
-      if (userData) {
-        this.user = JSON.parse(userData);
-      }
-      console.log('User data loaded in Userprofile component:', this.user);
+      this.userRole = this.authService.get_role();
+      if (!userData) return;
+
     }
   }
 }
-
