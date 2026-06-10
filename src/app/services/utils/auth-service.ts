@@ -45,7 +45,7 @@ export class AuthService {
     const token = this.get_token();
     if (!token) return '';
     const decodedToken = this.decode_token(token);
-    return decodedToken.id ?? decodedToken.sub ?? '';
+    return decodedToken.uid ?? decodedToken.sub ?? '';
   }
 
   decode_token(token: string): any {
