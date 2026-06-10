@@ -29,12 +29,11 @@
             <div class="craftsman-info">
               <a
                 class="craftsman-name"
+                [routerLink]="['/profile', craftsman.username]"
                 (click)="onSelectCraftsman(craftsman)"
-                style="cursor: pointer"
               >
                 {{ craftsman.firstname }} {{ craftsman.lastname }}
               </a>
-              
               <div class="craftsman-email">{{ craftsman.email }}</div>
               <div class="craftsman-craft">{{ craftsman.craft }}</div>
               <div class="craftsman-rating">
