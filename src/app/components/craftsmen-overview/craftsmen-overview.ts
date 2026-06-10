@@ -10,28 +10,26 @@ import { CraftsmanService } from '../../services/craftsman/craftsman-service';
 import { craftLabel } from '../../constants/craft-options';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-
-interface ApiCraftsman {
-  id: number;
-  username: string;
-  email: string;
-  firstname: string;
-  lastname: string;
-  profilePicture: string;
-  craft: string;
-  rating: number;
-  numberOfRatings: number;
-}
+import { UserService } from '../../services/user/user-service';
+import { Craftsman } from '../../models/user';
 
 @Component({
   selector: 'app-craftsmen-overview',
   standalone: true,
-  imports: [CommonModule, FormsModule, CardModule, RatingModule, PaginatorModule, RouterLink, ButtonModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    CardModule,
+    RatingModule,
+    PaginatorModule,
+    RouterLink,
+    ButtonModule,
+  ],
   templateUrl: './craftsmen-overview.html',
   styleUrl: './craftsmen-overview.css',
 })
 export class CraftsmenOverview implements OnInit, OnDestroy {
-  craftsmen: ApiCraftsman[] = [];
+  craftsmen: Craftsman[] = [];
   isLoading = false;
   pageSize = 6;
   first = 0;
@@ -40,15 +38,16 @@ export class CraftsmenOverview implements OnInit, OnDestroy {
   activeCraftLabel: string | null = null;
 
   private craftsmanService = inject(CraftsmanService);
+  private userService = inject(UserService)
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private destroy$ = new Subject<void>();
 
   ngOnInit(): void {
-    this.route.queryParamMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
+    this.route.queryParamMap.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       const craft = params.get('craft');
       this.activeCraft = craft;
-      this.activeCraftLabel = craft ? (craftLabel(craft) || craft) : null;
+      this.activeCraftLabel = craft ? craftLabel(craft) || craft : null;
       this.first = 0;
       this.loadCraftsmen();
     });
@@ -67,6 +66,15 @@ export class CraftsmenOverview implements OnInit, OnDestroy {
     this.first = event.first;
     this.pageSize = event.rows;
     this.loadCraftsmen();
+  }
+
+  // Inside CraftsmenOverview
+  onSelectCraftsman(craftsman: Craftsman): void {
+    this.userService.setPreviewUser(craftsman);
+
+    this.router.navigate(['/profile'], {
+      queryParams: { username: craftsman.username },
+    });
   }
 
   private loadCraftsmen(): void {
@@ -99,4 +107,3 @@ export class CraftsmenOverview implements OnInit, OnDestroy {
     }
   }
 }
-
