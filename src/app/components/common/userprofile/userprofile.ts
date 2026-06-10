@@ -50,6 +50,7 @@ export class Userprofile implements OnInit {
       const userData = localStorage.getItem('userData');
       this.userRole = this.authService.get_role();
       if (!userData) return;
+      this.user = JSON.parse(userData)
 
     }
   }

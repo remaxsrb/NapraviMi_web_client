@@ -23,7 +23,8 @@ export class UserActions {
       {
         label: 'Moj profil',
         icon: 'pi pi-user',
-        routerLink: this.getProfileLink(),
+        routerLink: '/profile'
+
       },
       {
         label: 'Podešavanja',
@@ -38,10 +39,6 @@ export class UserActions {
     ];
   }
 
-  private getProfileLink(): string {
-    const role = this.authService.get_role();
-    return role === 'craftsman' ? '/craftsman-profile' : '/user-profile';
-  }
 
   logout() {
     this.authService.logout();
