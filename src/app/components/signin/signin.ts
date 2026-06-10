@@ -64,7 +64,6 @@ export class Signin implements OnInit {
         const payload = this.authService.decode_token(response.access_token);
         const userRole = payload?.role;
         if (userRole === 'craftsman') {
-          userData.craftsman_id = String(userData?.craftsman_id);
           userData.rating = String(userData?.rating);
           userData.numberOfRatings = String(userData?.numberOfRatings);
 
