@@ -37,7 +37,7 @@ export const routes: Routes = [
     data: { expected_role: 'user' },
   },
     {
-    path: 'user-profile',
+    path: 'profile',
     component: Userprofile,
     canActivate: [authGuard],
     
