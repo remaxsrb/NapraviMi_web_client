@@ -1,4 +1,11 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  NgZone,
+  OnDestroy,
+  ViewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
@@ -9,8 +16,9 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { MessageModule } from 'primeng/message';
 import { ProductService } from '../../../services/product/product-service';
 import { FileService } from '../../../services/utils/file-service';
-import { forkJoin, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { EMPTY, firstValueFrom, forkJoin, from, of, Subject } from 'rxjs';
+import { catchError, finalize, mergeMap, switchMap, takeUntil, toArray } from 'rxjs/operators';
+import { AuthService } from '../../../services/utils/auth-service';
 
 interface ApiProduct {
   name: string;
@@ -21,6 +29,8 @@ interface ApiProduct {
   images: string[];
   videos: string[];
 }
+
+const MAX_CONCURRENT_UPLOADS = 3;
 
 @Component({
   selector: 'app-add-product',
@@ -35,11 +45,14 @@ interface ApiProduct {
     InputNumberModule,
     MessageModule,
   ],
+  providers: [ProductService, FileService],
   templateUrl: './add-product.html',
   styleUrl: './add-product.css',
 })
-export class AddProduct {
+export class AddProduct implements OnDestroy {
   @ViewChild('fileInput') fileInputRef!: ElementRef<HTMLInputElement>;
+
+  private destroy$ = new Subject<void>();
 
   name = '';
   description = '';
@@ -52,12 +65,18 @@ export class AddProduct {
 
   allFiles: File[] = [];
 
-  get selectedImages(): File[] { return this.allFiles.filter(f => f.type.startsWith('image/')); }
-  get selectedVideos(): File[] { return this.allFiles.filter(f => f.type.startsWith('video/')); }
+  get selectedImages(): File[] {
+    return this.allFiles.filter((f) => f.type.startsWith('image/'));
+  }
+  get selectedVideos(): File[] {
+    return this.allFiles.filter((f) => f.type.startsWith('video/'));
+  }
 
   constructor(
     private productService: ProductService,
     private fileService: FileService,
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   openFilePicker(): void {
@@ -90,22 +109,31 @@ export class AddProduct {
     this.addFiles(files);
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   private addFiles(incoming: File[]): void {
     const valid = incoming.filter(
-      f => f.type.startsWith('image/') || f.type.startsWith('video/'),
+      (f) => f.type.startsWith('image/') || f.type.startsWith('video/'),
     );
     const rejected = incoming.length - valid.length;
     if (rejected > 0) {
       this.errorMessage = `${rejected} fajl(a) je odbačeno — dozvoljene su samo slike i videi.`;
-      setTimeout(() => { this.errorMessage = ''; }, 4000);
+      setTimeout(() => {
+        this.errorMessage = '';
+      }, 4000);
     }
     // deduplicate by name + size + type
     const newFiles = valid.filter(
-      incoming => !this.allFiles.some(
-        existing => existing.name === incoming.name &&
-          existing.size === incoming.size &&
-          existing.type === incoming.type,
-      ),
+      (incoming) =>
+        !this.allFiles.some(
+          (existing) =>
+            existing.name === incoming.name &&
+            existing.size === incoming.size &&
+            existing.type === incoming.type,
+        ),
     );
     this.allFiles = [...this.allFiles, ...newFiles];
   }
@@ -114,61 +142,73 @@ export class AddProduct {
     this.allFiles = this.allFiles.filter((_, i) => i !== index);
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    const craftsmanId = Number(userData?.craftsman_id);
-    if (!craftsmanId) {
-      console.error('Craftsman ID not found in localStorage');
-      return;
-    }
+    const craftsmanId = Number(this.authService.get_id());
+    console.log(craftsmanId);
+    if (!craftsmanId) return;
 
     this.isSubmitting = true;
     this.successMessage = '';
     this.errorMessage = '';
 
-    const images = this.selectedImages;
-    const videos = this.selectedVideos;
+    try {
+      const tagged = await this.uploadFiles();
 
-    const imageUploads$ = images.map(f => this.fileService.uploadFile(f, 'product_image'));
-    const videoUploads$ = videos.map(f => this.fileService.uploadFile(f, 'product_video'));
+      const newProduct: ApiProduct = {
+        name: this.name,
+        craftsmanId,
+        description: this.description,
+        materialPrice: this.materialPrice ?? 0,
+        laborPrice: this.laborPrice ?? 0,
+        images: tagged.filter((t) => t.kind === 'image').map((t) => t.url),
+        videos: tagged.filter((t) => t.kind === 'video').map((t) => t.url),
+      };
 
-    const allUploads$ = [...imageUploads$, ...videoUploads$];
-    const uploads$ = allUploads$.length > 0 ? forkJoin(allUploads$) : of([]);
+      await firstValueFrom(this.productService.create(newProduct));
 
-    uploads$.pipe(
-      switchMap((uploadResults: any[]) => {
-        const imageUrls = uploadResults
-          .slice(0, imageUploads$.length)
-          .map(r => r?.data?.url ?? r?.url ?? '');
-        const videoUrls = uploadResults
-          .slice(imageUploads$.length)
-          .map(r => r?.data?.url ?? r?.url ?? '');
+      this.clearForm();
+      this.successMessage = 'Proizvod je uspešno dodat.';
+      this.cdr.markForCheck();
 
-        const newProduct: ApiProduct = {
-          name: this.name,
-          craftsmanId,
-          description: this.description,
-          materialPrice: this.materialPrice ?? 0,
-          laborPrice: this.laborPrice ?? 0,
-          images: imageUrls,
-          videos: videoUrls,
-        };
-        return this.productService.create(newProduct);
-      }),
-    ).subscribe({
-      next: () => {
-        this.successMessage = 'Proizvod je uspešno dodat.';
-        this.errorMessage = '';
-        this.isSubmitting = false;
-        this.clearForm();
-        setTimeout(() => { this.successMessage = ''; }, 5000);
-      },
-      error: () => {
-        this.errorMessage = 'Greška pri dodavanju proizvoda. Pokušajte ponovo.';
+      setTimeout(() => {
         this.successMessage = '';
-        this.isSubmitting = false;
-      },
+        this.cdr.markForCheck();
+      }, 5000);
+    } catch {
+      this.errorMessage = 'Greška pri dodavanju proizvoda. Pokušajte ponovo.';
+    } finally {
+      this.isSubmitting = false;
+      this.cdr.markForCheck();
+    }
+  }
+
+  private async uploadFiles() {
+    const tagged = [
+      ...this.selectedImages.map((f) => ({
+        file: f,
+        kind: 'image' as const,
+        type: 'product_image' as const,
+      })),
+      ...this.selectedVideos.map((f) => ({
+        file: f,
+        kind: 'video' as const,
+        type: 'product_video' as const,
+      })),
+    ];
+
+    // Still respects concurrency limit using a simple pool
+    const results: { kind: 'image' | 'video'; url: string }[] = [];
+    const pool = Array.from({ length: MAX_CONCURRENT_UPLOADS }, async () => {
+      while (tagged.length > 0) {
+        const { file, kind, type } = tagged.shift()!;
+        const result = await firstValueFrom(this.fileService.uploadFile(file, type));
+        results.push({ kind, url: result?.data?.url ?? result?.url ?? '' });
+      }
     });
+
+    await Promise.all(pool);
+    return results;
   }
 
   clearForm(): void {

@@ -1,6 +1,11 @@
 <p-card header="Dodaj proizvod">
   <div class="flex-column">
-    
+    @if (successMessage) {
+      <p-message severity="success" [text]="successMessage" />
+    }
+    @if (errorMessage) {
+      <p-message severity="error" [text]="errorMessage" />
+    }
     <div class="field">
       <label for="product-name">Naziv</label>
       <input 
@@ -92,11 +97,6 @@
 
     <p-button label="Dodaj proizvod" icon="pi pi-plus" (onClick)="onSubmit()" [loading]="isSubmitting" />
     
-    @if (successMessage) {
-      <p-message severity="success" [text]="successMessage" />
-    }
-    @if (errorMessage) {
-      <p-message severity="error" [text]="errorMessage" />
-    }
+    
   </div>
 </p-card>
