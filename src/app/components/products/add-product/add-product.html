@@ -13,7 +13,7 @@
         pInputText 
         id="product-name" 
         name="productName" 
-        [(ngModel)]="name" 
+        [(ngModel)]="product.name" 
         placeholder="Naziv proizvoda" 
         fluid />
     </div>
@@ -24,31 +24,19 @@
         pInputTextarea 
         id="product-desc" 
         name="productDesc" 
-        [(ngModel)]="description" 
+        [(ngModel)]="product.description" 
         rows="4" 
         placeholder="Opis proizvoda" 
         fluid></textarea>
     </div>
 
     <div class="field">
-      <label for="material-price">Cena materijala</label>
+      <label for="cena">Cena</label>
       <p-inputnumber 
-        id="material-price" 
-        name="materialPrice" 
-        [(ngModel)]="materialPrice" 
-        placeholder="Cena materijala" 
-        [min]="0" 
-        mode="decimal" 
-        fluid />
-    </div>
-
-    <div class="field">
-      <label for="labor-price">Cena rada</label>
-      <p-inputnumber 
-        id="labor-price" 
-        name="laborPrice" 
-        [(ngModel)]="laborPrice" 
-        placeholder="Cena rada" 
+        id="cena" 
+        name="cena" 
+        [(ngModel)]="product.price" 
+        placeholder="Cena" 
         [min]="0" 
         mode="decimal" 
         fluid />
