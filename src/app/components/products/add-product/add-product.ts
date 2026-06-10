@@ -19,13 +19,13 @@ import { FileService } from '../../../services/utils/file-service';
 import { EMPTY, firstValueFrom, forkJoin, from, of, Subject } from 'rxjs';
 import { catchError, finalize, mergeMap, switchMap, takeUntil, toArray } from 'rxjs/operators';
 import { AuthService } from '../../../services/utils/auth-service';
+import { Product } from '../../../models/product';
 
 interface ApiProduct {
   name: string;
   craftsmanId: number;
   description: string;
-  materialPrice: number;
-  laborPrice: number;
+  price: number;
   images: string[];
   videos: string[];
 }
@@ -54,16 +54,13 @@ export class AddProduct implements OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  name = '';
-  description = '';
-  materialPrice: number | null = null;
-  laborPrice: number | null = null;
   successMessage = '';
   errorMessage = '';
   isSubmitting = false;
   isDragging = false;
 
   allFiles: File[] = [];
+  product: Product = new Product();
 
   get selectedImages(): File[] {
     return this.allFiles.filter((f) => f.type.startsWith('image/'));
@@ -156,11 +153,10 @@ export class AddProduct implements OnDestroy {
       const tagged = await this.uploadFiles();
 
       const newProduct: ApiProduct = {
-        name: this.name,
+        name: this.product.name,
         craftsmanId,
-        description: this.description,
-        materialPrice: this.materialPrice ?? 0,
-        laborPrice: this.laborPrice ?? 0,
+        description: this.product.description,
+        price: this.product.price ?? 0,
         images: tagged.filter((t) => t.kind === 'image').map((t) => t.url),
         videos: tagged.filter((t) => t.kind === 'video').map((t) => t.url),
       };
@@ -212,10 +208,9 @@ export class AddProduct implements OnDestroy {
   }
 
   clearForm(): void {
-    this.name = '';
-    this.description = '';
-    this.materialPrice = null;
-    this.laborPrice = null;
+    this.product.name = '';
+    this.product.description = '';
+    this.product.price = null;
     this.allFiles = [];
   }
 }
