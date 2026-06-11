@@ -10,17 +10,15 @@ export class ProductService {
 
   constructor(private http: HttpClient) {}
 
-  private cachedProduct: any = null;
-
   // Store the product here right before navigating
   setPreviewProduct(product: any) {
-    this.cachedProduct = product;
+    sessionStorage.setItem('previewProduct', JSON.stringify(product));
   }
 
   getPreviewProduct() {
-    const product = this.cachedProduct;
-    this.cachedProduct = null; // Clear it after reading
-    return product;
+    const product = sessionStorage.getItem('previewProduct');
+    if (!product) return null
+    return JSON.parse(product);
   }
 
   create(data: any): Observable<any> {
