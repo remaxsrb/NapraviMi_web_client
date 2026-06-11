@@ -48,6 +48,13 @@ export class AuthService {
     return decodedToken.uid ?? decodedToken.sub ?? '';
   }
 
+  get_craftsman_id(): string {
+    const token = this.get_token();
+    if (!token) return '';
+    const decodedToken = this.decode_token(token);
+    return decodedToken.craftsman_id ?? '';
+  }
+
   decode_token(token: string): any {
     return this.jwtHelper.decodeToken(token);
   }

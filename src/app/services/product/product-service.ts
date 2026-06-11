@@ -30,4 +30,8 @@ export class ProductService {
   all(username: string, skip: number, limit: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/all/${username}?skip=${skip}&limit=${limit}`);
   }
+
+  delete(id: number, craftsmanId: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/delete`, {body: { id, craftsmanId }});
+  }
 }

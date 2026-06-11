@@ -30,6 +30,9 @@
             <small>({{ product.numberOfRatings }})</small>
           </div>
         }
+        @if (isOwner) {
+          <p-button label="Obriši proizvod" severity="danger" (onClick)="deleteProduct()" />
+        }
       </div>
     </p-card>
   </div>
