@@ -7,11 +7,12 @@ import { User } from '../../../models/user';
 import { AuthService } from '../../../services/utils/auth-service';
 import { UserActions } from '../../common/user-actions/user-actions';
 import { AddProduct } from '../../products/add-product/add-product';
+import { Header } from "../../common/header/header/header";
 
 @Component({
   selector: 'app-user-dashboard',
   standalone: true,
-  imports: [CommonModule, MenubarModule, ButtonModule, UserActions, AddProduct],
+  imports: [CommonModule, MenubarModule, ButtonModule, UserActions, AddProduct, Header],
   templateUrl: './user-dashboard.html',
   styleUrl: './user-dashboard.css',
 })

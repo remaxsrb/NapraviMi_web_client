@@ -10,14 +10,13 @@ export class ProductService {
 
   constructor(private http: HttpClient) {}
 
-  // Store the product here right before navigating
   setPreviewProduct(product: any) {
     sessionStorage.setItem('previewProduct', JSON.stringify(product));
   }
 
   getPreviewProduct() {
     const product = sessionStorage.getItem('previewProduct');
-    if (!product) return null
+    if (!product) return null;
     return JSON.parse(product);
   }
 
@@ -30,6 +29,6 @@ export class ProductService {
   }
 
   delete(id: number, craftsmanId: number): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/delete`, {body: { id, craftsmanId }});
+    return this.http.delete<any>(`${this.apiUrl}/delete`, { body: { id, craftsmanId } });
   }
 }

@@ -10,6 +10,12 @@
       />
       <button pButton label="Pretraži" icon="pi pi-search" (click)="onSearch()"></button>
     </div>
-    <button pButton label="Prijavi se" icon="pi pi-sign-in" routerLink="/login"></button>
+    @if (!isLoggedIn) {
+      <button pButton label="Registruj se" icon="pi pi-user-plus" routerLink="/user-registration"></button>
+      <button pButton label="Prijavi se" icon="pi pi-sign-in" routerLink="/login"></button>
+    }
+    @if (isLoggedIn) {
+      <app-user-actions [user]="currentUser"></app-user-actions>
+    }
   </div>
 </div>
