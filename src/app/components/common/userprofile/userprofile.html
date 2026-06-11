@@ -1,15 +1,8 @@
 <body>
-  @if (isGuestView) {
-    <app-public-header></app-public-header>
-  } @else {
-    <div class="header">
-      <h1>NapraviMi</h1>
-      <app-user-actions [user]="user"></app-user-actions>
-    </div>
-  }
+  <app-header></app-header>
 
   <nav>
-    <p-menubar></p-menubar>
+    <p-menubar [model]="menuItems"></p-menubar>
   </nav>
   <div class="grid">
     <div class="flex-row">

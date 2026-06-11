@@ -6,8 +6,7 @@ import { MenubarModule } from 'primeng/menubar';
 import { CardModule } from 'primeng/card';
 import { ImageModule } from 'primeng/image';
 import { User } from '../../../models/user';
-import { UserActions } from '../user-actions/user-actions';
-import { PublicHeader } from '../public-header/public-header';
+import { Header } from '../header/header/header';
 import { ProductsByCraftsman } from '../../products/products-by-craftsman/products-by-craftsman/products-by-craftsman';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../../services/user/user-service';
@@ -21,8 +20,7 @@ import { MenuItem } from 'primeng/api';
     ButtonModule,
     CardModule,
     ImageModule,
-    UserActions,
-    PublicHeader,
+    Header,
     ProductsByCraftsman,
   ],
   templateUrl: './userprofile.html',
@@ -37,6 +35,7 @@ export class Userprofile implements OnInit {
   ) {}
 
   craftsmanMenuItems: MenuItem[] = [];
+  menuItems: MenuItem[] = [];
 
   user: User = new User();  isGuestView = false;
 
@@ -44,16 +43,19 @@ export class Userprofile implements OnInit {
 
   ngOnInit() {
     const usernameParam = this.route.snapshot.paramMap.get('username');
+    const userData = localStorage.getItem('userData');
+    const loggedInUser = userData ? JSON.parse(userData) : null;
 
-    if (usernameParam) {
+    if (usernameParam && loggedInUser?.username !== usernameParam) {
       this.isGuestView = true;
       this.user = this.userService.getPreviewUser();
     } else {
-      const userData = localStorage.getItem('userData');
       this.userRole = this.authService.get_role();
-      if (!userData) return;
-      this.user = JSON.parse(userData)
-
+      if (!loggedInUser) return;
+      this.user = loggedInUser;
+      this.menuItems = [
+        { label: 'Pregled zanatlija', icon: 'pi pi-users', routerLink: '/craftsmen' },
+      ];
     }
   }
 }

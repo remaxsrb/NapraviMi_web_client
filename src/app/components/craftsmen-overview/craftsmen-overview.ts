@@ -5,12 +5,13 @@ import { CardModule } from 'primeng/card';
 import { PaginatorModule } from 'primeng/paginator';
 import { ButtonModule } from 'primeng/button';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CraftsmanService } from '../../services/craftsman/craftsman-service';
 import { craftLabel } from '../../constants/craft-options';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserService } from '../../services/user/user-service';
+import { AuthService } from '../../services/utils/auth-service';
 import { User } from '../../models/user';
 
 @Component({
@@ -22,7 +23,6 @@ import { User } from '../../models/user';
     CardModule,
     RatingModule,
     PaginatorModule,
-    RouterLink,
     ButtonModule,
   ],
   templateUrl: './craftsmen-overview.html',
@@ -38,7 +38,8 @@ export class CraftsmenOverview implements OnInit, OnDestroy {
   activeCraftLabel: string | null = null;
 
   private craftsmanService = inject(CraftsmanService);
-  private userService = inject(UserService)
+  private userService = inject(UserService);
+  private authService = inject(AuthService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private destroy$ = new Subject<void>();
@@ -70,7 +71,14 @@ export class CraftsmenOverview implements OnInit, OnDestroy {
 
   // Inside CraftsmenOverview
   onSelectCraftsman(craftsman: User): void {
-    this.userService.setPreviewUser(craftsman);
+    const userData = localStorage.getItem('userData');
+    const loggedInUser = userData ? JSON.parse(userData) : null;
+    if (loggedInUser?.username === craftsman.username) {
+      this.router.navigate(['/profile']);
+    } else {
+      this.userService.setPreviewUser(craftsman);
+      this.router.navigate(['/profile', craftsman.username]);
+    }
   }
 
   private loadCraftsmen(): void {
