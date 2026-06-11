@@ -1,1 +1,45 @@
-<p>products-by-craftsman works!</p>
+<div class="products-page">
+  <h2>Proizvodi</h2>
+
+  @if (isLoading) {
+    <p>Učitavanje proizvoda...</p>
+  } @else if (products.length === 0) {
+    <p>Nema dostupnih proizvoda.</p>
+  } @else {
+    <p-dataview
+      [value]="products"
+      layout="grid"
+      [paginator]="true"
+      [rows]="pageSize"
+      [totalRecords]="totalRecords"
+      [lazy]="true"
+      (onPage)="onPage($event)"
+    >
+      <ng-template #grid let-items>
+        <div class="product-grid">
+          @for (product of items; track product.id) {
+            <div class="product-card">
+              <a [routerLink]="['/product', product.id]" class="product-image-link" (click)="onSelectProduct(product)">
+                @if (getFirstImage(product)) {
+                  <img [src]="getFirstImage(product)" [alt]="product.name" class="product-img" loading="eager" />
+                } @else {
+                  <div class="product-img-placeholder">📦</div>
+                }
+              </a>
+              <div class="product-body">
+                <a [routerLink]="['/product', product.id]" class="product-name" (click)="onSelectProduct(product)">{{ product.name }}</a>
+                <p class="product-desc">{{ product.description }}</p>
+                <div class="product-footer">
+                  <span class="product-price">{{ product.price }} RSD</span>
+                  @if (product.rating !== null) {
+                    <p-rating [(ngModel)]="product.rating" [readonly]="true" />
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </ng-template>
+    </p-dataview>
+  }
+</div>

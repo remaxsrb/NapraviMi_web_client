@@ -23,11 +23,11 @@ import { Product } from '../../../models/product';
 
 interface ApiProduct {
   name: string;
-  craftsmanId: number;
   description: string;
   price: number;
   images: string[];
   videos: string[];
+  username?: string;
 }
 
 const MAX_CONCURRENT_UPLOADS = 3;
@@ -140,11 +140,12 @@ export class AddProduct implements OnDestroy {
   }
 
   async onSubmit(): Promise<void> {
-    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-    const craftsmanId = Number(this.authService.get_id());
-    console.log(craftsmanId);
-    if (!craftsmanId) return;
-
+    const userData = localStorage.getItem("userData");
+    if (!userData) {
+      this.errorMessage = 'Niste prijavljeni.';
+      return;
+    }
+    const username = JSON.parse(userData).username;
     this.isSubmitting = true;
     this.successMessage = '';
     this.errorMessage = '';
@@ -154,11 +155,11 @@ export class AddProduct implements OnDestroy {
 
       const newProduct: ApiProduct = {
         name: this.product.name,
-        craftsmanId,
         description: this.product.description,
         price: this.product.price ?? 0,
         images: tagged.filter((t) => t.kind === 'image').map((t) => t.url),
         videos: tagged.filter((t) => t.kind === 'video').map((t) => t.url),
+        username: username
       };
 
       await firstValueFrom(this.productService.create(newProduct));

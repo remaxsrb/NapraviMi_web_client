@@ -15,6 +15,8 @@ import { AdminLogin } from './components/admin/admin-login/admin-login';
 import { CraftsmanApplications } from './components/admin/craftsman-applications/craftsman-applications';
 import { SetRoles } from './components/admin/set-roles/set-roles';
 import { ProfileSettings } from './components/common/profile-settings/profile-settings';
+import { ProductsByCraftsman } from './components/products/products-by-craftsman/products-by-craftsman/products-by-craftsman';
+import { ProductPage } from './components/products/product-page/product-page/product-page';
 
 export const routes: Routes = [
   {
@@ -36,11 +38,10 @@ export const routes: Routes = [
     canActivate: [authGuard, roleGuard],
     data: { expected_role: 'user' },
   },
-    {
+  {
     path: 'profile',
     component: Userprofile,
     canActivate: [authGuard],
-    
   },
   {
     path: 'internal-login',
@@ -62,14 +63,16 @@ export const routes: Routes = [
     canActivate: [authGuard, roleGuard],
     data: { expected_role: 'craftsman' },
   },
-    {
-    path: 'profile',
-    component: Userprofile,
-    canActivate: [authGuard, roleGuard],
-    data: { expected_role: 'craftsman' },
-  },
   {
     path: 'profile/:username',
     component: Userprofile,
+  },
+  {
+    path: 'products/:username',
+    component: ProductsByCraftsman,
+  },
+  {
+    path: 'product/:id',
+    component: ProductPage,
   },
 ];
