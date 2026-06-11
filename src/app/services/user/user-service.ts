@@ -12,17 +12,15 @@ export class UserService {
 
   private apiUrl = 'http://localhost:8080/users';
 
-  private cachedUser: any = null;
-
   // Store the user here right before navigating
   setPreviewUser(user: any) {
-    this.cachedUser = user;
+    sessionStorage.setItem('previewUser', JSON.stringify(user));
   }
 
   getPreviewUser() {
-    const user = this.cachedUser;
-    this.cachedUser = null; // Clear it after reading
-    return user;
+    const user = sessionStorage.getItem('previewUser');
+    if (!user) return null;
+    return JSON.parse(user);
   }
 
   register(user: any): Observable<any> {
