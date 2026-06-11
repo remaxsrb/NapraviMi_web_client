@@ -9,11 +9,12 @@ import { FormsModule } from '@angular/forms';
 import { ProductService } from '../../../../services/product/product-service';
 import { AuthService } from '../../../../services/utils/auth-service';
 import { Product } from '../../../../models/product';
+import { Header } from "../../../common/header/header/header";
 
 @Component({
   selector: 'app-product-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, CardModule, ImageModule, RatingModule, ButtonModule],
+  imports: [CommonModule, FormsModule, CardModule, ImageModule, RatingModule, ButtonModule, Header],
   templateUrl: './product-page.html',
   styleUrl: './product-page.css',
 })

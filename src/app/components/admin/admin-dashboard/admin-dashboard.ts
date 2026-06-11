@@ -1,37 +1,22 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
-import { MenubarModule } from 'primeng/menubar';
 import { User } from '../../../models/user';
 import { AuthService } from '../../../services/utils/auth-service';
 import { UserActions } from '../../common/user-actions/user-actions';
+import { Navbar } from '../../common/navbar/navbar/navbar';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, MenubarModule, ButtonModule, RouterOutlet, UserActions],
+  imports: [CommonModule, ButtonModule, RouterOutlet, UserActions, Navbar],
   templateUrl: './admin-dashboard.html',
   styleUrl: './admin-dashboard.css',
 })
 export class AdminDashboard implements OnInit {
-   user: User = new User();
-
-  adminMenuItems: MenuItem[] = [
-    {
-      label: 'Zahtevi zanatlija',
-      icon: 'pi pi-list',
-      routerLink: '/admin/craftsman-applications',
-    },
-    {
-      label: 'Postavi uloge',
-      icon: 'pi pi-user-edit',
-      routerLink: '/admin/set-roles',
-    },
-  ];
-
-   role: string = '';
+  user: User = new User();
+  role: string = '';
 
   constructor(private authService: AuthService) {}
 
@@ -40,9 +25,6 @@ export class AdminDashboard implements OnInit {
     if (storedUser) {
       this.user = JSON.parse(storedUser) as User;
     }
-    const role = this.authService.get_role();
-    this.role = role;
-
+    this.role = this.authService.get_role();
   }
-
 }

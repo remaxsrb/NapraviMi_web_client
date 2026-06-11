@@ -4,9 +4,7 @@
     <app-user-actions [user]="user"></app-user-actions>
   </div>
   <div class="user-role">Uloga: {{ role }}</div>
-  <nav>
-    <p-menubar [model]="adminMenuItems"></p-menubar>
-  </nav>
+  <app-navbar></app-navbar>
   <div class="content">
     <router-outlet></router-outlet>
   </div>
