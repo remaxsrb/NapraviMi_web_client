@@ -1,3 +1,4 @@
+@import "primeicons/primeicons.css";
 /* Ensure the radio button component doesn't stretch to 100% width */
 .p-radiobutton {
     width: auto !important;

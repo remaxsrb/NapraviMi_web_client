@@ -15,7 +15,10 @@
         <div class="mb-4 p-8">
           <p-card>
             <h2>{{ user.firstname }} {{ user.lastname }}</h2>
-            <p>{{ user.craft }}</p>           
+
+            <p-rating [(ngModel)]="user.rating" readonly="true"></p-rating>
+
+            <p>{{ user.craft }}</p>
             <p>{{ user.email }}</p>
           </p-card>
         </div>

@@ -6,6 +6,7 @@ export class User {
     profilePicture: string = '';
     gender: string = '';
 
+    craftsmanId?: number;
     craft?: string;
     rating?: number;
     numberOfRatings?: number;

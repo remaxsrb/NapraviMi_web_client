@@ -17,7 +17,7 @@ import { SetRoles } from './components/admin/set-roles/set-roles';
 import { ProfileSettings } from './components/common/profile-settings/profile-settings';
 import { ProductsByCraftsman } from './components/products/products-by-craftsman/products-by-craftsman/products-by-craftsman';
 import { ProductPage } from './components/products/product-page/product-page/product-page';
-
+import { Cart } from './components/common/cart/cart';
 export const routes: Routes = [
   {
     path: '',
@@ -37,6 +37,12 @@ export const routes: Routes = [
     component: UserDashboard,
     canActivate: [authGuard, roleGuard],
     data: { expected_role: 'user' },
+    children: [
+      {
+        path: 'cart',
+        component: Cart,
+      },
+    ],
   },
   {
     path: 'profile',
