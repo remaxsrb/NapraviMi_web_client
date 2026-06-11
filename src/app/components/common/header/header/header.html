@@ -11,8 +11,22 @@
       <button pButton label="Pretraži" icon="pi pi-search" (click)="onSearch()"></button>
     </div>
     @if (!isLoggedIn) {
-      <button pButton label="Registruj se" icon="pi pi-user-plus" routerLink="/user-registration"></button>
+      <button
+        pButton
+        label="Registruj se"
+        icon="pi pi-user-plus"
+        routerLink="/user-registration"
+      ></button>
       <button pButton label="Prijavi se" icon="pi pi-sign-in" routerLink="/login"></button>
+    }
+    @if (isUser) {
+      <p-button
+        icon="pi pi-shopping-cart"
+        [badge]="cartItemCount > 0 ? cartItemCount.toString() : ''"
+        badgeSeverity="danger"
+        routerLink="/user/cart"
+        text="true"
+      ></p-button>
     }
     @if (isLoggedIn) {
       <app-user-actions [user]="currentUser"></app-user-actions>

@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { User } from '../../../models/user';
 import { AuthService } from '../../../services/utils/auth-service';
@@ -10,7 +11,7 @@ import { Navbar } from '../../common/navbar/navbar/navbar';
 @Component({
   selector: 'app-user-dashboard',
   standalone: true,
-  imports: [CommonModule, ButtonModule, AddProduct, Header, Navbar],
+  imports: [CommonModule, ButtonModule, AddProduct, Header, Navbar, RouterOutlet],
   templateUrl: './user-dashboard.html',
   styleUrl: './user-dashboard.css',
 })
