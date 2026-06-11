@@ -8,6 +8,7 @@ import { ImageModule } from 'primeng/image';
 import { User } from '../../../models/user';
 import { UserActions } from '../user-actions/user-actions';
 import { PublicHeader } from '../public-header/public-header';
+import { ProductsByCraftsman } from '../../products/products-by-craftsman/products-by-craftsman/products-by-craftsman';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../../services/user/user-service';
 import { MenuItem } from 'primeng/api';
@@ -22,6 +23,7 @@ import { MenuItem } from 'primeng/api';
     ImageModule,
     UserActions,
     PublicHeader,
+    ProductsByCraftsman,
   ],
   templateUrl: './userprofile.html',
   styleUrl: './userprofile.css',

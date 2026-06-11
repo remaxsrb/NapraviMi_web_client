@@ -10,11 +10,24 @@ export class ProductService {
 
   constructor(private http: HttpClient) {}
 
+  private cachedProduct: any = null;
+
+  // Store the product here right before navigating
+  setPreviewProduct(product: any) {
+    this.cachedProduct = product;
+  }
+
+  getPreviewProduct() {
+    const product = this.cachedProduct;
+    this.cachedProduct = null; // Clear it after reading
+    return product;
+  }
+
   create(data: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/create`, data);
   }
 
-  all(craftsmanId: number, skip: number, limit: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/all/${craftsmanId}?skip=${skip}&limit=${limit}`);
+  all(username: string, skip: number, limit: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/all/${username}?skip=${skip}&limit=${limit}`);
   }
 }

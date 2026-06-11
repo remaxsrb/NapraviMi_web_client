@@ -1,1 +1,36 @@
-<p>product-page works!</p>
+@if (isLoading) {
+  <p>Učitavanje...</p>
+} @else if (product) {
+  <div class="product-page">
+    <h2>{{ product.name }}</h2>
+
+    @if (product.images?.length) {
+      <div class="product-gallery">
+        @for (img of product.images; track img) {
+          <p-image [src]="img" [alt]="product.name" width="280" [preview]="true" />
+        }
+      </div>
+    }
+
+    @if (product.videos?.length) {
+      <div class="product-videos">
+        @for (vid of product.videos; track vid) {
+          <video [src]="vid" controls class="product-video"></video>
+        }
+      </div>
+    }
+
+    <p-card>
+      <p class="product-description">{{ product.description }}</p>
+      <div class="product-meta">
+        <span class="product-price">{{ product.price }} RSD</span>
+        @if (product.rating !== null) {
+          <div class="product-rating">
+            <p-rating [(ngModel)]="product.rating" [readonly]="true" />
+            <small>({{ product.numberOfRatings }})</small>
+          </div>
+        }
+      </div>
+    </p-card>
+  </div>
+}
