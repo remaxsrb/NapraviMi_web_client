@@ -2,9 +2,7 @@
   <app-header></app-header>
 
   <div class="user-role">Uloga: {{ userRole }}</div>
-  <nav>
-    <p-menubar [model]="menuItems"></p-menubar>
-  </nav>
+  <app-navbar (addProductClick)="showAddProduct = !showAddProduct"></app-navbar>
   @if (showAddProduct) {
     <div class="add-product-section">
       <app-add-product></app-add-product>
