@@ -1,8 +1,10 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { MenubarModule } from 'primeng/menubar';
 import { MenuItem } from 'primeng/api';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../services/utils/auth-service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-navbar',
@@ -11,10 +13,11 @@ import { AuthService } from '../../../../services/utils/auth-service';
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
-export class Navbar implements OnInit {
+export class Navbar implements OnInit, OnDestroy {
   @Output() addProductClick = new EventEmitter<void>();
 
   items: MenuItem[] = [];
+  private destroy$ = new Subject<void>();
 
   constructor(
     private authService: AuthService,
@@ -22,6 +25,16 @@ export class Navbar implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.buildItems();
+    this.authService.authChanged$.pipe(takeUntil(this.destroy$)).subscribe(() => this.buildItems());
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private buildItems(): void {
     const role = this.authService.get_role();
     const isLoggedIn = this.authService.is_LoggedIn();
 
@@ -33,7 +46,7 @@ export class Navbar implements OnInit {
     } else if (role === 'craftsman') {
       this.items = [
         { label: 'Pregled zanatlija', icon: 'pi pi-users', command: () => this.router.navigate(['craftsmen']) },
-        { label: 'Dodaj proizvod', icon: 'pi pi-plus', command: () => this.addProductClick.emit() },
+        { label: 'Dodaj proizvod', icon: 'pi pi-plus', routerLink: '/craftsman/add-product' },
       ];
     } else {
       this.items = [
