@@ -9,7 +9,9 @@ import { FormsModule } from '@angular/forms';
 import { ProductService } from '../../../../services/product/product-service';
 import { AuthService } from '../../../../services/utils/auth-service';
 import { Product } from '../../../../models/product';
-import { Header } from "../../../common/header/header/header";
+import { Header } from '../../../common/header/header/header';
+import { CartService } from '../../../../services/cart/cart-service';
+import { User } from '../../../../models/user';
 
 @Component({
   selector: 'app-product-page',
@@ -21,11 +23,13 @@ import { Header } from "../../../common/header/header/header";
 export class ProductPage implements OnInit {
   isLoading = true;
   isOwner = false;
+  isCustomer = false;
 
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private productService = inject(ProductService);
   private authService = inject(AuthService);
+  private cartService = inject(CartService);
 
   product: Product | null = null;
 
@@ -35,6 +39,7 @@ export class ProductPage implements OnInit {
       this.router.navigate(['/']);
       return;
     }
+    this.isCustomer = this.authService.get_role() === 'user';
     const cachedProduct = this.productService.getPreviewProduct();
     if (cachedProduct) {
       this.product = cachedProduct;
@@ -47,7 +52,7 @@ export class ProductPage implements OnInit {
 
   private checkOwnership(): void {
     if (this.authService.get_role() !== 'craftsman') return;
-    
+
     this.isOwner = Number(this.authService.get_craftsman_id()) === this.product?.craftsmanId;
   }
 
@@ -57,5 +62,21 @@ export class ProductPage implements OnInit {
       next: () => this.router.navigate(['/profile']),
       error: () => {},
     });
+  }
+
+  addToCart() {
+    const customerID = Number(this.authService.get_id())
+    const quantity = 1
+    this.cartService.addToCart(customerID, this.product!.id!, quantity).subscribe({
+      next: (response: any) => {
+        if (!localStorage.getItem("userData")) return 
+       const userDataString = JSON.parse(localStorage.getItem("userData")!)
+       var user : User = JSON.parse(userDataString)
+        user.cart = JSON.parse(response)
+
+        console.log(user)
+       
+      }
+    })
   }
 }
