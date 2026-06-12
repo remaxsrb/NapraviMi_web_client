@@ -1,4 +1,4 @@
-  <app-header></app-header>
+<app-header></app-header>
 
 @if (isLoading) {
   <p>Učitavanje...</p>
@@ -34,6 +34,9 @@
         }
         @if (isOwner) {
           <p-button label="Obriši proizvod" severity="danger" (onClick)="deleteProduct()" />
+        }
+        @if (isCustomer) {
+          <p-button label="Dodaj u korpu" severity="success" (onClick)="addToCart()" />
         }
       </div>
     </p-card>
