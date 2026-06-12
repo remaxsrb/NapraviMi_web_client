@@ -2,6 +2,7 @@ export class Product {
     id: number | null = null;
     name: string = '';
     craftsmanId: number | null = null;
+    category: string = '';
     hidden: boolean = false;
     price: number | null = null;
     description : string = ''
@@ -10,4 +11,5 @@ export class Product {
     available : boolean = true;
     images? : string[] = [];
     videos? : string[] = [];
+    
 }

@@ -7,12 +7,13 @@ import { ButtonModule } from 'primeng/button';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CraftsmanService } from '../../services/craftsman/craftsman-service';
-import { craftLabel } from '../../constants/craft-options';
-import { Subject } from 'rxjs';
+import { CraftService } from '../../services/craft/craft-service';
+import { combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserService } from '../../services/user/user-service';
 import { AuthService } from '../../services/utils/auth-service';
 import { User } from '../../models/user';
+import { CraftOption } from '../../interfaces/craft-option';
 
 @Component({
   selector: 'app-craftsmen-overview',
@@ -38,6 +39,7 @@ export class CraftsmenOverview implements OnInit, OnDestroy {
   activeCraftLabel: string | null = null;
 
   private craftsmanService = inject(CraftsmanService);
+  private craftService = inject(CraftService);
   private userService = inject(UserService);
   private authService = inject(AuthService);
   private route = inject(ActivatedRoute);
@@ -45,13 +47,17 @@ export class CraftsmenOverview implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   ngOnInit(): void {
-    this.route.queryParamMap.pipe(takeUntil(this.destroy$)).subscribe((params) => {
-      const craft = params.get('craft');
-      this.activeCraft = craft;
-      this.activeCraftLabel = craft ? craftLabel(craft) || craft : null;
-      this.first = 0;
-      this.loadCraftsmen();
-    });
+    combineLatest([this.route.queryParamMap, this.craftService.getCraftOptions()])
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(([params, craftOptions]: [any, CraftOption[]]) => {
+        const craft = params.get('craft');
+        this.activeCraft = craft;
+        this.activeCraftLabel = craft
+          ? craftOptions.find((c) => c.value === craft)?.label || craft
+          : null;
+        this.first = 0;
+        this.loadCraftsmen();
+      });
   }
 
   ngOnDestroy(): void {

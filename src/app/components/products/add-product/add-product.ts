@@ -4,6 +4,7 @@ import {
   ElementRef,
   NgZone,
   OnDestroy,
+  OnInit,
   ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -20,6 +21,9 @@ import { EMPTY, firstValueFrom, forkJoin, from, of, Subject } from 'rxjs';
 import { catchError, finalize, mergeMap, switchMap, takeUntil, toArray } from 'rxjs/operators';
 import { AuthService } from '../../../services/utils/auth-service';
 import { Product } from '../../../models/product';
+import { ProductCategoryOption } from '../../../interfaces/product-category-option';
+import { ProductCategoryService } from '../../../services/product_category/product-category-service';
+import { SelectModule } from 'primeng/select';
 
 interface ApiProduct {
   name: string;
@@ -28,6 +32,7 @@ interface ApiProduct {
   images: string[];
   videos: string[];
   username?: string;
+  category: string;
 }
 
 const MAX_CONCURRENT_UPLOADS = 3;
@@ -44,12 +49,13 @@ const MAX_CONCURRENT_UPLOADS = 3;
     TextareaModule,
     InputNumberModule,
     MessageModule,
+    SelectModule,
   ],
   providers: [ProductService, FileService],
   templateUrl: './add-product.html',
   styleUrl: './add-product.css',
 })
-export class AddProduct implements OnDestroy {
+export class AddProduct implements OnDestroy, OnInit {
   @ViewChild('fileInput') fileInputRef!: ElementRef<HTMLInputElement>;
 
   private destroy$ = new Subject<void>();
@@ -61,6 +67,7 @@ export class AddProduct implements OnDestroy {
 
   allFiles: File[] = [];
   product: Product = new Product();
+  productCategories: ProductCategoryOption[] = [];
 
   get selectedImages(): File[] {
     return this.allFiles.filter((f) => f.type.startsWith('image/'));
@@ -74,6 +81,7 @@ export class AddProduct implements OnDestroy {
     private fileService: FileService,
     private authService: AuthService,
     private cdr: ChangeDetectorRef,
+    private pcService: ProductCategoryService,
   ) {}
 
   openFilePicker(): void {
@@ -104,6 +112,12 @@ export class AddProduct implements OnDestroy {
     this.isDragging = false;
     const files = Array.from(event.dataTransfer?.files ?? []);
     this.addFiles(files);
+  }
+
+  ngOnInit(): void {
+    this.pcService.getProductCategoryOptions().subscribe((options) => {
+      this.productCategories = options;
+    });
   }
 
   ngOnDestroy(): void {
@@ -149,7 +163,7 @@ export class AddProduct implements OnDestroy {
     this.isSubmitting = true;
     this.successMessage = '';
     this.errorMessage = '';
-
+ 
     try {
       const tagged = await this.uploadFiles();
 
@@ -159,7 +173,8 @@ export class AddProduct implements OnDestroy {
         price: this.product.price ?? 0,
         images: tagged.filter((t) => t.kind === 'image').map((t) => t.url),
         videos: tagged.filter((t) => t.kind === 'video').map((t) => t.url),
-        username: username
+        username: username,
+        category: this.product.category,
       };
 
       await firstValueFrom(this.productService.create(newProduct));

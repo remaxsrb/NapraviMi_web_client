@@ -5,7 +5,6 @@ import { ButtonModule } from 'primeng/button';
 import { BadgeModule } from 'primeng/badge';
 import { InputTextModule } from 'primeng/inputtext';
 import { Router, RouterLink } from '@angular/router';
-import { CRAFT_OPTIONS } from '../../../../constants/craft-options';
 import { AuthService } from '../../../../services/utils/auth-service';
 import { CartService } from '../../../../services/cart/cart-service';
 import { UserActions } from '../../user-actions/user-actions';
@@ -48,18 +47,13 @@ export class Header implements OnInit {
   }
 
   onSearch(): void {
-    const q = this.searchQuery.trim().toLowerCase();
+    const q = this.searchQuery.trim();
     if (!q) {
       this.router.navigate(['']);
       return;
     }
-    const match = CRAFT_OPTIONS.find((c) =>
-      c.keywords.some((kw) => kw.includes(q) || q.includes(kw)),
-    );
-    if (match) {
-      this.router.navigate(['craftsmen'], { queryParams: { craft: match.value } });
-    } else {
-      this.router.navigate(['']);
-    }
+    this.router.navigate(['craftsmen'], { queryParams: { craft: q } });
   }
 }
+
+
