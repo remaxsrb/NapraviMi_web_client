@@ -7,11 +7,12 @@ import { FileUploadModule } from 'primeng/fileupload';
 import { MessageModule } from 'primeng/message';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
-import { CRAFT_OPTIONS } from '../../constants/craft-options';
+import { CraftService } from '../../services/craft/craft-service';
 import { FileService } from '../../services/utils/file-service';
 import { UserService } from '../../services/user/user-service';
 import { RouterLink } from "@angular/router";
 import { CraftsmanApplicationService } from '../../services/craftsman-application/craftsman-application-service';
+import { CraftOption } from '../../interfaces/craft-option';
 
 @Component({
   selector: 'app-craftsman-application',
@@ -30,8 +31,8 @@ import { CraftsmanApplicationService } from '../../services/craftsman-applicatio
   templateUrl: './craftsman-application.html',
   styleUrls: ['./craftsman-application.css'],
 })
-export class CraftsmanApplication {
-  craftOptions = CRAFT_OPTIONS;
+export class CraftsmanApplication implements OnInit {
+  craftOptions: CraftOption[] = [];
 
   applicationForm!: FormGroup;
   selectedResumeName = '';
@@ -49,8 +50,13 @@ export class CraftsmanApplication {
     private fb: FormBuilder,
     private fileService: FileService,
     private caService: CraftsmanApplicationService,
+    private craftService: CraftService,
   ) {
     this.initForm();
+  }
+
+  ngOnInit(): void {
+    this.craftService.getCraftOptions().subscribe((options) => (this.craftOptions = options));
   }
 
   private setStatus(severity: 'success' | 'error' | 'info', message: string): void {

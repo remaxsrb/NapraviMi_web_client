@@ -8,38 +8,54 @@
     }
     <div class="field">
       <label for="product-name">Naziv</label>
-      <input 
-        type="text" 
-        pInputText 
-        id="product-name" 
-        name="productName" 
-        [(ngModel)]="product.name" 
-        placeholder="Naziv proizvoda" 
-        fluid />
+      <input
+        type="text"
+        pInputText
+        id="product-name"
+        name="productName"
+        [(ngModel)]="product.name"
+        placeholder="Naziv proizvoda"
+        fluid
+      />
     </div>
 
     <div class="field">
       <label for="product-desc">Opis</label>
-      <textarea 
-        pInputTextarea 
-        id="product-desc" 
-        name="productDesc" 
-        [(ngModel)]="product.description" 
-        rows="4" 
-        placeholder="Opis proizvoda" 
-        fluid></textarea>
+      <textarea
+        pInputTextarea
+        id="product-desc"
+        name="productDesc"
+        [(ngModel)]="product.description"
+        rows="4"
+        placeholder="Opis proizvoda"
+        fluid
+      ></textarea>
     </div>
 
     <div class="field">
       <label for="cena">Cena</label>
-      <p-inputnumber 
-        id="cena" 
-        name="cena" 
-        [(ngModel)]="product.price" 
-        placeholder="Cena" 
-        [min]="0" 
-        mode="decimal" 
-        fluid />
+      <p-inputnumber
+        id="cena"
+        name="cena"
+        [(ngModel)]="product.price"
+        placeholder="Cena"
+        [min]="0"
+        mode="decimal"
+        fluid
+      />
+    </div>
+
+    <div class="field flex flex-column">
+      <label for="craft">Kategorija</label>
+      <p-select
+        id="craft"
+        [options]="productCategories"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Izaberi kategoriju"
+        [(ngModel)]="product.category"
+        appendTo="body"
+      ></p-select>
     </div>
 
     <div class="field">
@@ -51,7 +67,7 @@
         type="file"
         accept="image/*,video/*"
         multiple
-        style="display:none"
+        style="display: none"
         (change)="onFileInputChange($event)"
       />
 
@@ -76,15 +92,20 @@
             <li class="file-item">
               <span class="file-icon">{{ file.type.startsWith('image/') ? '🖼️' : '🎬' }}</span>
               <span class="file-name" [title]="file.name">{{ file.name }}</span>
-              <button class="remove-btn" type="button" (click)="removeFile(i)" title="Ukloni">✕</button>
+              <button class="remove-btn" type="button" (click)="removeFile(i)" title="Ukloni">
+                ✕
+              </button>
             </li>
           }
         </ul>
       }
     </div>
 
-    <p-button label="Dodaj proizvod" icon="pi pi-plus" (onClick)="onSubmit()" [loading]="isSubmitting" />
-    
-    
+    <p-button
+      label="Dodaj proizvod"
+      icon="pi pi-plus"
+      (onClick)="onSubmit()"
+      [loading]="isSubmitting"
+    />
   </div>
 </p-card>

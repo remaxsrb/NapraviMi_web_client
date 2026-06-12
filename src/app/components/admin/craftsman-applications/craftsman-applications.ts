@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -9,7 +9,8 @@ import { CraftsmanApplicationService } from '../../../services/craftsman-applica
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { CraftsmanService } from '../../../services/craftsman/craftsman-service';
-import { CRAFT_OPTIONS, craftLabel } from '../../../constants/craft-options';
+import { CraftService } from '../../../services/craft/craft-service';
+import { CraftOption } from '../../../interfaces/craft-option';
 
 interface ApiApplication {
   id: number;
@@ -51,7 +52,7 @@ interface GetAllResponse {
   templateUrl: './craftsman-applications.html',
   styleUrl: './craftsman-applications.css',
 })
-export class CraftsmanApplications {
+export class CraftsmanApplications implements OnInit {
   applications: ApplicationRow[] = [];
   displayedApplications: ApplicationRow[] = [];
   first = 0;
@@ -65,13 +66,18 @@ export class CraftsmanApplications {
     { label: 'Odobri', value: 'approved' },
   ];
 
-  craftOptions = CRAFT_OPTIONS;
+  craftOptions: CraftOption[] = [];
 
   private craftsmanApplicationService = inject(CraftsmanApplicationService);
   private confirmationService = inject(ConfirmationService);
   private messageService = inject(MessageService);
   private craftsmanService = inject(CraftsmanService);
+  private craftService = inject(CraftService);
   constructor(private cdr: ChangeDetectorRef) {}
+
+  ngOnInit(): void {
+    this.craftService.getCraftOptions().subscribe((options) => (this.craftOptions = options));
+  }
 
   pageChange(event: any): void {
     const skip = event.first ?? 0;
@@ -115,7 +121,7 @@ export class CraftsmanApplications {
       id: application.id,
       email: application.email,
       craft: application.craft,
-      craftLabel: craftLabel(application.craft),
+      craftLabel: this.craftOptions.find((c) => c.value === application.craft)?.label ?? application.craft,
       status: application.status,
       newStatus: application.status,
       createdAt: new Date(application.created_at),
