@@ -13,14 +13,14 @@ export class CartService {
 
   constructor(private http: HttpClient) {}
 
-  addToCart(cartId: number, productId: number, quantity: number) {
-    return this.http.post<Cart>(`${this.apiUrl}/add`, { cartId, productId, quantity }).pipe(
+  addToCart(payload: any) {
+    return this.http.post<Cart>(`${this.apiUrl}/add`,payload).pipe(
       tap((cart) => this.cartItemCount.set(cart?.items?.length ?? 0)),
     );
   }
 
-  removeFromCart(cartId: number, productId: number) {
-    return this.http.post<Cart>(`${this.apiUrl}/remove`, { cartId, productId }).pipe(
+  removeFromCart(payload : any) {
+    return this.http.post<Cart>(`${this.apiUrl}/remove`,payload).pipe(
       tap((cart) => this.cartItemCount.set(cart?.items?.length ?? 0)),
     );
   }
