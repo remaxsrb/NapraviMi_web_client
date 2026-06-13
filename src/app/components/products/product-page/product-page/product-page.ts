@@ -65,18 +65,21 @@ export class ProductPage implements OnInit {
   }
 
   addToCart() {
-    const customerID = Number(this.authService.get_id())
-    const quantity = 1
-    this.cartService.addToCart(customerID, this.product!.id!, quantity).subscribe({
+    const payload = {
+      cart_id: Number(this.authService.get_id()),
+      product_id: this.product?.id,
+      quantity: 1
+    }
+    this.cartService.addToCart(payload).subscribe({
       next: (response: any) => {
-        if (!localStorage.getItem("userData")) return 
-       const userDataString = JSON.parse(localStorage.getItem("userData")!)
-       var user : User = JSON.parse(userDataString)
-        user.cart = JSON.parse(response)
+        if (!localStorage.getItem('userData')) return;
+        const userDataString = localStorage.getItem('userData')!;
+        var user: User = JSON.parse(userDataString);
+        user.cart = response.cart;
 
-        console.log(user)
-       
-      }
-    })
+        console.log(user);
+        localStorage.setItem('userData', JSON.stringify(user));
+      },
+    });
   }
 }
