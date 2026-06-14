@@ -77,7 +77,6 @@ export class ProductPage implements OnInit {
         var user: User = JSON.parse(userDataString);
         user.cart = response.cart;
 
-        console.log(user);
         localStorage.setItem('userData', JSON.stringify(user));
       },
     });
