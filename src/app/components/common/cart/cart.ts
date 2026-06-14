@@ -18,6 +18,7 @@ export class Cart implements OnInit {
 
   cartId: number = 0;
   cartItems: any[] = [];
+  total_price : number = 0;
 
   ngOnInit(): void {
     const userData = localStorage.getItem('userData');
@@ -25,13 +26,14 @@ export class Cart implements OnInit {
     const user = JSON.parse(userData);
     this.cartId = user.cart.id;
     this.cartItems = user.cart.items;
-    console.log(this.cartItems);
+    this.total_price = user.cart.total
   }
 
   removeFromCart(item: any) {
     const payload = {
       cart_id : this.cartId,
-      product_id : item.product.id
+      product_id : item.product.id,
+      quantity: item.quantity
     }
     this.cartService.removeFromCart(payload).subscribe({
       next: (response: any) => {
@@ -41,6 +43,7 @@ export class Cart implements OnInit {
           if (!userData) return;
           var user = JSON.parse(userData)
           user.cart.items = this.cartItems;
+          this.total_price = user.cart.total = response.cart.total
           localStorage.setItem("userData", JSON.stringify(user))
         }
       },

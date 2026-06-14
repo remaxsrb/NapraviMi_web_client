@@ -75,7 +75,6 @@ h1 {
   align-items: center;     /* Centers the child elements vertically */
   width: 100%;             /* Takes full width of the screen */
   padding: 15px 0;         /* Add some padding for breathing room */
-  background-color: #ffffff; /* Or whatever your layout color is */
 }
 
 /* 2. Make the link wrapper occupy exactly 1/3 (33.33%) of the header */
