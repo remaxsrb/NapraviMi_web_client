@@ -67,3 +67,30 @@ h1 {
   height: 100vh;   /* full screen height */
   width: 100%;    /* full screen width */
 }
+
+/* 1. Update the header container to use Flexbox */
+.header {
+  display: flex;
+  justify-content: center; /* Centers the child elements horizontally */
+  align-items: center;     /* Centers the child elements vertically */
+  width: 100%;             /* Takes full width of the screen */
+  padding: 15px 0;         /* Add some padding for breathing room */
+  background-color: #ffffff; /* Or whatever your layout color is */
+}
+
+/* 2. Make the link wrapper occupy exactly 1/3 (33.33%) of the header */
+.logo-link {
+  display: flex;
+  justify-content: center; /* Centers the image inside the 33% link box */
+  width: 33.33%;           /* Takes exactly one-third of the header width */
+  text-decoration: none; 
+  border: none;          
+}
+
+/* 3. Style the logo image itself */
+.header-logo {
+  max-width: 100%;         /* Ensures the logo scales down if the screen is small */
+  height: auto;            /* Keeps the logo aspect ratio perfect */
+  max-height: 180px;        /* Limits the maximum vertical size so it doesn't get huge */
+  display: block;
+}

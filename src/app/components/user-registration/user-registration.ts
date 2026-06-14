@@ -9,7 +9,7 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../services/user/user-service';
 
 @Component({
@@ -25,6 +25,7 @@ import { UserService } from '../../services/user/user-service';
     RadioButtonModule,
     ButtonModule,
     CardModule,
+    RouterLink
   ],
   templateUrl: './user-registration.html',
   styleUrls: ['./user-registration.css'],
