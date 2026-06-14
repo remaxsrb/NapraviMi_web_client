@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { RatingModule } from 'primeng/rating';
@@ -14,7 +14,7 @@ import { CartService } from '../../../services/cart/cart-service';
   styleUrl: './cart.css',
 })
 export class Cart implements OnInit {
-  constructor(private cartService: CartService) {}
+  constructor(private cartService: CartService, private cdr: ChangeDetectorRef) {}
 
   cartId: number = 0;
   cartItems: any[] = [];
@@ -45,7 +45,7 @@ export class Cart implements OnInit {
           const user = JSON.parse(userData);
           user.cart.items = this.cartItems;
           user.cart.total = this.total_price;
-
+          this.cdr.markForCheck();
           localStorage.setItem('userData', JSON.stringify(user));
         }
       },
