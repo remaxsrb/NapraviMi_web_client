@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -13,6 +13,15 @@ import { UserService } from '../../services/user/user-service';
 import { RouterLink } from "@angular/router";
 import { CraftsmanApplicationService } from '../../services/craftsman-application/craftsman-application-service';
 import { CraftOption } from '../../interfaces/craft-option';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
+
+interface ApplicationState {
+  craftOptions: CraftOption[];
+  selectedResumeName: string;
+  statusMessage: string;
+  statusSeverity: 'success' | 'error' | 'info';
+}
 
 @Component({
   selector: 'app-craftsman-application',
@@ -31,14 +40,9 @@ import { CraftOption } from '../../interfaces/craft-option';
   templateUrl: './craftsman-application.html',
   styleUrls: ['./craftsman-application.css'],
 })
-export class CraftsmanApplication implements OnInit {
-  craftOptions: CraftOption[] = [];
-
+export class CraftsmanApplication {
   applicationForm!: FormGroup;
-  selectedResumeName = '';
   resumeFile?: File;
-  statusMessage = '';
-  statusSeverity: 'success' | 'error' | 'info' = 'info';
   messageText =
     'Molimo priložite svoj rezime u PDF formatu pre nego što pošaljete prijavu.<br/>Podržan je samo PDF format.' +
     '<br/><br/>' +
@@ -46,22 +50,39 @@ export class CraftsmanApplication implements OnInit {
     '<br/> ' +
     'Nakon slanja prijave, naš tim će pregledati vaš rezime i kontaktirati vas putem emaila sa daljim informacijama o procesu odobrenja.';
 
-  constructor(
-    private fb: FormBuilder,
-    private fileService: FileService,
-    private caService: CraftsmanApplicationService,
-    private craftService: CraftService,
-  ) {
+  private fb = inject(FormBuilder);
+  private fileService = inject(FileService);
+  private caService = inject(CraftsmanApplicationService);
+  private craftService = inject(CraftService);
+
+  private statusSubject$ = new BehaviorSubject<{ message: string; severity: 'success' | 'error' | 'info' }>({
+    message: '',
+    severity: 'info',
+  });
+
+  private resumeNameSubject$ = new BehaviorSubject<string>('');
+
+  readonly state$: Observable<ApplicationState> = this.craftService.getCraftOptions().pipe(
+    map((craftOptions) => ({
+      craftOptions,
+      selectedResumeName: this.resumeNameSubject$.value,
+      statusMessage: this.statusSubject$.value.message,
+      statusSeverity: this.statusSubject$.value.severity,
+    })),
+    startWith({
+      craftOptions: [],
+      selectedResumeName: '',
+      statusMessage: '',
+      statusSeverity: 'info' as const,
+    })
+  );
+
+  constructor() {
     this.initForm();
   }
 
-  ngOnInit(): void {
-    this.craftService.getCraftOptions().subscribe((options) => (this.craftOptions = options));
-  }
-
   private setStatus(severity: 'success' | 'error' | 'info', message: string): void {
-    this.statusSeverity = severity;
-    this.statusMessage = message;
+    this.statusSubject$.next({ severity, message });
   }
 
   initForm(): void {
@@ -74,25 +95,25 @@ export class CraftsmanApplication implements OnInit {
   onResumeSelected(event: any): void {
     const file = event?.files?.[0] as File | undefined;
     if (!file) {
-      this.selectedResumeName = '';
+      this.resumeNameSubject$.next('');
       this.resumeFile = undefined;
       return;
     }
 
     if (file.type !== 'application/pdf') {
       alert('Molimo izaberite PDF datoteku za rezime.');
-      this.selectedResumeName = '';
+      this.resumeNameSubject$.next('');
       this.resumeFile = undefined;
       return;
     }
 
     this.resumeFile = file;
-    this.selectedResumeName = file.name;
+    this.resumeNameSubject$.next(file.name);
   }
 
   onResumeRemoved(): void {
     this.resumeFile = undefined;
-    this.selectedResumeName = '';
+    this.resumeNameSubject$.next('');
   }
 
   onSubmit(): void {
@@ -109,8 +130,7 @@ export class CraftsmanApplication implements OnInit {
             this.onResumeRemoved();
             this.setStatus('success', 'Prijava je uspešno kreirana. Pratite email za dalji postupak.');
             setTimeout(() => {
-              this.statusMessage = '';
-              
+              this.setStatus('info', '');
             }, 3000);
           },
           error: () => {
@@ -119,7 +139,7 @@ export class CraftsmanApplication implements OnInit {
         });
       },
       error: () => {
-        this.setStatus('error', 'Došlo je do greške prilikom otpremanja rezimea. Molimo pokušajte ponovo.');
+        this.setStatus('error', 'Došlo je do greške pri otpremanju fajla. Molimo pokušajte ponovo.');
       },
     });
   }

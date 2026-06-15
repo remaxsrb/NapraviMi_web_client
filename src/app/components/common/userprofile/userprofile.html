@@ -1,4 +1,6 @@
 <body>
+  @let state = (state$ | async);
+  @if (state; as profileState) {
   <app-header></app-header>
 
   <app-navbar></app-navbar>
@@ -7,26 +9,27 @@
       <div class="col-4">
         <div class="mb-4 p-8">
           <p-card>
-            <p-image src="{{ user.profilePicture }}"></p-image>
+            <p-image [src]="profileState.user.profilePicture || ''"></p-image>
           </p-card>
         </div>
       </div>
       <div class="col-8">
         <div class="mb-4 p-8">
           <p-card>
-            <h2>{{ user.firstname }} {{ user.lastname }}</h2>
+            <h2>{{ profileState.user.firstname }} {{ profileState.user.lastname }}</h2>
 
-            <p-rating [(ngModel)]="user.rating" readonly="true"></p-rating>
+            <p-rating [ngModel]="profileState.user.rating" readonly="true"></p-rating>
 
-            <p>{{ user.craft }}</p>
-            <p>{{ user.email }}</p>
+            <p>{{ profileState.user.craft }}</p>
+            <p>{{ profileState.user.email }}</p>
           </p-card>
         </div>
       </div>
     </div>
   </div>
 
-  @if (user.craft) {
-    <app-products-by-craftsman [username]="user.username"></app-products-by-craftsman>
+  @if (profileState.user.craft) {
+    <app-products-by-craftsman [username]="profileState.user.username"></app-products-by-craftsman>
+  }
   }
 </body>

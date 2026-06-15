@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { AuthService } from '../../../services/utils/auth-service';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
@@ -13,6 +13,15 @@ import { UserService } from '../../../services/user/user-service';
 import { RatingModule } from 'primeng/rating';
 import { FormsModule } from '@angular/forms';
 import { CraftsmanService } from '../../../services/craftsman/craftsman-service';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
+
+interface UserProfileState {
+  user: User;
+  isGuestView: boolean;
+  userRole: string;
+  isNotTheOwner: boolean;
+}
 
 @Component({
   selector: 'app-userprofile',
@@ -30,52 +39,65 @@ import { CraftsmanService } from '../../../services/craftsman/craftsman-service'
   templateUrl: './userprofile.html',
   styleUrl: './userprofile.css',
 })
-export class Userprofile implements OnInit {
-  constructor(
-    private authService: AuthService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private userService: UserService,
-    private craftsmanService: CraftsmanService
-  ) {}
+export class Userprofile {
+  private authService = inject(AuthService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private userService = inject(UserService);
+  private craftsmanService = inject(CraftsmanService);
 
-  user: User = new User();
-  isGuestView = false;
-  userRole = '';
-  isNotTheOwner = false;
-  
+  readonly state$: Observable<UserProfileState> = this.authService.authChanged$.pipe(
+    map(() => this.buildState()),
+    startWith(this.buildState())
+  );
 
-  ngOnInit() {
+  onRateCraftsman(event: { value?: number }): void {
+    const currentState = this.buildState();
+    const rating = event.value;
+    const craftsmanId = currentState.user.craftsmanId;
+
+    if (!craftsmanId || rating === undefined) {
+      return;
+    }
+
+    this.craftsmanService.rateCraftsman(craftsmanId, rating)
+      .subscribe({
+        next: (response: any) => {
+          console.log('Rating submitted successfully:', response);
+        },
+        error: (error: any) => {
+          console.error('Error submitting rating:', error);
+        }
+      });
+  }
+
+  private buildState(): UserProfileState {
     const usernameParam = this.route.snapshot.paramMap.get('username');
     const userData = localStorage.getItem('userData');
     const loggedInUser = userData ? JSON.parse(userData) : null;
 
-    this.isNotTheOwner = loggedInUser && loggedInUser.username !== usernameParam; 
+    const isNotTheOwner = Boolean(
+      loggedInUser && usernameParam && loggedInUser.username !== usernameParam
+    );
+    const isGuestView = Boolean(
+      usernameParam && loggedInUser?.username !== usernameParam
+    );
 
-    if (usernameParam && loggedInUser?.username !== usernameParam) {
-      this.isGuestView = true;
-      this.user = this.userService.getPreviewUser();
+    let user: User;
+    let userRole = '';
+
+    if (isGuestView) {
+      user = this.userService.getPreviewUser() ?? new User();
     } else {
-      this.userRole = this.authService.get_role();
-      if (!loggedInUser) return;
-      this.user = loggedInUser;
+      userRole = this.authService.get_role();
+      user = loggedInUser || new User();
     }
+
+    return {
+      user,
+      isGuestView,
+      userRole,
+      isNotTheOwner,
+    };
   }
-
-
-
-onRateCraftsman(event: any): void {
-  const rating = event.value;
-
-  this.craftsmanService.rateCraftsman(this.user.craftsmanId!, rating)
-    .subscribe({
-      next: (response: any) => {
-        console.log('Rating submitted successfully:', response);
-      },
-      error: (error: any) => {
-        console.error('Error submitting rating:', error);
-      }
-    });
-}
-
 }

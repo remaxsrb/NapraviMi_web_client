@@ -1,4 +1,5 @@
 <body>
+  @let state = (state$ | async);
   <div class="header">
     <a routerLink="/" class="logo-link">
     <img src="images/pilot-logo.png" alt="NapraviMi Logo" class="header-logo" />
@@ -10,9 +11,9 @@
         <div class="login-header">Prijavi se</div>
       </ng-template>
 
-      @if (loginError) {
+      @if (state?.loginError) {
         <div class="mb-3">
-          <p-message severity="error">{{ loginErrorMessage }}</p-message>
+          <p-message severity="error">{{ state?.loginErrorMessage }}</p-message>
         </div>
       }
 

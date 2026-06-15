@@ -1,3 +1,4 @@
+  @let state = (state$ | async);
   <div class="header">
     <h1 routerLink="/">NapraviMi</h1>
   </div>
@@ -12,10 +13,10 @@
         ></p-message>
       </div>
 
-      <div class="mb-3" *ngIf="statusMessage">
+      <div class="mb-3" *ngIf="state?.statusMessage">
         <p-message
-          [severity]="statusSeverity"
-          [text]="statusMessage"
+          [severity]="state?.statusSeverity"
+          [text]="state?.statusMessage"
         ></p-message>
       </div>
 
@@ -34,7 +35,7 @@
           <label for="craft">Zanat</label>
           <p-select
             id="craft"
-            [options]="craftOptions"
+            [options]="state?.craftOptions"
             optionLabel="label"
             optionValue="value"
             formControlName="craft"
@@ -58,9 +59,9 @@
           ></p-fileUpload>
         </div>
 
-        @if (selectedResumeName) {
+        @if (state?.selectedResumeName) {
           <div class="field">
-            <small>Izabrani fajl: {{ selectedResumeName }}</small>
+            <small>Izabrani fajl: {{ state?.selectedResumeName }}</small>
           </div>
         }
 

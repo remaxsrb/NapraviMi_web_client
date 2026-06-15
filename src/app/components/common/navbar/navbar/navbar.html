@@ -1,3 +1,4 @@
 <nav>
-  <p-menubar [model]="items"></p-menubar>
+  @let state = (state$ | async);
+  <p-menubar [model]="state?.items"></p-menubar>
 </nav>

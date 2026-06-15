@@ -1,5 +1,7 @@
 <div class="header">
-    <a routerLink="/" class="logo-link">
+  @let state = (state$ | async);
+  @if (state; as headerState) {
+  <a routerLink="/" class="logo-link">
     <img src="images/pilot-logo.png" alt="NapraviMi Logo" class="header-logo" />
   </a>
   <div class="page-top-actions">
@@ -12,7 +14,7 @@
       />
       <button pButton label="Pretraži" icon="pi pi-search" (click)="onSearch()"></button>
     </div>
-    @if (!isLoggedIn) {
+    @if (!headerState.isLoggedIn) {
       <button
         pButton
         label="Registruj se"
@@ -21,17 +23,18 @@
       ></button>
       <button pButton label="Prijavi se" icon="pi pi-sign-in" routerLink="/login"></button>
     }
-    @if (isUser) {
+    @if (headerState.isUser) {
       <p-button
         icon="pi pi-shopping-cart"
-        [badge]="cartItemCount > 0 ? cartItemCount.toString() : ''"
+        [badge]="headerState.cartItemCount > 0 ? headerState.cartItemCount.toString() : ''"
         badgeSeverity="danger"
         routerLink="/user/cart"
         text="true"
       ></p-button>
     }
-    @if (isLoggedIn) {
-      <app-user-actions [user]="currentUser"></app-user-actions>
+    @if (headerState.isLoggedIn) {
+      <app-user-actions [user]="headerState.currentUser"></app-user-actions>
     }
   </div>
+  }
 </div>

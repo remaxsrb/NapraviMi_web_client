@@ -1,17 +1,18 @@
 <div class="products-page">
+  @let state = (state$ | async);
   <h2>Proizvodi</h2>
 
-  @if (isLoading) {
+  @if (state?.isLoading) {
     <p>Učitavanje proizvoda...</p>
-  } @else if (products.length === 0) {
+  } @else if ((state?.products?.length ?? 0) === 0) {
     <p>Nema dostupnih proizvoda.</p>
   } @else {
     <p-dataview
-      [value]="products"
+      [value]="state?.products"
       layout="grid"
       [paginator]="true"
-      [rows]="pageSize"
-      [totalRecords]="totalRecords"
+      [rows]="state?.rows ?? 9"
+      [totalRecords]="state?.totalRecords ?? 0"
       [lazy]="true"
       (onPage)="onPage($event)"
     >

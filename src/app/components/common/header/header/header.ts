@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
@@ -9,8 +9,15 @@ import { AuthService } from '../../../../services/utils/auth-service';
 import { CartService } from '../../../../services/cart/cart-service';
 import { UserActions } from '../../user-actions/user-actions';
 import { User } from '../../../../models/user';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
+
+interface HeaderState {
+  currentUser: User | undefined;
+  isLoggedIn: boolean;
+  isUser: boolean;
+  cartItemCount: number;
+}
 
 @Component({
   selector: 'app-header',
@@ -19,42 +26,28 @@ import { takeUntil } from 'rxjs/operators';
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
-export class Header implements OnInit, OnDestroy {
+export class Header {
   searchQuery = '';
-  currentUser: User | undefined;
-  private destroy$ = new Subject<void>();
 
-  constructor(
-    private router: Router,
-    private authService: AuthService,
-    private cartService: CartService,
-  ) {}
+  private router = inject(Router);
+  private authService = inject(AuthService);
+  private cartService = inject(CartService);
 
-  ngOnInit(): void {
-    this.loadUser();
-    this.authService.authChanged$.pipe(takeUntil(this.destroy$)).subscribe(() => this.loadUser());
-  }
+  readonly state$: Observable<HeaderState> = this.authService.authChanged$.pipe(
+    map(() => this.buildState()),
+    startWith(this.buildState())
+  );
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
-  private loadUser(): void {
+  private buildState(): HeaderState {
     const userData = localStorage.getItem('userData');
-    this.currentUser = userData ? JSON.parse(userData) : undefined;
-  }
+    const currentUser = userData ? JSON.parse(userData) : undefined;
 
-  get isLoggedIn(): boolean {
-    return this.authService.is_LoggedIn();
-  }
-
-  get isUser(): boolean {
-    return this.authService.get_role() === 'user';
-  }
-
-  get cartItemCount() {
-    return this.cartService.cartItemCount();
+    return {
+      currentUser,
+      isLoggedIn: this.authService.is_LoggedIn(),
+      isUser: this.authService.get_role() === 'user',
+      cartItemCount: this.cartService.cartItemCount(),
+    };
   }
 
   onSearch(): void {

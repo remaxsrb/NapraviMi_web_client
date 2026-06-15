@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input, OnInit, inject } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DataViewModule } from 'primeng/dataview';
@@ -9,6 +9,8 @@ import { RatingModule } from 'primeng/rating';
 import { FormsModule } from '@angular/forms';
 import { ProductService } from '../../../../services/product/product-service';
 import { Product } from '../../../../models/product';
+import { BehaviorSubject, combineLatest, EMPTY, Observable } from 'rxjs';
+import { map, switchMap, startWith, catchError } from 'rxjs/operators';
 
 interface ApiProduct {
   id: number;
@@ -21,6 +23,19 @@ interface ApiProduct {
   available: boolean;
   images: string[];
   videos: string[];
+}
+
+interface PaginationEvent {
+  first: number;
+  rows: number;
+}
+
+interface ProductsState {
+  products: Product[];
+  isLoading: boolean;
+  totalRecords: number;
+  first: number;
+  rows: number;
 }
 
 @Component({
@@ -39,53 +54,91 @@ interface ApiProduct {
   templateUrl: './products-by-craftsman.html',
   styleUrl: './products-by-craftsman.css',
 })
-export class ProductsByCraftsman implements OnInit {
+export class ProductsByCraftsman {
   @Input() username: string = '';
-
-  products: Product[] = [];
-  isLoading = false;
-  first = 0;
-  pageSize = 9;
-  totalRecords = 0;
 
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private productService = inject(ProductService);
-  private cdr = inject(ChangeDetectorRef);
+
+  private paginationSubject$ = new BehaviorSubject<PaginationEvent>({
+    first: 0,
+    rows: 9,
+  });
+
+  private usernameSubject$ = new BehaviorSubject<string>('');
+
+  readonly state$: Observable<ProductsState> = combineLatest([
+    this.usernameSubject$,
+    this.paginationSubject$,
+  ]).pipe(
+    switchMap(([username, pagination]) => {
+      if (!username) {
+        return EMPTY.pipe(
+          startWith({
+            products: [],
+            isLoading: true,
+            totalRecords: 0,
+            first: pagination.first,
+            rows: pagination.rows,
+          })
+        );
+      }
+
+      return this.productService.all(username, pagination.first, pagination.rows).pipe(
+        map((response: any) => ({
+          products: response?.data?.products ?? response?.data ?? [],
+          isLoading: false,
+          totalRecords: response?.data?.total ?? 0,
+          first: pagination.first,
+          rows: pagination.rows,
+        })),
+        startWith({
+          products: [],
+          isLoading: true,
+          totalRecords: 0,
+          first: pagination.first,
+          rows: pagination.rows,
+        }),
+        catchError(() =>
+          EMPTY.pipe(
+            startWith({
+              products: [],
+              isLoading: false,
+              totalRecords: 0,
+              first: pagination.first,
+              rows: pagination.rows,
+            })
+          )
+        )
+      );
+    }),
+    startWith({
+      products: [],
+      isLoading: true,
+      totalRecords: 0,
+      first: 0,
+      rows: 9,
+    })
+  );
 
   ngOnInit(): void {
-    if (!this.username) {
+    if (this.username) {
+      this.usernameSubject$.next(this.username);
+    } else {
       const routeUsername = this.route.snapshot.paramMap.get('username');
       if (!routeUsername) {
         this.router.navigate(['/']);
         return;
       }
-      this.username = routeUsername;
+      this.usernameSubject$.next(routeUsername);
     }
-    this.loadProducts();
   }
 
   onPage(event: any): void {
-    this.first = event.first;
-    this.pageSize = event.rows;
-    this.loadProducts();
-  }
-
-  private loadProducts(): void {
-    this.isLoading = true;
-    this.productService.all(this.username, this.first, this.pageSize).subscribe({
-      next: (response: any) => {
-        this.products = response?.data?.products ?? response?.data ?? [];
-        this.totalRecords = response?.data?.total ?? this.products.length;
-        this.isLoading = false;
-              this.cdr.markForCheck();
-
-      },
-      error: () => {
-        this.products = [];
-        this.isLoading = false;
-        this.cdr.markForCheck();
-      },
+    this.paginationSubject$.next({
+      first: event.first,
+      rows: event.rows,
     });
   }
 
@@ -96,5 +149,4 @@ export class ProductsByCraftsman implements OnInit {
   onSelectProduct(product: Product): void {
     this.productService.setPreviewProduct(product);
   }
-
 }

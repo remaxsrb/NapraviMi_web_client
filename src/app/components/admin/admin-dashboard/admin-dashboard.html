@@ -1,9 +1,10 @@
 <body>
+  @let state = (state$ | async);
   <div class="header">
     <h1>NapraviMi</h1>
-    <app-user-actions [user]="user"></app-user-actions>
+    <app-user-actions [user]="state?.user"></app-user-actions>
   </div>
-  <div class="user-role">Uloga: {{ role }}</div>
+  <div class="user-role">Uloga: {{ state?.role }}</div>
   <app-navbar></app-navbar>
   <div class="content">
     <router-outlet></router-outlet>

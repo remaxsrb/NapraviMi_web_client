@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
@@ -12,6 +12,15 @@ import { Product } from '../../../../models/product';
 import { Header } from '../../../common/header/header/header';
 import { CartService } from '../../../../services/cart/cart-service';
 import { User } from '../../../../models/user';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
+
+interface ProductPageState {
+  product: Product | null;
+  isLoading: boolean;
+  isOwner: boolean;
+  isCustomer: boolean;
+}
 
 @Component({
   selector: 'app-product-page',
@@ -20,65 +29,76 @@ import { User } from '../../../../models/user';
   templateUrl: './product-page.html',
   styleUrl: './product-page.css',
 })
-export class ProductPage implements OnInit {
-  isLoading = true;
-  isOwner = false;
-  isCustomer = false;
-
+export class ProductPage {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private productService = inject(ProductService);
   private authService = inject(AuthService);
   private cartService = inject(CartService);
 
-  product: Product | null = null;
+  readonly state$: Observable<ProductPageState> = this.buildState();
 
-  ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    if (!id) {
-      this.router.navigate(['/']);
-      return;
-    }
-    this.isCustomer = this.authService.get_role() === 'user';
+  addToCart(): void {
     const cachedProduct = this.productService.getPreviewProduct();
-    if (cachedProduct) {
-      this.product = cachedProduct;
-      this.isLoading = false;
-      this.checkOwnership();
-    } else {
-      this.router.navigate(['/']);
-    }
-  }
+    if (!cachedProduct) return;
 
-  private checkOwnership(): void {
-    if (this.authService.get_role() !== 'craftsman') return;
+    const payload = {
+      cart_id: Number(this.authService.get_id()),
+      product_id: cachedProduct.id,
+      quantity: 1,
+    };
 
-    this.isOwner = Number(this.authService.get_craftsman_id()) === this.product?.craftsmanId;
+    this.cartService.addToCart(payload).subscribe({
+      next: (response: any) => {
+        const userDataString = localStorage.getItem('userData');
+        if (!userDataString) return;
+
+        const user: User = JSON.parse(userDataString);
+        user.cart = response.cart;
+        localStorage.setItem('userData', JSON.stringify(user));
+      },
+    });
   }
 
   deleteProduct(): void {
-    if (!this.product) return;
-    this.productService.delete(this.product.id!, this.product.craftsmanId!).subscribe({
+    const cachedProduct = this.productService.getPreviewProduct();
+    if (!cachedProduct) return;
+
+    this.productService.delete(cachedProduct.id!, cachedProduct.craftsmanId!).subscribe({
       next: () => this.router.navigate(['/profile']),
       error: () => {},
     });
   }
 
-  addToCart() {
-    const payload = {
-      cart_id: Number(this.authService.get_id()),
-      product_id: this.product?.id,
-      quantity: 1
-    }
-    this.cartService.addToCart(payload).subscribe({
-      next: (response: any) => {
-        if (!localStorage.getItem('userData')) return;
-        const userDataString = localStorage.getItem('userData')!;
-        var user: User = JSON.parse(userDataString);
-        user.cart = response.cart;
+  private buildState(): Observable<ProductPageState> {
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    const cachedProduct = this.productService.getPreviewProduct();
+    const isCustomer = this.authService.get_role() === 'user';
 
-        localStorage.setItem('userData', JSON.stringify(user));
-      },
+    if (!id || !cachedProduct) {
+      this.router.navigate(['/']);
+      return new Observable((observer) => {
+        observer.next({
+          product: null,
+          isLoading: false,
+          isOwner: false,
+          isCustomer,
+        });
+      });
+    }
+
+    const isOwner =
+      this.authService.get_role() === 'craftsman' &&
+      Number(this.authService.get_craftsman_id()) === cachedProduct.craftsmanId;
+
+    return new Observable((observer) => {
+      observer.next({
+        product: cachedProduct,
+        isLoading: false,
+        isOwner,
+        isCustomer,
+      });
+      observer.complete();
     });
   }
 }

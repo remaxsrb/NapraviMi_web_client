@@ -1,55 +1,54 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { MenubarModule } from 'primeng/menubar';
 import { MenuItem } from 'primeng/api';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../services/utils/auth-service';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
+import { AsyncPipe } from '@angular/common';
+
+interface NavbarState {
+  items: MenuItem[];
+}
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [MenubarModule],
+  imports: [MenubarModule, AsyncPipe],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
-export class Navbar implements OnInit, OnDestroy {
+export class Navbar {
   @Output() addProductClick = new EventEmitter<void>();
 
-  items: MenuItem[] = [];
-  private destroy$ = new Subject<void>();
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
-  constructor(
-    private authService: AuthService,
-    private router: Router,
-  ) {}
+  readonly state$: Observable<NavbarState> = this.authService.authChanged$.pipe(
+    map(() => ({
+      items: this.buildItems(),
+    })),
+    startWith({
+      items: this.buildItems(),
+    })
+  );
 
-  ngOnInit(): void {
-    this.buildItems();
-    this.authService.authChanged$.pipe(takeUntil(this.destroy$)).subscribe(() => this.buildItems());
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
-  private buildItems(): void {
+  private buildItems(): MenuItem[] {
     const role = this.authService.get_role();
     const isLoggedIn = this.authService.is_LoggedIn();
 
     if (role === 'admin') {
-      this.items = [
+      return [
         { label: 'Zahtevi zanatlija', icon: 'pi pi-list', routerLink: '/admin/craftsman-applications' },
         { label: 'Postavi uloge', icon: 'pi pi-user-edit', routerLink: '/admin/set-roles' },
       ];
     } else if (role === 'craftsman') {
-      this.items = [
+      return [
         { label: 'Pregled zanatlija', icon: 'pi pi-users', command: () => this.router.navigate(['craftsmen']) },
         { label: 'Dodaj proizvod', icon: 'pi pi-plus', routerLink: '/craftsman/add-product' },
       ];
     } else {
-      this.items = [
+      return [
         ...(!isLoggedIn || role === 'user' ? [{ label: 'Postani Zanatlija', icon: 'pi pi-list', routerLink: '/craftsman-apply' }] : []),
         { label: 'Pregled zanatlija', icon: 'pi pi-users', command: () => this.router.navigate(['craftsmen']) },
       ];

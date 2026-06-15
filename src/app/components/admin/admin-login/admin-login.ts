@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -9,38 +9,46 @@ import { MessageModule } from 'primeng/message';
 import { PasswordModule } from 'primeng/password';
 import { UserService } from '../../../services/user/user-service';
 import { AuthService } from '../../../services/utils/auth-service';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
+
+interface AdminLoginState {
+  loginError: boolean;
+  loginErrorMessage: string;
+}
 
 @Component({
   selector: 'app-admin-login',
   standalone: true,
-  imports: [ CommonModule,
+  imports: [
+    CommonModule,
     ReactiveFormsModule,
     MessageModule,
     InputTextModule,
     PasswordModule,
     ButtonModule,
     CardModule,
-    RouterLink,],
+    RouterLink,
+  ],
   templateUrl: './admin-login.html',
   styleUrl: './admin-login.css',
 })
-export class AdminLogin implements OnInit {
-
-   loginError: boolean = false;
-  loginErrorMessage: string = '';
-
+export class AdminLogin {
   loginForm!: FormGroup;
 
-  constructor(
-    private fb: FormBuilder,
-    private router: Router,
-    private userService: UserService,
-    private authService: AuthService,
-    private cdr: ChangeDetectorRef,
-  ) {}
+  private fb = inject(FormBuilder);
+  private router = inject(Router);
+  private userService = inject(UserService);
+  private authService = inject(AuthService);
 
+  private errorSubject$ = new BehaviorSubject<AdminLoginState>({
+    loginError: false,
+    loginErrorMessage: '',
+  });
 
-  ngOnInit(): void {
+  readonly state$ = this.errorSubject$.asObservable();
+
+  constructor() {
     this.initLoginForm();
   }
 
@@ -52,8 +60,10 @@ export class AdminLogin implements OnInit {
   }
 
   submit(): void {
-    this.loginError = false;
-    this.loginErrorMessage = '';
+    this.errorSubject$.next({
+      loginError: false,
+      loginErrorMessage: '',
+    });
 
     this.userService.login(this.loginForm.value).subscribe({
       next: (response) => {
@@ -61,10 +71,22 @@ export class AdminLogin implements OnInit {
         localStorage.setItem('userData', JSON.stringify(response.user));
         const payload = this.authService.decode_token(response.access_token);
         const userRole = payload?.role;
-        console.log('User role from token payload:', userRole);
+
         if (userRole === 'admin') {
           this.router.navigate(['/admin']);
+        } else {
+          this.errorSubject$.next({
+            loginError: true,
+            loginErrorMessage: 'Nije dozvoljen pristup. Samo administratori mogu da se prijave ovde.',
+          });
         }
+      },
+      error: (error) => {
+        const errorMessage = this.getLoginErrorMessage(error);
+        this.errorSubject$.next({
+          loginError: true,
+          loginErrorMessage: errorMessage,
+        });
       },
     });
   }

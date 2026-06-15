@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { Message, MessageModule } from 'primeng/message';
@@ -11,6 +11,12 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../services/user/user-service';
+import { BehaviorSubject, Observable } from 'rxjs';
+
+interface RegistrationState {
+  submissionError: boolean;
+  submissionErrorMessage: string;
+}
 
 @Component({
   selector: 'app-user-registration',
@@ -32,15 +38,19 @@ import { UserService } from '../../services/user/user-service';
 })
 export class UserRegistration {
   signUpForm!: FormGroup;
-  submissionError: boolean = false;
-  submissionErrorMessage: string = '';
 
-  constructor(
-    private fb: FormBuilder,
-    private router: Router,
-    private userService: UserService,
-    private cdr: ChangeDetectorRef,
-  ) {
+  private fb = inject(FormBuilder);
+  private router = inject(Router);
+  private userService = inject(UserService);
+
+  private errorSubject$ = new BehaviorSubject<RegistrationState>({
+    submissionError: false,
+    submissionErrorMessage: '',
+  });
+
+  readonly state$ = this.errorSubject$.asObservable();
+
+  constructor() {
     this.initSignUpForm();
   }
 
@@ -75,8 +85,10 @@ export class UserRegistration {
   }
 
   submit(): void {
-    this.submissionError = false;
-    this.submissionErrorMessage = '';
+    this.errorSubject$.next({
+      submissionError: false,
+      submissionErrorMessage: '',
+    });
 
     const formValue = this.signUpForm.value;
     const userData = {
@@ -86,13 +98,14 @@ export class UserRegistration {
 
     this.userService.register(userData).subscribe({
       next: () => {
-        this.submissionError = false;
         this.router.navigate(['/']);
       },
       error: (error) => {
-        this.submissionError = true;
-        this.submissionErrorMessage = this.getSignupErrorMessage(error);
-        this.cdr.detectChanges(); 
+        const errorMessage = this.getSignupErrorMessage(error);
+        this.errorSubject$.next({
+          submissionError: true,
+          submissionErrorMessage: errorMessage,
+        });
       },
     });
   }

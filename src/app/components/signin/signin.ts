@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -10,6 +10,13 @@ import { PasswordModule } from 'primeng/password';
 import { RegexPatterns } from '../../regexPatterns';
 import { UserService } from '../../services/user/user-service';
 import { AuthService } from '../../services/utils/auth-service';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
+
+interface SigninState {
+  loginError: boolean;
+  loginErrorMessage: string;
+}
 
 @Component({
   selector: 'app-signin',
@@ -27,22 +34,22 @@ import { AuthService } from '../../services/utils/auth-service';
   templateUrl: './signin.html',
   styleUrl: './signin.css',
 })
-export class Signin implements OnInit {
-
-  loginError: boolean = false;
-  loginErrorMessage: string = '';
-
+export class Signin {
   loginForm!: FormGroup;
 
-  constructor(
-    private fb: FormBuilder,
-    private router: Router,
-    private userService: UserService,
-    private authService: AuthService,
-    private cdr: ChangeDetectorRef,
-  ) {}
+  private fb = inject(FormBuilder);
+  private router = inject(Router);
+  private userService = inject(UserService);
+  private authService = inject(AuthService);
 
-  ngOnInit(): void {
+  private errorSubject$ = new BehaviorSubject<SigninState>({
+    loginError: false,
+    loginErrorMessage: '',
+  });
+
+  readonly state$ = this.errorSubject$.asObservable();
+
+  constructor() {
     this.initLoginForm();
   }
 
@@ -54,8 +61,10 @@ export class Signin implements OnInit {
   }
 
   submit(): void {
-    this.loginError = false;
-    this.loginErrorMessage = '';
+    this.errorSubject$.next({
+      loginError: false,
+      loginErrorMessage: '',
+    });
 
     this.userService.login(this.loginForm.value).subscribe({
       next: (response) => {
@@ -73,21 +82,18 @@ export class Signin implements OnInit {
           this.router.navigate(['/craftsman']);
         }
       },
+      error: (error) => {
+        const errorMessage = this.getLoginErrorMessage(error);
+        this.errorSubject$.next({
+          loginError: true,
+          loginErrorMessage: errorMessage,
+        });
+      },
     });
   }
 
   private getLoginErrorMessage(error: any): string {
     const { error: backendErrorMessage, message: backendMessage } = error?.error ?? {};
-    const effectiveMessage = backendErrorMessage || backendMessage || error?.message;
-
-    if (effectiveMessage) {
-      return effectiveMessage;
-    }
-
-    if (error?.status) {
-      return `Prijavljivanje nije uspelo. Status: ${error.status}.`;
-    }
-
-    return 'Došlo je do greške pri prijavljivanju. Pokušajte ponovo.';
+    return backendErrorMessage || backendMessage || 'Greška pri prijavi. Pokušajte ponovo.';
   }
 }

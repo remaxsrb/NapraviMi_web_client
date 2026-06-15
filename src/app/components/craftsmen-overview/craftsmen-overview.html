@@ -1,23 +1,24 @@
 <div class="craftsmen-overview">
+  @let state = (state$ | async);
   <div class="overview-header">
-    <h2>{{ activeCraft ? 'Zanatlije - ' + activeCraftLabel : 'Pregled zanatlija' }}</h2>
-    @if (activeCraft) {
+    <h2>{{ state?.activeCraft ? 'Zanatlije - ' + state?.activeCraftLabel : 'Pregled zanatlija' }}</h2>
+    @if (state?.activeCraft) {
       <div class="active-filter">
         <span class="filter-label"
-          >Filtar: <strong>{{ activeCraftLabel }}</strong></span
+          >Filtar: <strong>{{ state?.activeCraftLabel }}</strong></span
         >
         <button class="clear-filter-btn" (click)="clearFilter()" title="Ukloni filtar">✕</button>
       </div>
     }
   </div>
 
-  @if (isLoading) {
+  @if (state?.isLoading) {
     <p>Učitavanje zanatlija...</p>
-  } @else if (craftsmen.length === 0) {
+  } @else if ((state?.craftsmen?.length ?? 0) === 0) {
     <p>Nema zanatlija za prikaz.</p>
   } @else {
     <div class="craftsmen-grid">
-      @for (craftsman of craftsmen; track craftsman.email) {
+      @for (craftsman of state?.craftsmen; track craftsman.email) {
         <p-card styleClass="craftsman-card">
           <div class="craftsman-card-content">
             <img
@@ -46,9 +47,9 @@
       }
     </div>
     <p-paginator
-      [rows]="pageSize"
-      [totalRecords]="totalRecords"
-      [first]="first"
+      [rows]="state?.rows ?? 6"
+      [totalRecords]="state?.totalRecords ?? 0"
+      [first]="state?.first ?? 0"
       [rowsPerPageOptions]="[6, 12, 24]"
       (onPageChange)="onPageChange($event)"
     ></p-paginator>

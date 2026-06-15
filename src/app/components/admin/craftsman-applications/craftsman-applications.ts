@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -11,6 +11,8 @@ import { ToastModule } from 'primeng/toast';
 import { CraftsmanService } from '../../../services/craftsman/craftsman-service';
 import { CraftService } from '../../../services/craft/craft-service';
 import { CraftOption } from '../../../interfaces/craft-option';
+import { BehaviorSubject, combineLatest, EMPTY, Observable } from 'rxjs';
+import { map, switchMap, startWith, catchError } from 'rxjs/operators';
 
 interface ApiApplication {
   id: number;
@@ -44,6 +46,29 @@ interface GetAllResponse {
   };
 }
 
+interface PaginationEvent {
+  first: number;
+  rows: number;
+}
+
+interface LazyLoadEvent {
+  first?: number | null;
+  rows?: number | null;
+}
+
+interface StatusChangeEvent {
+  value?: string;
+}
+
+interface CraftsmanApplicationsState {
+  applications: ApplicationRow[];
+  craftOptions: CraftOption[];
+  first: number;
+  rows: number;
+  totalRecords: number;
+  isLoading: boolean;
+}
+
 @Component({
   selector: 'app-craftsman-applications',
   standalone: true,
@@ -52,85 +77,98 @@ interface GetAllResponse {
   templateUrl: './craftsman-applications.html',
   styleUrl: './craftsman-applications.css',
 })
-export class CraftsmanApplications implements OnInit {
-  applications: ApplicationRow[] = [];
-  displayedApplications: ApplicationRow[] = [];
-  first = 0;
-  backendLimit = 5;
-  totalRecords = 0;
-  isLoading = false;
-  private initialLazyLoadHandled = false;
-
+export class CraftsmanApplications {
   statusOptions: StatusOption[] = [
     { label: 'Odbij', value: 'rejected' },
     { label: 'Odobri', value: 'approved' },
   ];
-
-  craftOptions: CraftOption[] = [];
 
   private craftsmanApplicationService = inject(CraftsmanApplicationService);
   private confirmationService = inject(ConfirmationService);
   private messageService = inject(MessageService);
   private craftsmanService = inject(CraftsmanService);
   private craftService = inject(CraftService);
-  constructor(private cdr: ChangeDetectorRef) {}
 
-  ngOnInit(): void {
-    this.craftService.getCraftOptions().subscribe((options) => (this.craftOptions = options));
-  }
+  private paginationSubject$ = new BehaviorSubject<PaginationEvent>({
+    first: 0,
+    rows: 5,
+  });
 
-  pageChange(event: any): void {
-    const skip = event.first ?? 0;
-    const rows = event.rows ?? this.backendLimit;
+  readonly state$: Observable<CraftsmanApplicationsState> = combineLatest([
+    this.craftService.getCraftOptions(),
+    this.paginationSubject$,
+  ]).pipe(
+    switchMap(([craftOptions, pagination]) =>
+      this.craftsmanApplicationService
+        .all({ limit: pagination.rows, skip: pagination.first })
+        .pipe(
+          map((response: GetAllResponse) => ({
+            applications: response.data.craftsman_applications.map((a) =>
+              this.mapApiApplicationToRow(a, craftOptions)
+            ),
+            craftOptions,
+            first: pagination.first,
+            rows: pagination.rows,
+            totalRecords: response.data.total,
+            isLoading: false,
+          })),
+          startWith({
+            applications: [],
+            craftOptions,
+            first: pagination.first,
+            rows: pagination.rows,
+            totalRecords: 0,
+            isLoading: true,
+          }),
+          catchError(() =>
+            EMPTY.pipe(
+              startWith({
+                applications: [],
+                craftOptions,
+                first: pagination.first,
+                rows: pagination.rows,
+                totalRecords: 0,
+                isLoading: false,
+              })
+            )
+          )
+        )
+    ),
+    startWith({
+      applications: [],
+      craftOptions: [],
+      first: 0,
+      rows: 5,
+      totalRecords: 0,
+      isLoading: true,
+    })
+  );
 
-    if (!this.initialLazyLoadHandled) {
-      this.initialLazyLoadHandled = true;
-      setTimeout(() => this.loadPage(skip, rows));
-      return;
-    }
-
-    setTimeout(() => this.loadPage(skip, rows));
-  }
-
-  private loadPage(skip: number, limit: number): void {
-    this.isLoading = true;
-    const requestData: any = { limit, skip };
-
-    this.craftsmanApplicationService.all(requestData).subscribe({
-      next: (response: GetAllResponse) => {
-        this.applications = response.data.craftsman_applications.map((a) => this.mapApiApplicationToRow(a));
-        this.displayedApplications = this.applications;
-        this.first = skip;
-        this.backendLimit = limit;
-        this.totalRecords = response.data.total;
-        this.isLoading = false;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.applications = [];
-        this.displayedApplications = [];
-        this.totalRecords = 0;
-        this.isLoading = false;
-        this.cdr.detectChanges();
-      },
+  pageChange(event: LazyLoadEvent): void {
+    this.paginationSubject$.next({
+      first: event.first ?? 0,
+      rows: event.rows ?? this.paginationSubject$.value.rows,
     });
   }
 
-  private mapApiApplicationToRow(application: ApiApplication): ApplicationRow {
+  private mapApiApplicationToRow(application: ApiApplication, craftOptions: CraftOption[]): ApplicationRow {
     return {
       id: application.id,
       email: application.email,
       craft: application.craft,
-      craftLabel: this.craftOptions.find((c) => c.value === application.craft)?.label ?? application.craft,
+      craftLabel: craftOptions.find((c) => c.value === application.craft)?.label ?? application.craft,
       status: application.status,
       newStatus: application.status,
       createdAt: new Date(application.created_at),
-      resolvedAt: application.resolved_at && !application.resolved_at.startsWith('0001-01-01') ? new Date(application.resolved_at) : undefined,
+      resolvedAt:
+        application.resolved_at && !application.resolved_at.startsWith('0001-01-01')
+          ? new Date(application.resolved_at)
+          : undefined,
     };
   }
 
-  onStatusChange(event: any, app: ApplicationRow): void {
-    const newStatus = event.value;
+  onStatusChange(event: StatusChangeEvent, app: ApplicationRow): void {
+    const newStatus = event.value ?? app.status;
     if (newStatus === app.status) {
       return;
     }
@@ -145,13 +183,15 @@ export class CraftsmanApplications implements OnInit {
       rejectLabel: 'Ne',
       accept: () => {
         if (newStatus === 'approved') {
-          const requestData = {
-            id: app.id,
-          };
+          const requestData = { id: app.id };
           this.craftsmanApplicationService.approveCA(requestData).subscribe({
             next: () => {
-              this.messageService.add({ severity: 'success', summary: 'Uspeh', detail: `Zahtev odobren.` });
-              this.loadPage(this.first, this.backendLimit);
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Uspeh',
+                detail: `Zahtev odobren.`,
+              });
+              this.refreshPage();
 
               const craftsmanData = {
                 email: app.email,
@@ -159,39 +199,55 @@ export class CraftsmanApplications implements OnInit {
               };
 
               this.craftsmanService.createCraftsman(craftsmanData).subscribe({
-                next: () => {
-                  
-                },
+                next: () => {},
                 error: () => {
-                  this.messageService.add({ severity: 'error', summary: 'Greška', detail: `Došlo je do greške prilikom kreiranja zanatlije nakon odobrenja zahteva.` });
+                  this.messageService.add({
+                    severity: 'error',
+                    summary: 'Greška',
+                    detail: `Došlo je do greške prilikom kreiranja zanatlije nakon odobrenja zahteva.`,
+                  });
                 },
               });
-
             },
             error: () => {
-              this.messageService.add({ severity: 'error', summary: 'Greška', detail: `Došlo je do greške prilikom odobravanja zahteva.` });
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Greška',
+                detail: `Došlo je do greške prilikom odobravanja zahteva.`,
+              });
               app.newStatus = app.status;
             },
           });
         } else if (newStatus === 'rejected') {
-          const requestData = {
-            id: app.id,
-          };
+          const requestData = { id: app.id };
           this.craftsmanApplicationService.rejectCA(requestData).subscribe({
             next: () => {
-              this.messageService.add({ severity: 'success', summary: 'Uspeh', detail: `Zahtev odbijen.` });
-              this.loadPage(this.first, this.backendLimit);
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Uspeh',
+                detail: `Zahtev odbijen.`,
+              });
+              this.refreshPage();
             },
             error: () => {
-              this.messageService.add({ severity: 'error', summary: 'Greška', detail: `Došlo je do greške prilikom odbijanja zahteva.` });
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Greška',
+                detail: `Došlo je do greške prilikom odbijanja zahteva.`,
+              });
               app.newStatus = app.status;
             },
           });
-        } 
+        }
       },
       reject: () => {
         app.newStatus = app.status;
       },
     });
+  }
+
+  private refreshPage(): void {
+    const currentPagination = this.paginationSubject$.value;
+    this.paginationSubject$.next(currentPagination);
   }
 }

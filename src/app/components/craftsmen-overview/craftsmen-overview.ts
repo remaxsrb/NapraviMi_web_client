@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RatingModule } from 'primeng/rating';
 import { CardModule } from 'primeng/card';
 import { PaginatorModule } from 'primeng/paginator';
@@ -8,12 +8,26 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CraftsmanService } from '../../services/craftsman/craftsman-service';
 import { CraftService } from '../../services/craft/craft-service';
-import { combineLatest, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, EMPTY, Observable } from 'rxjs';
+import { map, switchMap, startWith, catchError, tap } from 'rxjs/operators';
 import { UserService } from '../../services/user/user-service';
-import { AuthService } from '../../services/utils/auth-service';
 import { User } from '../../models/user';
 import { CraftOption } from '../../interfaces/craft-option';
+
+interface PaginationEvent {
+  first: number;
+  rows: number;
+}
+
+interface CraftsmenState {
+  craftsmen: User[];
+  isLoading: boolean;
+  totalRecords: number;
+  activeCraft: string | null;
+  activeCraftLabel: string | null;
+  first: number;
+  rows: number;
+}
 
 @Component({
   selector: 'app-craftsmen-overview',
@@ -29,53 +43,92 @@ import { CraftOption } from '../../interfaces/craft-option';
   templateUrl: './craftsmen-overview.html',
   styleUrl: './craftsmen-overview.css',
 })
-export class CraftsmenOverview implements OnInit, OnDestroy {
-  craftsmen: User[] = [];
-  isLoading = false;
-  pageSize = 6;
-  first = 0;
-  totalRecords = 0;
-  activeCraft: string | null = null;
-  activeCraftLabel: string | null = null;
-
+export class CraftsmenOverview {
   private craftsmanService = inject(CraftsmanService);
   private craftService = inject(CraftService);
   private userService = inject(UserService);
-  private authService = inject(AuthService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private destroy$ = new Subject<void>();
 
-  ngOnInit(): void {
-    combineLatest([this.route.queryParamMap, this.craftService.getCraftOptions()])
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(([params, craftOptions]: [any, CraftOption[]]) => {
-        const craft = params.get('craft');
-        this.activeCraft = craft;
-        this.activeCraftLabel = craft
-          ? craftOptions.find((c) => c.value === craft)?.label || craft
-          : null;
-        this.first = 0;
-        this.loadCraftsmen();
-      });
-  }
+  private paginationSubject$ = new BehaviorSubject<PaginationEvent>({
+    first: 0,
+    rows: 6,
+  });
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
+  readonly state$: Observable<CraftsmenState> = combineLatest([
+    this.route.queryParamMap,
+    this.craftService.getCraftOptions(),
+    this.paginationSubject$,
+  ]).pipe(
+    switchMap(([params, craftOptions, pagination]) => {
+      const craft = params.get('craft');
+      const activeCraftLabel = craft
+        ? craftOptions.find((c) => c.value === craft)?.label || craft
+        : null;
+
+      // Reset pagination when craft filter changes
+      const adjustedPagination =
+        craft && pagination.first > 0 ? { first: 0, rows: pagination.rows } : pagination;
+      if (adjustedPagination.first !== pagination.first) {
+        this.paginationSubject$.next(adjustedPagination);
+      }
+
+      return this.fetchCraftsmen(craft, adjustedPagination).pipe(
+        map((response) => ({
+          craftsmen: response?.data?.craftsmen || [],
+          isLoading: false,
+          totalRecords: response?.data?.total || 0,
+          activeCraft: craft,
+          activeCraftLabel,
+          first: adjustedPagination.first,
+          rows: adjustedPagination.rows,
+        })),
+        startWith({
+          craftsmen: [],
+          isLoading: true,
+          totalRecords: 0,
+          activeCraft: craft,
+          activeCraftLabel,
+          first: adjustedPagination.first,
+          rows: adjustedPagination.rows,
+        }),
+        catchError(() =>
+          EMPTY.pipe(
+            startWith({
+              craftsmen: [],
+              isLoading: false,
+              totalRecords: 0,
+              activeCraft: craft,
+              activeCraftLabel,
+              first: adjustedPagination.first,
+              rows: adjustedPagination.rows,
+            })
+          )
+        )
+      );
+    }),
+    startWith({
+      craftsmen: [],
+      isLoading: true,
+      totalRecords: 0,
+      activeCraft: null,
+      activeCraftLabel: null,
+      first: 0,
+      rows: 6,
+    })
+  );
 
   clearFilter(): void {
     this.router.navigate([], { queryParams: {} });
   }
 
   onPageChange(event: any): void {
-    this.first = event.first;
-    this.pageSize = event.rows;
-    this.loadCraftsmen();
+    this.paginationSubject$.next({
+      first: event.first,
+      rows: event.rows,
+    });
   }
 
-  // Inside CraftsmenOverview
   onSelectCraftsman(craftsman: User): void {
     const userData = localStorage.getItem('userData');
     const loggedInUser = userData ? JSON.parse(userData) : null;
@@ -87,32 +140,16 @@ export class CraftsmenOverview implements OnInit, OnDestroy {
     }
   }
 
-  private loadCraftsmen(): void {
-    this.isLoading = true;
-
-    if (this.activeCraft) {
-      this.craftsmanService.getByCraft(this.activeCraft, this.first, this.pageSize).subscribe({
-        next: (response: any) => {
-          this.craftsmen = response?.data?.craftsmen || [];
-          this.totalRecords = response?.data?.total || 0;
-          this.isLoading = false;
-        },
-        error: () => {
-          this.craftsmen = [];
-          this.isLoading = false;
-        },
-      });
+  private fetchCraftsmen(
+    craft: string | null,
+    pagination: PaginationEvent
+  ): Observable<any> {
+    if (craft) {
+      return this.craftsmanService.getByCraft(craft, pagination.first, pagination.rows);
     } else {
-      this.craftsmanService.all({ limit: this.pageSize, skip: this.first }).subscribe({
-        next: (response: any) => {
-          this.craftsmen = response?.data?.craftsmen || [];
-          this.totalRecords = response?.data?.total || 0;
-          this.isLoading = false;
-        },
-        error: () => {
-          this.craftsmen = [];
-          this.isLoading = false;
-        },
+      return this.craftsmanService.all({
+        limit: pagination.rows,
+        skip: pagination.first,
       });
     }
   }

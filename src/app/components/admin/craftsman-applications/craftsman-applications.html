@@ -1,17 +1,19 @@
 <p-confirmDialog></p-confirmDialog>
 <p-toast></p-toast>
 <div class="craftsman-applications-page">
+  @let state = (state$ | async);
   <h2>Zahtevi za ulogu zanatlije</h2>
 
   <p-table
-    [value]="displayedApplications"
+    [value]="state?.applications ?? []"
     [paginator]="true"
-    [first]="first"
-    [rows]="backendLimit"
-    [totalRecords]="totalRecords"
+    [first]="state?.first ?? 0"
+    [rows]="state?.rows ?? 5"
+    [totalRecords]="state?.totalRecords ?? 0"
     [lazy]="true"
     (onLazyLoad)="pageChange($event)"
     [rowsPerPageOptions]="[5, 10, 15]"
+    [loading]="state?.isLoading ?? false"
   >
     <ng-template pTemplate="header">
       <tr>
