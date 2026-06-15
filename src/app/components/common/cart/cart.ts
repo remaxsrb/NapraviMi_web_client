@@ -8,6 +8,7 @@ import { CartService } from '../../../services/cart/cart-service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 interface CartState {
   cartId: number;
@@ -24,6 +25,7 @@ interface CartState {
 })
 export class Cart {
   private cartService = inject(CartService);
+  private router = inject(Router);
 
   private cartStateSubject$ = new BehaviorSubject<CartState>(this.loadInitialState());
 
@@ -80,5 +82,9 @@ export class Cart {
       cartItems: user.cart.items,
       total_price: user.cart.total,
     };
+  }
+
+  placeOrder(): void {
+    this.router.navigate(['/payment']);
   }
 }

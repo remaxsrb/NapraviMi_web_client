@@ -21,6 +21,12 @@ export interface NewOrderRequest {
   credit_card_data?: CreditCardData;
 }
 
+export interface CreateOrderResponse {
+  pdfURL?: string;
+  pdfUrl?: string;
+  pdf_url?: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -30,6 +36,6 @@ export class PaymentService {
   constructor(private http: HttpClient) {}
 
   createOrder(orderRequest: NewOrderRequest) {
-    return this.http.post<any>(`${this.orderApiUrl}`, orderRequest);
+    return this.http.post<CreateOrderResponse>(`${this.orderApiUrl}/create`, orderRequest);
   }
 }

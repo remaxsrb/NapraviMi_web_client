@@ -13,7 +13,8 @@ import {
   ValidationErrors,
 } from '@angular/forms';
 import { RegexPatterns } from '../../../regexPatterns';
-import { PaymentService, NewOrderRequest, CreditCardData } from '../../../services/payment/payment-service';
+import { PaymentService, NewOrderRequest } from '../../../services/payment/payment-service';
+import { AuthService } from '../../../services/utils/auth-service';
 
 export type PaymentType = 'cash' | 'card' | null;
 export type CardType = 'VISA' | 'MASTERCARD' | 'DINERS' | null;
@@ -35,6 +36,7 @@ function cardNumberValidator(control: AbstractControl): ValidationErrors | null 
 export class Payment {
   private router = inject(Router);
   private paymentService = inject(PaymentService);
+  private authService = inject(AuthService);
 
   selectedPayment: PaymentType = null;
   isLoading = false;
@@ -94,7 +96,7 @@ export class Payment {
       return;
     }
 
-    const craftsmanId = cartItems[0]?.product?.craftsmanId;
+    const craftsmanId = cartItems[0]?.product?.craftsman_id;
     if (!craftsmanId) {
       this.errorMessage = 'Greška pri preuzimanju podataka o zanatliji';
       this.isLoading = false;
@@ -134,8 +136,17 @@ export class Payment {
     this.paymentService.createOrder(orderRequest).subscribe({
       next: (response) => {
         this.isLoading = false;
-        console.log('Order created successfully:', response);
-        // TODO: Clear cart and redirect to success page
+        const pdfUrl = response?.pdfURL ?? response?.pdfUrl ?? response?.pdf_url;
+
+        this.clearCartFromLocalState();
+
+        if (pdfUrl) {
+          window.open(pdfUrl, '_blank');
+          this.router.navigate([this.getDashboardRouteByRole()]);
+          return;
+        }
+
+        this.errorMessage = 'Porudžbina je kreirana, ali potvrda nije dostupna.';
         this.router.navigate(['/user/cart']);
       },
       error: (err) => {
@@ -148,5 +159,27 @@ export class Payment {
 
   goBack(): void {
     this.router.navigate(['/user/cart']);
+  }
+
+  private clearCartFromLocalState(): void {
+    const raw = localStorage.getItem('userData');
+    if (!raw) return;
+
+    const user = JSON.parse(raw);
+    if (!user.cart) {
+      user.cart = { id: null, items: [], total: 0 };
+    }
+
+    user.cart.items = [];
+    user.cart.total = 0;
+    localStorage.setItem('userData', JSON.stringify(user));
+  }
+
+  private getDashboardRouteByRole(): string {
+    const role = this.authService.get_role();
+
+    if (role === 'admin') return '/admin';
+    if (role === 'craftsman') return '/craftsman';
+    return '/user';
   }
 }

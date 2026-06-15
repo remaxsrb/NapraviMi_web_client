@@ -19,6 +19,7 @@ import { ProductsByCraftsman } from './components/products/products-by-craftsman
 import { ProductPage } from './components/products/product-page/product-page/product-page';
 import { AddProduct } from './components/products/add-product/add-product';
 import { Cart } from './components/common/cart/cart';
+import { Payment } from './components/common/payment/payment';
 export const routes: Routes = [
   {
     path: '',
@@ -84,5 +85,11 @@ export const routes: Routes = [
   {
     path: 'product/:id',
     component: ProductPage,
+  },
+  {
+    path: 'payment',
+    component: Payment,
+    canActivate: [authGuard, roleGuard],
+    data: { expected_role: 'user' },
   },
 ];
