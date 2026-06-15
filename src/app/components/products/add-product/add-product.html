@@ -1,10 +1,12 @@
 <p-card header="Dodaj proizvod">
+  @let state = (state$ | async);
+  @if (state; as addProductState) {
   <div class="flex-column">
-    @if (successMessage) {
-      <p-message severity="success" [text]="successMessage" />
+    @if (addProductState.successMessage) {
+      <p-message severity="success" [text]="addProductState.successMessage" />
     }
-    @if (errorMessage) {
-      <p-message severity="error" [text]="errorMessage" />
+    @if (addProductState.errorMessage) {
+      <p-message severity="error" [text]="addProductState.errorMessage" />
     }
     <div class="field">
       <label for="product-name">Naziv</label>
@@ -49,7 +51,7 @@
       <label for="craft">Kategorija</label>
       <p-select
         id="craft"
-        [options]="productCategories"
+        [options]="addProductState.productCategories"
         optionLabel="label"
         optionValue="value"
         placeholder="Izaberi kategoriju"
@@ -74,7 +76,7 @@
       <!-- drop zone -->
       <div
         class="drop-zone"
-        [class.drag-over]="isDragging"
+        [class.drag-over]="addProductState.isDragging"
         (dragover)="onDragOver($event)"
         (dragleave)="onDragLeave($event)"
         (drop)="onDrop($event)"
@@ -86,9 +88,9 @@
       </div>
 
       <!-- file list -->
-      @if (allFiles.length > 0) {
+      @if (addProductState.allFiles.length > 0) {
         <ul class="file-list">
-          @for (file of allFiles; track file.name + file.size; let i = $index) {
+          @for (file of addProductState.allFiles; track file.name + file.size; let i = $index) {
             <li class="file-item">
               <span class="file-icon">{{ file.type.startsWith('image/') ? '🖼️' : '🎬' }}</span>
               <span class="file-name" [title]="file.name">{{ file.name }}</span>
@@ -105,7 +107,8 @@
       label="Dodaj proizvod"
       icon="pi pi-plus"
       (onClick)="onSubmit()"
-      [loading]="isSubmitting"
+      [loading]="addProductState.isSubmitting"
     />
   </div>
+  }
 </p-card>

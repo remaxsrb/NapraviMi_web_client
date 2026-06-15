@@ -1,9 +1,7 @@
 <body>
-  <div class="header">
-    <h1>
-      <a [routerLink]="dashboardLink" style="text-decoration: none; color: inherit">NapraviMi</a>
-    </h1>
-  </div>
+  @let state = (state$ | async);
+  @if (state; as profileState) {
+  <app-header></app-header>
 
   <div class="center-page">
     <div class="settings-container">
@@ -19,12 +17,16 @@
             Promena profilne slike
           </h3>
 
-          <div *ngIf="fileUploadError" class="mb-3">
-            <p-message severity="error">{{ fileUploadError }}</p-message>
-          </div>
-          <div *ngIf="fileUploadMessage" class="mb-3">
-            <p-message severity="success">{{ fileUploadMessage }}</p-message>
-          </div>
+          @if (profileState.fileUploadError) {
+            <div class="mb-3">
+              <p-message severity="error">{{ profileState.fileUploadError }}</p-message>
+            </div>
+          }
+          @if (profileState.fileUploadMessage) {
+            <div class="mb-3">
+              <p-message severity="success">{{ profileState.fileUploadMessage }}</p-message>
+            </div>
+          }
 
           <div class="field">
             <p-fileUpload
@@ -37,20 +39,19 @@
               [auto]="false"
               (onSelect)="onFileSelect($event)"
               (uploadHandler)="onFileUpload()"
-              [disabled]="uploadingFile"
+              [disabled]="profileState.uploadingFile"
               chooseLabel="Odaberite sliku"
             ></p-fileUpload>
           </div>
 
-          <div
-            *ngIf="uploadingFile"
-            class="mt-4 text-center flex align-items-center justify-content-center"
-          >
-            <p-progressSpinner
-              [style]="{ width: '40px', height: '40px', marginRight: '1rem' }"
-            ></p-progressSpinner>
-            <span>Učitavanje...</span>
-          </div>
+          @if (profileState.uploadingFile) {
+            <div class="mt-4 text-center flex align-items-center justify-content-center">
+              <p-progressSpinner
+                [style]="{ width: '40px', height: '40px', marginRight: '1rem' }"
+              ></p-progressSpinner>
+              <span>Učitavanje...</span>
+            </div>
+          }
         </div>
 
         <p-divider></p-divider>
@@ -58,12 +59,16 @@
         <div class="section-container mt-4">
           <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem">Promena lozinke</h3>
 
-          <div *ngIf="passwordErrorMessage" class="mb-3">
-            <p-message severity="error">{{ passwordErrorMessage }}</p-message>
-          </div>
-          <div *ngIf="passwordSuccessMessage" class="mb-3">
-            <p-message severity="success">{{ passwordSuccessMessage }}</p-message>
-          </div>
+          @if (profileState.passwordErrorMessage) {
+            <div class="mb-3">
+              <p-message severity="error">{{ profileState.passwordErrorMessage }}</p-message>
+            </div>
+          }
+          @if (profileState.passwordSuccessMessage) {
+            <div class="mb-3">
+              <p-message severity="success">{{ profileState.passwordSuccessMessage }}</p-message>
+            </div>
+          }
 
           <form [formGroup]="passwordForm" (ngSubmit)="submitPasswordChange()" class="p-fluid">
             <div class="field flex flex-column mb-3">
@@ -83,9 +88,11 @@
                 [toggleMask]="true"
                 [feedback]="false"
               ></p-password>
-              <div *ngIf="passwordForm.errors?.['passwordsMismatch']" class="p-error mt-1">
+              @if (passwordForm.errors?.['passwordsMismatch']) {
+                <div class="p-error mt-1">
                 Lozinke se ne poklapaju.
-              </div>
+                </div>
+              }
             </div>
             <p-divider></p-divider>
 
@@ -94,8 +101,8 @@
                 pButton
                 type="submit"
                 label="Promeni lozinku"
-                [disabled]="passwordForm.invalid || passwordSubmitting"
-                [loading]="passwordSubmitting"
+                [disabled]="passwordForm.invalid || profileState.passwordSubmitting"
+                [loading]="profileState.passwordSubmitting"
                 class="w-full"
               ></button>
             </div>
@@ -108,9 +115,11 @@
             Brisanje naloga
           </h3>
 
-          <div *ngIf="deleteAccountError" class="mb-3">
-            <p-message severity="error">{{ deleteAccountError }}</p-message>
-          </div>
+          @if (profileState.deleteAccountError) {
+            <div class="mb-3">
+              <p-message severity="error">{{ profileState.deleteAccountError }}</p-message>
+            </div>
+          }
 
           <p class="mb-4" style="color: var(--text-color-secondary); font-size: 0.9rem">
             Brisanje naloga je trajno i ne može se poništiti. Svi vaši podaci biće zauvek obrisani.
@@ -124,12 +133,13 @@
               icon="pi pi-trash"
               class="p-button-danger w-full"
               (click)="onDeleteAccount()"
-              [disabled]="deletingAccount"
-              [loading]="deletingAccount"
+              [disabled]="profileState.deletingAccount"
+              [loading]="profileState.deletingAccount"
             ></button>
           </div>
         </div>
       </p-card>
     </div>
   </div>
+  }
 </body>

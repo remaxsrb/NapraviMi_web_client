@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -14,6 +14,26 @@ import { FileService } from '../../../services/utils/file-service';
 import { AuthService } from '../../../services/utils/auth-service';
 import { RegexPatterns } from '../../../regexPatterns';
 import { DividerModule } from 'primeng/divider';
+import { Header } from "../header/header/header";
+import { BehaviorSubject } from 'rxjs';
+
+interface ProfileSettingsState {
+  uploadingFile: boolean;
+  fileUploadMessage: string;
+  fileUploadError: string;
+  passwordSubmitting: boolean;
+  passwordSuccessMessage: string;
+  passwordErrorMessage: string;
+  username: string;
+  userRole: string;
+  dashboardLink: string;
+  deletingAccount: boolean;
+  deleteAccountError: string;
+}
+
+interface SelectedFilesEvent {
+  files?: File[];
+}
 
 @Component({
   selector: 'app-profile-settings',
@@ -28,46 +48,26 @@ import { DividerModule } from 'primeng/divider';
     InputTextModule,
     FileUploadModule,
     ProgressSpinnerModule,
-    RouterLink,
     DividerModule,
-  ],
+    Header
+],
   templateUrl: './profile-settings.html',
   styleUrl: './profile-settings.css',
 })
-export class ProfileSettings implements OnInit {
+export class ProfileSettings {
   passwordForm!: FormGroup;
-  uploadingFile = false;
-  fileUploadMessage = '';
-  fileUploadError = '';
-  passwordSubmitting = false;
-  passwordSuccessMessage = '';
-  passwordErrorMessage = '';
-  username: string = '';
-  userRole: string = '';
-  dashboardLink: string = '';
-  deletingAccount = false;
-  deleteAccountError = '';
+  private fb = inject(FormBuilder);
+  private userService = inject(UserService);
+  private fileService = inject(FileService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
+  private readonly stateSubject$ = new BehaviorSubject<ProfileSettingsState>(this.buildInitialState());
+  readonly state$ = this.stateSubject$.asObservable();
 
   selectedFile: File | null = null;
 
-  constructor(
-    private fb: FormBuilder,
-    private userService: UserService,
-    private fileService: FileService,
-    private authService: AuthService,
-    private router: Router,
-  ) {}
-
-  ngOnInit(): void {
-    this.userRole = this.authService.get_role();
-    this.dashboardLink =
-      this.userRole === 'admin' ? '/admin' : this.userRole === 'craftsman' ? '/craftsman' : '/user';
-
-    const userData = localStorage.getItem('userData');
-    if (userData) {
-      this.username = JSON.parse(userData).username;
-    }
-
+  constructor() {
     this.passwordForm = this.fb.group(
       {
         new_password: ['', [Validators.required, Validators.pattern(RegexPatterns.PASSWORD)]],
@@ -84,61 +84,81 @@ export class ProfileSettings implements OnInit {
   }
 
   submitPasswordChange(): void {
-    this.passwordErrorMessage = '';
-    this.passwordSuccessMessage = '';
-    if (this.passwordForm.invalid) return;
+    if (this.passwordForm.invalid) {
+      return;
+    }
 
-    this.passwordSubmitting = true;
+    const currentState = this.stateSubject$.value;
+    this.patchState({
+      passwordErrorMessage: '',
+      passwordSuccessMessage: '',
+      passwordSubmitting: true,
+    });
+
     const payload = {
-      username: this.username,
+      username: currentState.username,
       new_password: this.passwordForm.get('new_password')?.value,
     };
 
     this.userService.changePassword(payload).subscribe({
       next: () => {
-        this.passwordSubmitting = false;
-        this.passwordSuccessMessage = 'Lozinka je uspešno izmenjena.';
+        this.patchState({
+          passwordSubmitting: false,
+          passwordSuccessMessage: 'Lozinka je uspešno izmenjena.',
+          passwordErrorMessage: '',
+        });
         this.passwordForm.reset();
         this.authService.logout();
       },
       error: (err) => {
-        this.passwordSubmitting = false;
-        this.passwordErrorMessage =
-          err?.error?.message || 'Došlo je do greške pri promeni lozinke.';
+        this.patchState({
+          passwordSubmitting: false,
+          passwordErrorMessage: err?.error?.message || 'Došlo je do greške pri promeni lozinke.',
+        });
       },
     });
   }
 
-  onFileSelect(event: any): void {
-    this.selectedFile = event.files[0];
+  onFileSelect(event: SelectedFilesEvent): void {
+    this.selectedFile = event.files?.[0] ?? null;
   }
 
   onFileUpload(): void {
     const file = this.selectedFile;
-    if (!file) return;
+    if (!file) {
+      return;
+    }
 
-    this.uploadingFile = true;
-    this.fileUploadError = '';
-    this.fileUploadMessage = '';
+    const currentState = this.stateSubject$.value;
+
+    this.patchState({
+      uploadingFile: true,
+      fileUploadError: '',
+      fileUploadMessage: '',
+    });
 
     this.fileService.uploadFile(file, 'avatar').subscribe({
       next: (response) => {
         const profilePictureUrl = response?.data?.url || response?.url || '';
         if (!profilePictureUrl) {
-          this.uploadingFile = false;
-          this.fileUploadError = 'Greška: Server nije vratio URL slike.';
+          this.patchState({
+            uploadingFile: false,
+            fileUploadError: 'Greška: Server nije vratio URL slike.',
+          });
           return;
         }
 
         const payload = {
-          username: this.username,
+          username: currentState.username,
           newProfilePicture: profilePictureUrl,
         };
 
         this.userService.setProfilePicture(payload).subscribe({
           next: () => {
-            this.uploadingFile = false;
-            this.fileUploadMessage = 'Profilna slika je uspešno izmenjena.';
+            this.patchState({
+              uploadingFile: false,
+              fileUploadMessage: 'Profilna slika je uspešno izmenjena.',
+            });
 
             const currentDataString = localStorage.getItem('userData') || '{}';
 
@@ -149,28 +169,71 @@ export class ProfileSettings implements OnInit {
             localStorage.setItem('userData', JSON.stringify(currentDataObject));
           },
           error: (err) => {
-            this.uploadingFile = false;
-            this.fileUploadError =
-              err?.error?.message || 'Došlo je do greške pri promeni profilne slike.';
+            this.patchState({
+              uploadingFile: false,
+              fileUploadError:
+                err?.error?.message || 'Došlo je do greške pri promeni profilne slike.',
+            });
           },
         });
       },
       error: (err) => {
-        this.uploadingFile = false;
-        this.fileUploadError = err?.error?.message || 'Došlo je do greške pri uploadu fajla.';
+        this.patchState({
+          uploadingFile: false,
+          fileUploadError: err?.error?.message || 'Došlo je do greške pri uploadu fajla.',
+        });
       },
     });
   }
 
   onDeleteAccount() {
-    this.userService.deleteAccount(this.username).subscribe({
+    const currentState = this.stateSubject$.value;
+    this.patchState({
+      deletingAccount: true,
+      deleteAccountError: '',
+    });
+
+    this.userService.deleteAccount(currentState.username).subscribe({
       next: () => {
         this.authService.logout();
         this.router.navigate(['/']);
       },
       error: (err) => {
-        this.deleteAccountError = err?.error?.message || 'Došlo je do greške pri brisanju naloga.';
+        this.patchState({
+          deletingAccount: false,
+          deleteAccountError: err?.error?.message || 'Došlo je do greške pri brisanju naloga.',
+        });
       },
     });
+  }
+
+  private patchState(patch: Partial<ProfileSettingsState>): void {
+    this.stateSubject$.next({
+      ...this.stateSubject$.value,
+      ...patch,
+    });
+  }
+
+  private buildInitialState(): ProfileSettingsState {
+    const userRole = this.authService.get_role();
+    const dashboardLink =
+      userRole === 'admin' ? '/admin' : userRole === 'craftsman' ? '/craftsman' : '/user';
+
+    const userData = localStorage.getItem('userData');
+    const username = userData ? JSON.parse(userData).username ?? '' : '';
+
+    return {
+      uploadingFile: false,
+      fileUploadMessage: '',
+      fileUploadError: '',
+      passwordSubmitting: false,
+      passwordSuccessMessage: '',
+      passwordErrorMessage: '',
+      username,
+      userRole,
+      dashboardLink,
+      deletingAccount: false,
+      deleteAccountError: '',
+    };
   }
 }

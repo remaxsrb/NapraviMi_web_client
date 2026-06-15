@@ -1,11 +1,8 @@
 import {
-  ChangeDetectorRef,
   Component,
   ElementRef,
-  NgZone,
-  OnDestroy,
-  OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -17,8 +14,8 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { MessageModule } from 'primeng/message';
 import { ProductService } from '../../../services/product/product-service';
 import { FileService } from '../../../services/utils/file-service';
-import { EMPTY, firstValueFrom, forkJoin, from, of, Subject } from 'rxjs';
-import { catchError, finalize, mergeMap, switchMap, takeUntil, toArray } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, firstValueFrom, Observable, of } from 'rxjs';
+import { catchError, map, startWith } from 'rxjs/operators';
 import { AuthService } from '../../../services/utils/auth-service';
 import { Product } from '../../../models/product';
 import { ProductCategoryOption } from '../../../interfaces/product-category-option';
@@ -33,6 +30,22 @@ interface ApiProduct {
   videos: string[];
   username?: string;
   category: string;
+}
+
+interface AddProductState {
+  successMessage: string;
+  errorMessage: string;
+  isSubmitting: boolean;
+  isDragging: boolean;
+  allFiles: File[];
+  productCategories: ProductCategoryOption[];
+}
+
+interface UiState {
+  successMessage: string;
+  errorMessage: string;
+  isSubmitting: boolean;
+  isDragging: boolean;
 }
 
 const MAX_CONCURRENT_UPLOADS = 3;
@@ -55,34 +68,46 @@ const MAX_CONCURRENT_UPLOADS = 3;
   templateUrl: './add-product.html',
   styleUrl: './add-product.css',
 })
-export class AddProduct implements OnDestroy, OnInit {
+export class AddProduct {
   @ViewChild('fileInput') fileInputRef!: ElementRef<HTMLInputElement>;
 
-  private destroy$ = new Subject<void>();
+  private productService = inject(ProductService);
+  private fileService = inject(FileService);
+  private authService = inject(AuthService);
+  private pcService = inject(ProductCategoryService);
 
-  successMessage = '';
-  errorMessage = '';
-  isSubmitting = false;
-  isDragging = false;
+  private uiStateSubject$ = new BehaviorSubject<UiState>({
+    successMessage: '',
+    errorMessage: '',
+    isSubmitting: false,
+    isDragging: false,
+  });
 
-  allFiles: File[] = [];
+  private allFilesSubject$ = new BehaviorSubject<File[]>([]);
+
+  private categories$: Observable<ProductCategoryOption[]> = this.pcService
+    .getProductCategoryOptions()
+    .pipe(
+      startWith([] as ProductCategoryOption[]),
+      catchError(() => of([] as ProductCategoryOption[]))
+    );
+
+  readonly state$: Observable<AddProductState> = combineLatest([
+    this.uiStateSubject$,
+    this.allFilesSubject$,
+    this.categories$,
+  ]).pipe(
+    map(([ui, allFiles, productCategories]) => ({
+      successMessage: ui.successMessage,
+      errorMessage: ui.errorMessage,
+      isSubmitting: ui.isSubmitting,
+      isDragging: ui.isDragging,
+      allFiles,
+      productCategories,
+    }))
+  );
+
   product: Product = new Product();
-  productCategories: ProductCategoryOption[] = [];
-
-  get selectedImages(): File[] {
-    return this.allFiles.filter((f) => f.type.startsWith('image/'));
-  }
-  get selectedVideos(): File[] {
-    return this.allFiles.filter((f) => f.type.startsWith('video/'));
-  }
-
-  constructor(
-    private productService: ProductService,
-    private fileService: FileService,
-    private authService: AuthService,
-    private cdr: ChangeDetectorRef,
-    private pcService: ProductCategoryService,
-  ) {}
 
   openFilePicker(): void {
     this.fileInputRef.nativeElement.value = '';
@@ -97,75 +122,72 @@ export class AddProduct implements OnDestroy, OnInit {
   onDragOver(event: DragEvent): void {
     event.preventDefault();
     event.stopPropagation();
-    this.isDragging = true;
+    this.patchUiState({ isDragging: true });
   }
 
   onDragLeave(event: DragEvent): void {
     event.preventDefault();
     event.stopPropagation();
-    this.isDragging = false;
+    this.patchUiState({ isDragging: false });
   }
 
   onDrop(event: DragEvent): void {
     event.preventDefault();
     event.stopPropagation();
-    this.isDragging = false;
+    this.patchUiState({ isDragging: false });
     const files = Array.from(event.dataTransfer?.files ?? []);
     this.addFiles(files);
   }
 
-  ngOnInit(): void {
-    this.pcService.getProductCategoryOptions().subscribe((options) => {
-      this.productCategories = options;
-    });
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
   private addFiles(incoming: File[]): void {
+    const existingFiles = this.allFilesSubject$.value;
     const valid = incoming.filter(
       (f) => f.type.startsWith('image/') || f.type.startsWith('video/'),
     );
     const rejected = incoming.length - valid.length;
     if (rejected > 0) {
-      this.errorMessage = `${rejected} fajl(a) je odbačeno — dozvoljene su samo slike i videi.`;
+      this.patchUiState({
+        errorMessage: `${rejected} fajl(a) je odbačeno - dozvoljene su samo slike i videi.`,
+      });
       setTimeout(() => {
-        this.errorMessage = '';
+        this.patchUiState({ errorMessage: '' });
       }, 4000);
     }
-    // deduplicate by name + size + type
+
     const newFiles = valid.filter(
-      (incoming) =>
-        !this.allFiles.some(
+      (incomingFile) =>
+        !existingFiles.some(
           (existing) =>
-            existing.name === incoming.name &&
-            existing.size === incoming.size &&
-            existing.type === incoming.type,
+            existing.name === incomingFile.name &&
+            existing.size === incomingFile.size &&
+            existing.type === incomingFile.type,
         ),
     );
-    this.allFiles = [...this.allFiles, ...newFiles];
+
+    this.allFilesSubject$.next([...existingFiles, ...newFiles]);
   }
 
   removeFile(index: number): void {
-    this.allFiles = this.allFiles.filter((_, i) => i !== index);
+    this.allFilesSubject$.next(this.allFilesSubject$.value.filter((_, i) => i !== index));
   }
 
   async onSubmit(): Promise<void> {
-    const userData = localStorage.getItem("userData");
+    const userData = localStorage.getItem('userData');
     if (!userData) {
-      this.errorMessage = 'Niste prijavljeni.';
+      this.patchUiState({ errorMessage: 'Niste prijavljeni.' });
       return;
     }
+
     const username = JSON.parse(userData).username;
-    this.isSubmitting = true;
-    this.successMessage = '';
-    this.errorMessage = '';
+
+    this.patchUiState({
+      isSubmitting: true,
+      successMessage: '',
+      errorMessage: '',
+    });
  
     try {
-      const tagged = await this.uploadFiles();
+      const tagged = await this.uploadFiles(this.allFilesSubject$.value);
 
       const newProduct: ApiProduct = {
         name: this.product.name,
@@ -180,42 +202,50 @@ export class AddProduct implements OnDestroy, OnInit {
       await firstValueFrom(this.productService.create(newProduct));
 
       this.clearForm();
-      this.successMessage = 'Proizvod je uspešno dodat.';
-      this.cdr.markForCheck();
+      this.patchUiState({
+        successMessage: 'Proizvod je uspešno dodat.',
+      });
 
       setTimeout(() => {
-        this.successMessage = '';
-        this.cdr.markForCheck();
+        this.patchUiState({ successMessage: '' });
       }, 5000);
     } catch {
-      this.errorMessage = 'Greška pri dodavanju proizvoda. Pokušajte ponovo.';
+      this.patchUiState({ errorMessage: 'Greška pri dodavanju proizvoda. Pokušajte ponovo.' });
     } finally {
-      this.isSubmitting = false;
-      this.cdr.markForCheck();
+      this.patchUiState({ isSubmitting: false });
     }
   }
 
-  private async uploadFiles() {
+  private async uploadFiles(files: File[]) {
+    const selectedImages = files.filter((f) => f.type.startsWith('image/'));
+    const selectedVideos = files.filter((f) => f.type.startsWith('video/'));
+
     const tagged = [
-      ...this.selectedImages.map((f) => ({
+      ...selectedImages.map((f) => ({
         file: f,
         kind: 'image' as const,
         type: 'product_image' as const,
       })),
-      ...this.selectedVideos.map((f) => ({
+      ...selectedVideos.map((f) => ({
         file: f,
         kind: 'video' as const,
         type: 'product_video' as const,
       })),
     ];
 
-    // Still respects concurrency limit using a simple pool
+    if (tagged.length === 0) {
+      return [] as { kind: 'image' | 'video'; url: string }[];
+    }
+
     const results: { kind: 'image' | 'video'; url: string }[] = [];
     const pool = Array.from({ length: MAX_CONCURRENT_UPLOADS }, async () => {
       while (tagged.length > 0) {
         const { file, kind, type } = tagged.shift()!;
         const result = await firstValueFrom(this.fileService.uploadFile(file, type));
-        results.push({ kind, url: result?.data?.url ?? result?.url ?? '' });
+        const url = result?.data?.url ?? result?.url ?? '';
+        if (url) {
+          results.push({ kind, url });
+        }
       }
     });
 
@@ -227,6 +257,14 @@ export class AddProduct implements OnDestroy, OnInit {
     this.product.name = '';
     this.product.description = '';
     this.product.price = null;
-    this.allFiles = [];
+    this.product.category = '';
+    this.allFilesSubject$.next([]);
+  }
+
+  private patchUiState(patch: Partial<UiState>): void {
+    this.uiStateSubject$.next({
+      ...this.uiStateSubject$.value,
+      ...patch,
+    });
   }
 }
