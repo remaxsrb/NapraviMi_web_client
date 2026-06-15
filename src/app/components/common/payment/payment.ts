@@ -16,7 +16,7 @@ import { RegexPatterns } from '../../../regexPatterns';
 import { PaymentService, NewOrderRequest } from '../../../services/payment/payment-service';
 import { AuthService } from '../../../services/utils/auth-service';
 
-export type PaymentType = 'cash' | 'card' | null;
+export type PaymentType = 'CC' | 'COD' | null;
 export type CardType = 'VISA' | 'MASTERCARD' | 'DINERS' | null;
 
 function cardNumberValidator(control: AbstractControl): ValidationErrors | null {
@@ -66,7 +66,7 @@ export class Payment {
   get isFormValid(): boolean {
     if (!this.selectedPayment) return false;
     if (this.addressForm.invalid) return false;
-    if (this.selectedPayment === 'card' && this.cardForm.invalid) return false;
+    if (this.selectedPayment === 'CC' && this.cardForm.invalid) return false;
     return true;
   }
 
@@ -117,12 +117,12 @@ export class Payment {
     const orderRequest: NewOrderRequest = {
       craftsman_id: craftsmanId,
       items,
-      payment_type: this.selectedPayment as 'cash' | 'card',
+      payment_type: this.selectedPayment as 'COD' | 'CC',
       shipping_address: shippingAddress,
     };
 
     // Add credit card data if paying by card
-    if (this.selectedPayment === 'card') {
+    if (this.selectedPayment === 'CC') {
       const cardForm = this.cardForm.value;
       orderRequest.credit_card_data = {
         owner_name: cardForm.cardHolder!,
@@ -136,7 +136,7 @@ export class Payment {
     this.paymentService.createOrder(orderRequest).subscribe({
       next: (response) => {
         this.isLoading = false;
-        const pdfUrl = response?.pdfURL ?? response?.pdfUrl ?? response?.pdf_url;
+        const pdfUrl = response?.url
 
         this.clearCartFromLocalState();
 

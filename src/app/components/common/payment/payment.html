@@ -10,8 +10,8 @@
   <div class="payment-options">
     <div
       class="payment-option"
-      [class.selected]="selectedPayment === 'cash'"
-      (click)="select('cash')"
+      [class.selected]="selectedPayment === 'COD'"
+      (click)="select('COD')"
     >
       <span class="payment-icon">💵</span>
       <span class="payment-label">Plaćanje pouzećem</span>
@@ -19,8 +19,8 @@
 
     <div
       class="payment-option"
-      [class.selected]="selectedPayment === 'card'"
-      (click)="select('card')"
+      [class.selected]="selectedPayment === 'CC'"
+      (click)="select('CC')"
     >
       <span class="payment-icon">💳</span>
       <span class="payment-label">Platnom karticom</span>
@@ -77,7 +77,7 @@
     </form>
   }
 
-  @if (selectedPayment === 'card') {
+  @if (selectedPayment === 'CC') {
     <form [formGroup]="cardForm" class="payment-form">
       <h3>Podaci o kartici</h3>
 

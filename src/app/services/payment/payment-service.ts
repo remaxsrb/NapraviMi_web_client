@@ -16,15 +16,13 @@ export interface CreditCardData {
 export interface NewOrderRequest {
   craftsman_id: number;
   items: OrderItemRequest[];
-  payment_type: 'cash' | 'card';
+  payment_type: 'COD' | 'CC';
   shipping_address: string;
   credit_card_data?: CreditCardData;
 }
 
 export interface CreateOrderResponse {
-  pdfURL?: string;
-  pdfUrl?: string;
-  pdf_url?: string;
+  url : string
 }
 
 @Injectable({
