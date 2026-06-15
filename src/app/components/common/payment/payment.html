@@ -1,0 +1,169 @@
+<div class="payment-container">
+  <h2>Odaberite način plaćanja</h2>
+
+  @if (errorMessage) {
+    <div class="error-banner">
+      {{ errorMessage }}
+    </div>
+  }
+
+  <div class="payment-options">
+    <div
+      class="payment-option"
+      [class.selected]="selectedPayment === 'cash'"
+      (click)="select('cash')"
+    >
+      <span class="payment-icon">💵</span>
+      <span class="payment-label">Plaćanje pouzećem</span>
+    </div>
+
+    <div
+      class="payment-option"
+      [class.selected]="selectedPayment === 'card'"
+      (click)="select('card')"
+    >
+      <span class="payment-icon">💳</span>
+      <span class="payment-label">Platnom karticom</span>
+    </div>
+  </div>
+
+  @if (selectedPayment) {
+    <form [formGroup]="addressForm" class="payment-form">
+      <h3>Podaci za dostavu</h3>
+
+      <div class="form-field">
+        <label for="street">Adresa</label>
+        <input
+          pInputText
+          id="street"
+          formControlName="street"
+          placeholder="Ulica i broj"
+          class="w-full"
+        />
+        @if (addressForm.get('street')?.invalid && addressForm.get('street')?.touched) {
+          <small class="field-error">Adresa je obavezna</small>
+        }
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label for="city">Grad</label>
+          <input
+            pInputText
+            id="city"
+            formControlName="city"
+            placeholder="Grad"
+            class="w-full"
+          />
+          @if (addressForm.get('city')?.invalid && addressForm.get('city')?.touched) {
+            <small class="field-error">Grad je obavezan</small>
+          }
+        </div>
+        <div class="form-field">
+          <label for="postalCode">Poštanski broj</label>
+          <input
+            pInputText
+            id="postalCode"
+            formControlName="postalCode"
+            placeholder="Poštanski broj"
+            maxlength="6"
+            class="w-full"
+          />
+          @if (addressForm.get('postalCode')?.invalid && addressForm.get('postalCode')?.touched) {
+            <small class="field-error">Unesite ispravan poštanski broj</small>
+          }
+        </div>
+      </div>
+    </form>
+  }
+
+  @if (selectedPayment === 'card') {
+    <form [formGroup]="cardForm" class="payment-form">
+      <h3>Podaci o kartici</h3>
+
+      <div class="form-field">
+        <label for="cardNumber">Broj kartice</label>
+        <div class="card-number-wrapper">
+          <input
+            pInputText
+            id="cardNumber"
+            formControlName="cardNumber"
+            placeholder="1234567890123456"
+            maxlength="16"
+            class="w-full"
+          />
+          @if (detectedCardType) {
+            <span class="card-badge card-{{ detectedCardType.toLowerCase() }}">
+              {{ detectedCardType }}
+            </span>
+          }
+        </div>
+        @if (cardForm.get('cardNumber')?.invalid && cardForm.get('cardNumber')?.touched) {
+          <small class="field-error">Broj kartice nije ispravan</small>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="cardHolder">Ime vlasnika</label>
+        <input
+          pInputText
+          id="cardHolder"
+          formControlName="cardHolder"
+          placeholder="Ime i prezime"
+          class="w-full"
+        />
+        @if (cardForm.get('cardHolder')?.invalid && cardForm.get('cardHolder')?.touched) {
+          <small class="field-error">Ime vlasnika je obavezno</small>
+        }
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label for="expiry">Datum isteka</label>
+          <input
+            pInputText
+            id="expiry"
+            formControlName="expiry"
+            placeholder="MM/GG"
+            maxlength="5"
+            class="w-full"
+          />
+          @if (cardForm.get('expiry')?.invalid && cardForm.get('expiry')?.touched) {
+            <small class="field-error">Format: MM/GG</small>
+          }
+        </div>
+        <div class="form-field">
+          <label for="cvv">CVV</label>
+          <input
+            pInputText
+            id="cvv"
+            formControlName="cvv"
+            placeholder="CVV"
+            maxlength="4"
+            type="password"
+            class="w-full"
+          />
+          @if (cardForm.get('cvv')?.invalid && cardForm.get('cvv')?.touched) {
+            <small class="field-error">CVV nije ispravan</small>
+          }
+        </div>
+      </div>
+    </form>
+  }
+
+  <div class="payment-actions">
+    <p-button
+      label="Nazad"
+      severity="secondary"
+      (onClick)="goBack()"
+      [disabled]="isLoading"
+    />
+    <p-button
+      label="Potvrdi porudžbinu"
+      severity="success"
+      [disabled]="!isFormValid || isLoading"
+      (onClick)="confirm()"
+      [loading]="isLoading"
+    />
+  </div>
+</div>
