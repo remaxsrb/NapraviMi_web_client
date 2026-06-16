@@ -1,0 +1,81 @@
+.orders-wrapper {
+	padding: 1rem;
+}
+
+.orders-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 1rem;
+}
+
+.orders-header h2 {
+	margin: 0;
+}
+
+.orders-error {
+	color: #b00020;
+	margin-bottom: 0.75rem;
+}
+
+.orders-table-container {
+	overflow-x: auto;
+}
+
+.orders-table {
+	width: 100%;
+	border-collapse: collapse;
+	min-width: 760px;
+}
+
+.orders-table th,
+.orders-table td {
+	text-align: left;
+	padding: 0.75rem;
+	border-bottom: 1px solid #e8e8e8;
+}
+
+.orders-table th {
+	font-weight: 600;
+}
+
+.orders-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+
+p-paginator {
+	margin-top: 1rem;
+	display: block;
+	width: 100%;
+}
+
+:host ::ng-deep .p-paginator {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-wrap: nowrap;
+	gap: 0.25rem;
+}
+
+:host ::ng-deep .p-paginator-pages {
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+}
+
+:host ::ng-deep .p-paginator-first,
+:host ::ng-deep .p-paginator-prev,
+:host ::ng-deep .p-paginator-next,
+:host ::ng-deep .p-paginator-last,
+:host ::ng-deep .p-paginator-page {
+	min-width: 2.25rem;
+	height: 2.25rem;
+}
+
+@media (max-width: 640px) {
+	:host ::ng-deep .p-paginator {
+		flex-wrap: wrap;
+	}
+}

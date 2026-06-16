@@ -20,6 +20,7 @@ import { ProductPage } from './components/products/product-page/product-page/pro
 import { AddProduct } from './components/products/add-product/add-product';
 import { Cart } from './components/common/cart/cart';
 import { Payment } from './components/common/payment/payment';
+import { OrderOverview } from './components/common/order-overview/order-overview';
 export const routes: Routes = [
   {
     path: '',
@@ -43,6 +44,10 @@ export const routes: Routes = [
       {
         path: 'cart',
         component: Cart,
+      },
+      {
+        path: 'orders',
+        component: OrderOverview,
       },
     ],
   },
@@ -72,6 +77,7 @@ export const routes: Routes = [
     data: { expected_role: 'craftsman' },
     children: [
       { path: 'add-product', component: AddProduct },
+      { path: 'orders', component: OrderOverview },
     ],
   },
   {

@@ -1,0 +1,63 @@
+<section class="orders-wrapper">
+	<div class="orders-header">
+		<h2>Porudžbine</h2>
+		
+	</div>
+
+	@if (errorMessage()) {
+		<p class="orders-error">{{ errorMessage() }}</p>
+	}
+
+	@if (isLoading()) {
+		<p>Učitavanje porudžbina...</p>
+	} @else if (!orders().length) {
+		<p>Nema porudžbina za prikaz.</p>
+	} @else {
+		<div class="orders-table-container">
+			<table class="orders-table">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Datum porudžbine</th>
+						<th>Datum završetka</th>
+						<th>Status</th>
+						<th>Potvrda</th>
+						@if (isCraftsman()) {
+							<th>Akcije</th>
+						}
+					</tr>
+				</thead>
+				<tbody>
+					@for (order of orders(); track order.order_id) {
+						<tr>
+							<td>#{{ order.order_id }}</td>
+							<td>{{ formatDate(order.order_date) }}</td>
+							<td>{{ formatDate(order.completion_date) }}</td>
+							<td>{{ getStatus(order) }}</td>
+							<td>
+								@if (order.url) {
+									<p-button label="Otvori" size="small" severity="help" (onClick)="openOrderDocument(order)" />
+								} @else {
+									<span>-</span>
+								}
+							</td>
+							@if (isCraftsman()) {
+								<td class="orders-actions">
+									<p-button label="Odbij" size="small" severity="danger" (onClick)="onReject(order.order_id)" />
+									<p-button label="Prihvati" size="small" severity="success" (onClick)="onAccept(order.order_id)" />
+									<p-button label="Isporuci" size="small" severity="contrast" (onClick)="onDeliver(order.order_id)" />
+								</td>
+							}
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+    <p-paginator
+      [rows]="PAGE_SIZE"
+      [totalRecords]="totalRecords()"
+      [first]="(currentPage() - 1) * PAGE_SIZE"
+      (onPageChange)="onPageChange($event)"
+    />
+	}
+</section>
