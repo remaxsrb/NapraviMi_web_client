@@ -28,6 +28,7 @@ export class OrderOverview implements OnInit {
   readonly isCraftsman = computed(() => this.role() === 'craftsman');
   readonly totalRecords = signal<number>(0);
   readonly currentPage = signal<number>(1);
+  readonly actionLoading = signal<boolean>(false);
 
   ngOnInit(): void {
     this.loadOrders();
@@ -55,9 +56,12 @@ export class OrderOverview implements OnInit {
     request$
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
-        next: (response: {data: GetAllOrdersResponse}) => {
-          this.orders.set(response.data.orders ?? []);
-          this.totalRecords.set(response.data.total ?? 0);
+        next: (response: { data?: GetAllOrdersResponse } | GetAllOrdersResponse) => {
+          const payload =
+            (response as { data?: GetAllOrdersResponse }).data ??
+            (response as GetAllOrdersResponse);
+          this.orders.set(payload?.orders ?? []);
+          this.totalRecords.set(payload?.total ?? 0);
         },
         error: () => {
           this.orders.set([]);
@@ -92,16 +96,71 @@ export class OrderOverview implements OnInit {
     window.open(order.url, '_blank', 'noopener,noreferrer');
   }
 
-  onReject(_orderId: number): void {
-    // TODO: Implement reject order logic.
+  onReject(orderId: number): void {
+    const craftsmanId = this.getRoleId('craftsman');
+    if (craftsmanId === null) {
+      this.errorMessage.set('Greška: ID zanatlije nije dostupan.');
+      return;
+    }
+
+    this.actionLoading.set(true);
+    this.errorMessage.set('');
+
+    this.orderService
+      .rejectOrder(orderId, craftsmanId)
+      .pipe(finalize(() => this.actionLoading.set(false)))
+      .subscribe({
+        next: () => this.loadOrders(this.currentPage()),
+        error: () => this.errorMessage.set('Greška prilikom odbijanja porudžbine.'),
+      });
   }
 
-  onAccept(_orderId: number): void {
-    // TODO: Implement accept order logic.
+  onAccept(orderId: number): void {
+    const craftsmanId = this.getRoleId('craftsman');
+    if (craftsmanId === null) {
+      this.errorMessage.set('Greška: ID zanatlije nije dostupan.');
+      return;
+    }
+
+    this.actionLoading.set(true);
+    this.errorMessage.set('');
+
+    this.orderService
+      .acceptOrder(orderId, craftsmanId)
+      .pipe(finalize(() => this.actionLoading.set(false)))
+      .subscribe({
+        next: () => this.loadOrders(this.currentPage()),
+        error: () => this.errorMessage.set('Greška prilikom prihvatanja porudžbine.'),
+      });
   }
 
-  onDeliver(_orderId: number): void {
-    // TODO: Implement deliver order logic.
+  onDeliver(orderId: number): void {
+    const craftsmanId = this.getRoleId('craftsman');
+    if (craftsmanId === null) {
+      this.errorMessage.set('Greška: ID zanatlije nije dostupan.');
+      return;
+    }
+
+    const order = this.orders().find((item) => item.order_id === orderId);
+    const customerId = this.orders().find((item) => item.order_id === orderId)?.customer_id;
+
+    console.log(customerId);
+
+    if (!Number.isFinite(customerId) || customerId! <= 0) {
+      this.errorMessage.set('Greška: ID kupca nije dostupan za isporuku porudžbine.');
+      return;
+    }
+
+    this.actionLoading.set(true);
+    this.errorMessage.set('');
+
+    this.orderService
+      .deliverOrder(orderId, craftsmanId, customerId!)
+      .pipe(finalize(() => this.actionLoading.set(false)))
+      .subscribe({
+        next: () => this.loadOrders(this.currentPage()),
+        error: () => this.errorMessage.set('Greška prilikom isporuke porudžbine.'),
+      });
   }
 
   private resolveRole(): DashboardRole {

@@ -24,8 +24,8 @@ describe('OrderOverview', () => {
         {
           provide: OrderService,
           useValue: {
-            getOrdersByCustomer: () => of({ orders: [] }),
-            getOrdersByCraftsman: () => of({ orders: [] }),
+            getOrdersByCustomer: () => of({ data: { orders: [] } }),
+            getOrdersByCraftsman: () => of({ data: { orders: [] } }),
           },
         },
       ],

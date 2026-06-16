@@ -7,6 +7,8 @@ export interface OrderResponse {
   completion_date?: string;
   url?: string;
   status?: string;
+  customer_id?: number;
+  craftsman_id?: number;
 }
 
 export interface GetAllOrdersResponse {
@@ -37,5 +39,17 @@ export class OrderService {
     return this.http.get<{data: GetAllOrdersResponse}>(`${this.url}/craftsman/${craftsman_id}`, {
       params: { page: page.toString(), limit: limit.toString() },
     });
+  }
+
+  acceptOrder(order_id: number, craftsman_id: number) {
+    return this.http.post<{status:string}>(`${this.url}/accept`, { order_id, craftsman_id });
+  }
+
+  rejectOrder(order_id: number, craftsman_id: number) {
+    return this.http.post<{status:string}>(`${this.url}/decline`, { order_id, craftsman_id });
+  }
+  
+  deliverOrder(order_id: number, craftsman_id: number, customer_id: number) {
+    return this.http.post<{status:string}>(`${this.url}/ship`, { order_id, craftsman_id, customer_id });
   }
 }

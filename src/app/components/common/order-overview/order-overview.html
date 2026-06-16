@@ -43,9 +43,9 @@
 							</td>
 							@if (isCraftsman()) {
 								<td class="orders-actions">
-									<p-button label="Odbij" size="small" severity="danger" (onClick)="onReject(order.order_id)" />
-									<p-button label="Prihvati" size="small" severity="success" (onClick)="onAccept(order.order_id)" />
-									<p-button label="Isporuci" size="small" severity="contrast" (onClick)="onDeliver(order.order_id)" />
+									<p-button label="Odbij" size="small" severity="danger" (onClick)="onReject(order.order_id)" [disabled]="actionLoading()" />
+									<p-button label="Prihvati" size="small" severity="success" (onClick)="onAccept(order.order_id)" [disabled]="actionLoading()" />
+									<p-button label="Isporuci" size="small" severity="contrast" (onClick)="onDeliver(order.order_id)" [disabled]="actionLoading()" />
 								</td>
 							}
 						</tr>
