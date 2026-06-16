@@ -40,9 +40,19 @@
 }
 
 .orders-actions {
+	vertical-align: middle;
+	white-space: nowrap;
+}
+
+.orders-actions-content {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 0.5rem;
+}
+
+.orders-empty {
+	display: inline-block;
+	min-width: 0.75rem;
 }
 
 p-paginator {

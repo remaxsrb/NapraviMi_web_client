@@ -43,9 +43,21 @@
 							</td>
 							@if (isCraftsman()) {
 								<td class="orders-actions">
-									<p-button label="Odbij" size="small" severity="danger" (onClick)="onReject(order.order_id)" [disabled]="actionLoading()" />
-									<p-button label="Prihvati" size="small" severity="success" (onClick)="onAccept(order.order_id)" [disabled]="actionLoading()" />
-									<p-button label="Isporuci" size="small" severity="contrast" (onClick)="onDeliver(order.order_id)" [disabled]="actionLoading()" />
+									@if (hasAvailableActions(order)) {
+										<div class="orders-actions-content">
+											@if (canReject(order)) {
+												<p-button label="Odbij" size="small" severity="danger" (onClick)="onReject(order.order_id)" [disabled]="actionLoading()" />
+											}
+											@if (canAccept(order)) {
+												<p-button label="Prihvati" size="small" severity="success" (onClick)="onAccept(order.order_id)" [disabled]="actionLoading()" />
+											}
+											@if (canDeliver(order)) {
+												<p-button label="Isporuci" size="small" severity="contrast" (onClick)="onDeliver(order.order_id)" [disabled]="actionLoading()" />
+											}
+										</div>
+									} @else {
+										<span class="orders-empty">-</span>
+									}
 								</td>
 							}
 						</tr>

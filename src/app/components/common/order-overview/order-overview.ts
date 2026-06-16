@@ -91,6 +91,24 @@ export class OrderOverview implements OnInit {
     return order.status ?? 'U obradi';
   }
 
+  canAccept(order: OrderResponse): boolean {
+    const status = this.normalizeStatus(order.status);
+    return status !== 'ACCEPTED' && status !== 'DECLINED' && status !== 'REJECTED' && status !== 'SHIPPED';
+  }
+
+  canReject(order: OrderResponse): boolean {
+    const status = this.normalizeStatus(order.status);
+    return status !== 'ACCEPTED' && status !== 'DECLINED' && status !== 'REJECTED' && status !== 'SHIPPED';
+  }
+
+  canDeliver(order: OrderResponse): boolean {
+    return this.normalizeStatus(order.status) === 'ACCEPTED';
+  }
+
+  hasAvailableActions(order: OrderResponse): boolean {
+    return this.canAccept(order) || this.canReject(order) || this.canDeliver(order);
+  }
+
   openOrderDocument(order: OrderResponse): void {
     if (!order.url) return;
     window.open(order.url, '_blank', 'noopener,noreferrer');
@@ -141,10 +159,7 @@ export class OrderOverview implements OnInit {
       return;
     }
 
-    const order = this.orders().find((item) => item.order_id === orderId);
     const customerId = this.orders().find((item) => item.order_id === orderId)?.customer_id;
-
-    console.log(customerId);
 
     if (!Number.isFinite(customerId) || customerId! <= 0) {
       this.errorMessage.set('Greška: ID kupca nije dostupan za isporuku porudžbine.');
@@ -180,5 +195,9 @@ export class OrderOverview implements OnInit {
 
     const parsed = Number(value);
     return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+  }
+
+  private normalizeStatus(status?: string): string {
+    return (status ?? '').trim().toUpperCase();
   }
 }
