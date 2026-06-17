@@ -4,7 +4,8 @@ import { finalize } from 'rxjs/operators';
 import { ButtonModule } from 'primeng/button';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { AuthService } from '../../../services/utils/auth-service';
-import { GetAllOrdersResponse, OrderResponse, OrderService } from '../../../services/order/order-service';
+import { OrderService } from '../../../services/order/order-service';
+import { GetAllOrdersResponse, OrderResponse } from '../../../interfaces/order';
 
 type DashboardRole = 'user' | 'craftsman' | 'unknown';
 

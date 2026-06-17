@@ -1,14 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, shareReplay } from 'rxjs';
-import { CraftOption } from '../../interfaces/craft-option';
-
-interface Craft {
-  id: number;
-  name: string;
-  Keywords: string[];
-  SearchKeywords: string[];
-}
+import { Craft, CraftOption } from '../../interfaces/craft';
 
 @Injectable({
   providedIn: 'root',

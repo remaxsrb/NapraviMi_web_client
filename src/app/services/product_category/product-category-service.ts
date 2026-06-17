@@ -1,14 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable, shareReplay } from 'rxjs';
-import { ProductCategoryOption } from '../../interfaces/product-category-option';
-
-interface ProductCategory {
-  id: number;
-  name: string;
-  Keywords: string[];
-  SearchKeywords: string[];
-}
+import { ProductCategory, ProductCategoryOption } from '../../interfaces/product-category';
 
 
 @Injectable({

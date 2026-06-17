@@ -7,37 +7,7 @@ import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { UserService } from '../../../services/user/user-service';
 import { ConfirmationService, MessageService } from 'primeng/api';
-
-interface ApiUser {
-  id: number;
-  username: string;
-  email: string;
-  first_name: string;
-  last_name: string;
-  role: string;
-  created_at: string;
-}
-
-interface RoleOption {
-  label: string;
-  value: string;
-}
-
-interface UserRoleRow {
-  id: number;
-  email: string;
-  username: string;
-  fullName: string;
-  role: string;
-  newRole: string;
-  createdAt: Date;
-}
-
-interface GetAllResponse {
-  users: ApiUser[];
-  total?: number;
-  page?: number;
-}
+import { ApiUser, RoleOption, UserRoleRow } from '../../../interfaces/admin-user';
 
 @Component({
   selector: 'app-set-roles',

@@ -1,29 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-
-export interface OrderItemRequest {
-  product_id: number;
-  quantity: number;
-}
-
-export interface CreditCardData {
-  owner_name: string;
-  card_number: string;
-  expiration_date: string;
-  cvv: string;
-}
-
-export interface NewOrderRequest {
-  craftsman_id: number;
-  items: OrderItemRequest[];
-  payment_type: 'COD' | 'CC';
-  shipping_address: string;
-  credit_card_data?: CreditCardData;
-}
-
-export interface CreateOrderResponse {
-  url : string
-}
+import { CreateOrderResponse, NewOrderRequest } from '../../interfaces/order';
 
 @Injectable({
   providedIn: 'root',
@@ -37,3 +14,4 @@ export class PaymentService {
     return this.http.post<CreateOrderResponse>(`${this.orderApiUrl}/create`, orderRequest);
   }
 }
+

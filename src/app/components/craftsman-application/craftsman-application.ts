@@ -12,7 +12,7 @@ import { FileService } from '../../services/utils/file-service';
 import { UserService } from '../../services/user/user-service';
 import { RouterLink } from "@angular/router";
 import { CraftsmanApplicationService } from '../../services/craftsman-application/craftsman-application-service';
-import { CraftOption } from '../../interfaces/craft-option';
+import { CraftOption } from '../../interfaces/craft';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 

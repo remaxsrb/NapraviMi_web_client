@@ -10,55 +10,11 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { CraftsmanService } from '../../../services/craftsman/craftsman-service';
 import { CraftService } from '../../../services/craft/craft-service';
-import { CraftOption } from '../../../interfaces/craft-option';
+import { CraftOption } from '../../../interfaces/craft';
+import { ApiApplication, ApplicationRow, GetApplicationsResponse, StatusChangeEvent, StatusOption } from '../../../interfaces/craftsman-application';
+import { LazyLoadEvent, PaginationEvent } from '../../../interfaces/pagination';
 import { BehaviorSubject, combineLatest, EMPTY, Observable } from 'rxjs';
 import { map, switchMap, startWith, catchError } from 'rxjs/operators';
-
-interface ApiApplication {
-  id: number;
-  email: string;
-  status: string;
-  craft: string;
-  created_at: string;
-  resolved_at?: string;
-}
-
-interface StatusOption {
-  label: string;
-  value: string;
-}
-
-interface ApplicationRow {
-  id: number;
-  email: string;
-  craft: string;
-  craftLabel: string;
-  status: string;
-  newStatus: string;
-  createdAt: Date;
-  resolvedAt?: Date;
-}
-
-interface GetAllResponse {
-  data: {
-    craftsman_applications: ApiApplication[];
-    total: number;
-  };
-}
-
-interface PaginationEvent {
-  first: number;
-  rows: number;
-}
-
-interface LazyLoadEvent {
-  first?: number | null;
-  rows?: number | null;
-}
-
-interface StatusChangeEvent {
-  value?: string;
-}
 
 interface CraftsmanApplicationsState {
   applications: ApplicationRow[];
@@ -102,7 +58,7 @@ export class CraftsmanApplications {
       this.craftsmanApplicationService
         .all({ limit: pagination.rows, skip: pagination.first })
         .pipe(
-          map((response: GetAllResponse) => ({
+          map((response: GetApplicationsResponse) => ({
             applications: response.data.craftsman_applications.map((a) =>
               this.mapApiApplicationToRow(a, craftOptions)
             ),

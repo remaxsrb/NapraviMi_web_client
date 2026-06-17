@@ -1,21 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-
-export interface OrderResponse {
-  order_id: number;
-  order_date: string;
-  completion_date?: string;
-  url?: string;
-  status?: string;
-  customer_id?: number;
-  craftsman_id?: number;
-}
-
-export interface GetAllOrdersResponse {
-  orders: OrderResponse[];
-  total?: number;
-  page?: number;
-}
+import { GetAllOrdersResponse } from '../../interfaces/order';
 
 @Injectable({
   providedIn: 'root',
@@ -53,3 +38,4 @@ export class OrderService {
     return this.http.post<{status:string}>(`${this.url}/ship`, { order_id, craftsman_id, customer_id });
   }
 }
+

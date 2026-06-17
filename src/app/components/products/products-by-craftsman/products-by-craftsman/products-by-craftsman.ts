@@ -9,26 +9,9 @@ import { RatingModule } from 'primeng/rating';
 import { FormsModule } from '@angular/forms';
 import { ProductService } from '../../../../services/product/product-service';
 import { Product } from '../../../../models/product';
+import { PaginationEvent } from '../../../../interfaces/pagination';
 import { BehaviorSubject, combineLatest, EMPTY, Observable } from 'rxjs';
 import { map, switchMap, startWith, catchError } from 'rxjs/operators';
-
-interface ApiProduct {
-  id: number;
-  name: string;
-  description: string;
-  materialPrice: number;
-  laborPrice: number;
-  rating: number | null;
-  numberOfRatings: number | null;
-  available: boolean;
-  images: string[];
-  videos: string[];
-}
-
-interface PaginationEvent {
-  first: number;
-  rows: number;
-}
 
 interface ProductsState {
   products: Product[];

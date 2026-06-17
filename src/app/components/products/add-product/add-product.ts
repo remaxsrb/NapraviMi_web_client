@@ -18,19 +18,10 @@ import { BehaviorSubject, combineLatest, firstValueFrom, Observable, of } from '
 import { catchError, map, startWith } from 'rxjs/operators';
 import { AuthService } from '../../../services/utils/auth-service';
 import { Product } from '../../../models/product';
-import { ProductCategoryOption } from '../../../interfaces/product-category-option';
+import { ProductCategoryOption } from '../../../interfaces/product-category';
+import { CreateProductRequest } from '../../../interfaces/product';
 import { ProductCategoryService } from '../../../services/product_category/product-category-service';
 import { SelectModule } from 'primeng/select';
-
-interface ApiProduct {
-  name: string;
-  description: string;
-  price: number;
-  images: string[];
-  videos: string[];
-  username?: string;
-  category: string;
-}
 
 interface AddProductState {
   successMessage: string;
@@ -189,7 +180,7 @@ export class AddProduct {
     try {
       const tagged = await this.uploadFiles(this.allFilesSubject$.value);
 
-      const newProduct: ApiProduct = {
+      const newProduct: CreateProductRequest = {
         name: this.product.name,
         description: this.product.description,
         price: this.product.price ?? 0,

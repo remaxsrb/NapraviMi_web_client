@@ -13,8 +13,9 @@ import {
   ValidationErrors,
 } from '@angular/forms';
 import { RegexPatterns } from '../../../regexPatterns';
-import { PaymentService, NewOrderRequest } from '../../../services/payment/payment-service';
+import { CartService } from '../../../services/cart/cart-service';
 import { AuthService } from '../../../services/utils/auth-service';
+import { CheckoutPayload } from '../../../interfaces/payment';
 
 export type PaymentType = 'CC' | 'COD' | null;
 export type CardType = 'VISA' | 'MASTERCARD' | 'DINERS' | null;
@@ -35,7 +36,7 @@ function cardNumberValidator(control: AbstractControl): ValidationErrors | null 
 })
 export class Payment {
   private router = inject(Router);
-  private paymentService = inject(PaymentService);
+  private cartService = inject(CartService);
   private authService = inject(AuthService);
 
   selectedPayment: PaymentType = null;
@@ -80,51 +81,17 @@ export class Payment {
     this.isLoading = true;
     this.errorMessage = null;
 
-    const userData = localStorage.getItem('userData');
-    if (!userData) {
-      this.errorMessage = 'Korisnikovi podaci nisu dostupni';
-      this.isLoading = false;
-      return;
-    }
-
-    const user = JSON.parse(userData);
-    const cartItems = user.cart?.items || [];
-
-    if (cartItems.length === 0) {
-      this.errorMessage = 'Korpa je prazna';
-      this.isLoading = false;
-      return;
-    }
-
-    const craftsmanId = cartItems[0]?.product?.craftsman_id;
-    if (!craftsmanId) {
-      this.errorMessage = 'Greška pri preuzimanju podataka o zanatliji';
-      this.isLoading = false;
-      return;
-    }
-
-    // Merge address fields
     const addressForm = this.addressForm.value;
     const shippingAddress = `${addressForm.street}, ${addressForm.city} ${addressForm.postalCode}`;
 
-    // Build items array
-    const items = cartItems.map((item: any) => ({
-      product_id: item.product.id,
-      quantity: item.quantity,
-    }));
-
-    // Build order request
-    const orderRequest: NewOrderRequest = {
-      craftsman_id: craftsmanId,
-      items,
+    const payload: CheckoutPayload = {
       payment_type: this.selectedPayment as 'COD' | 'CC',
       shipping_address: shippingAddress,
     };
 
-    // Add credit card data if paying by card
     if (this.selectedPayment === 'CC') {
       const cardForm = this.cardForm.value;
-      orderRequest.credit_card_data = {
+      payload.credit_card_data = {
         owner_name: cardForm.cardHolder!,
         card_number: (cardForm.cardNumber || '').replace(/\s/g, ''),
         expiration_date: cardForm.expiry!,
@@ -132,27 +99,20 @@ export class Payment {
       };
     }
 
-    // Submit order
-    this.paymentService.createOrder(orderRequest).subscribe({
-      next: (response) => {
+    this.cartService.checkout(payload).subscribe({
+      next: (orders) => {
         this.isLoading = false;
-        const pdfUrl = response?.url
-
         this.clearCartFromLocalState();
 
-        if (pdfUrl) {
-          window.open(pdfUrl, '_blank');
-          this.router.navigate([this.getDashboardRouteByRole()]);
-          return;
-        }
+        orders.forEach((order) => {
+          if (order.url) window.open(order.url, '_blank');
+        });
 
-        this.errorMessage = 'Porudžbina je kreirana, ali potvrda nije dostupna.';
-        this.router.navigate(['/user/cart']);
+        this.router.navigate([this.getDashboardRouteByRole()]);
       },
-      error: (err) => {
+      error: (err: { error?: { message?: string } }) => {
         this.isLoading = false;
         this.errorMessage = err.error?.message || 'Greška pri kreiranju porudžbine';
-        console.error('Error creating order:', err);
       },
     });
   }

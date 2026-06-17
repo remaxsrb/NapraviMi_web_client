@@ -12,12 +12,8 @@ import { BehaviorSubject, combineLatest, EMPTY, Observable } from 'rxjs';
 import { map, switchMap, startWith, catchError, tap } from 'rxjs/operators';
 import { UserService } from '../../services/user/user-service';
 import { User } from '../../models/user';
-import { CraftOption } from '../../interfaces/craft-option';
-
-interface PaginationEvent {
-  first: number;
-  rows: number;
-}
+import { CraftOption } from '../../interfaces/craft';
+import { PaginationEvent } from '../../interfaces/pagination';
 
 interface CraftsmenState {
   craftsmen: User[];
