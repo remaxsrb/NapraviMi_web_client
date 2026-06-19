@@ -50,9 +50,10 @@ export class OrderOverview implements OnInit {
       return;
     }
 
+    const skip = (page - 1) * this.PAGE_SIZE;
     const request$ = role === 'craftsman'
-      ? this.orderService.getOrdersByCraftsman(roleId, page, this.PAGE_SIZE)
-      : this.orderService.getOrdersByCustomer(roleId, page, this.PAGE_SIZE);
+      ? this.orderService.getOrdersByCraftsman(roleId, skip, this.PAGE_SIZE)
+      : this.orderService.getOrdersByCustomer(roleId, skip, this.PAGE_SIZE);
 
     request$
       .pipe(finalize(() => this.isLoading.set(false)))
@@ -73,7 +74,9 @@ export class OrderOverview implements OnInit {
   }
 
   onPageChange(event: PaginatorState): void {
-    const newPage = (event.first ?? 0) / (event.rows ?? this.PAGE_SIZE) + 1;
+    const skip = event.first ?? 0;
+    const limit = event.rows ?? this.PAGE_SIZE;
+    const newPage = Math.floor(skip / limit) + 1;
     this.loadOrders(newPage);
   }
 

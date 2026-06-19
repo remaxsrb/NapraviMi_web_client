@@ -10,7 +10,7 @@ import { User } from '../../models/user';
 export class UserService {
   constructor(private http: HttpClient) {}
 
-  private apiUrl = 'http://localhost:8080/users';
+    private apiUrl = 'http://localhost:8080/api/users';
 
   // Store the user here right before navigating
   setPreviewUser(user: any) {

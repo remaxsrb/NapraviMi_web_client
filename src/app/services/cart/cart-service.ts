@@ -9,7 +9,7 @@ import { OrderResponse } from '../../interfaces/order';
   providedIn: 'root',
 })
 export class CartService {
-  private apiUrl = 'http://localhost:8080/cart';
+  private apiUrl = 'http://localhost:8080/api/carts';
 
   cartItemCount = signal(0);
 

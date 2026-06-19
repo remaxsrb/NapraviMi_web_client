@@ -6,7 +6,7 @@ import { CreateOrderResponse, NewOrderRequest } from '../../interfaces/order';
   providedIn: 'root',
 })
 export class PaymentService {
-  private orderApiUrl = 'http://localhost:8080/orders';
+  private orderApiUrl = 'http://localhost:8080/api/orders';
 
   constructor(private http: HttpClient) {}
 

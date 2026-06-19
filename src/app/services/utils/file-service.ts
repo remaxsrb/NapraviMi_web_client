@@ -10,7 +10,7 @@ export class FileService {
     private http: HttpClient
   ) { }
 
-  private apiUrl = 'http://localhost:8080/files';
+  private apiUrl = 'http://localhost:8080/api/files';
 
    uploadFile(file:File, purpose: string) {
 

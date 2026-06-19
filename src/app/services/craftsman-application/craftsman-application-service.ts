@@ -6,29 +6,30 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class CraftsmanApplicationService {
-  private apiUrl = 'http://localhost:8080/craftsman-applications';
+  private publicApiUrl = 'http://localhost:8080/api/craftsman-applications';
+  private adminApiUrl = 'http://localhost:8080/api/admin/craftsman-applications';
   
 
   constructor(private http: HttpClient) {}
 
   create(data: any): Observable<any> {
     return this.http.post<any>(
-      `${this.apiUrl}/create`,
+      `${this.publicApiUrl}/create`,
       data
     );
   }
 
   all(data: any): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/all`, { params: data });
+    return this.http.get<any>(`${this.adminApiUrl}/all`, { params: data });
   }
 
   
   approveCA(data:any): Observable<any> {
-    return this.http.patch<any>(`${this.apiUrl}/approve`, data);
+    return this.http.patch<any>(`${this.adminApiUrl}/approve`, data);
   }
 
   rejectCA(data:any): Observable<any> {
-    return this.http.patch<any>(`${this.apiUrl}/reject`, data);
+    return this.http.patch<any>(`${this.adminApiUrl}/reject`, data);
   }
 
 

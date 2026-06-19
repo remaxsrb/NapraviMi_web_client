@@ -8,7 +8,7 @@ import { ProductCategory, ProductCategoryOption } from '../../interfaces/product
   providedIn: 'root',
 })
 export class ProductCategoryService {
-  private apiUrl = 'http://localhost:8080/product-categories';
+  private apiUrl = 'http://localhost:8080/api/product-categories';
 
   private categories$;
   

@@ -7,7 +7,7 @@ import { Craft, CraftOption } from '../../interfaces/craft';
   providedIn: 'root',
 })
 export class CraftService {
-  private apiUrl = 'http://localhost:8080/crafts';
+  private apiUrl = 'http://localhost:8080/api/crafts';
   private crafts$;
 
   constructor(private http: HttpClient) {

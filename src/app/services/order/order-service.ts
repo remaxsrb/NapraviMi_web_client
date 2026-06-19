@@ -8,21 +8,21 @@ import { GetAllOrdersResponse } from '../../interfaces/order';
 export class OrderService {
 
 
-  private url = 'http://localhost:8080/orders';
+  private url = 'http://localhost:8080/api/orders';
 
   constructor(
     private http: HttpClient
   ) {}
 
-  getOrdersByCustomer(user_id: number, page: number = 1, limit: number = 10) {
+  getOrdersByCustomer(user_id: number, skip: number = 0, limit: number = 10) {
     return this.http.get<{data: GetAllOrdersResponse}>(`${this.url}/customer/${user_id}`, {
-      params: { page: page.toString(), limit: limit.toString() },
+      params: { skip: skip.toString(), limit: limit.toString() },
     });
   }
 
-  getOrdersByCraftsman(craftsman_id: number, page: number = 1, limit: number = 10) {
+  getOrdersByCraftsman(craftsman_id: number, skip: number = 0, limit: number = 10) {
     return this.http.get<{data: GetAllOrdersResponse}>(`${this.url}/craftsman/${craftsman_id}`, {
-      params: { page: page.toString(), limit: limit.toString() },
+      params: { skip: skip.toString(), limit: limit.toString() },
     });
   }
 
