@@ -14,12 +14,14 @@ import {
   ValidationErrors,
 } from '@angular/forms';
 import { RegexPatterns } from '../../../regexPatterns';
-import { CartService, CheckoutResponse } from '../../../services/cart/cart-service';
+import { CartService } from '../../../services/cart/cart-service';
 import { AuthService } from '../../../services/utils/auth-service';
-import { CheckoutPayload } from '../../../interfaces/payment';
+import { CheckoutPayload, ParsedPaymentError } from '../../../interfaces/payment';
+import { CheckoutResponse } from '../../../interfaces/order';
 import { PaymentErrNotification } from '../payment-err-notification/payment-err-notification';
-import { PaymentErrorHandler, ParsedPaymentError } from '../../../services/utils/payment-error-handler';
+import { PaymentErrorHandler } from '../../../services/utils/payment-error-handler';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ToastModule } from 'primeng/toast';
 
 export type PaymentType = 'CC' | 'COD' | null;
 export type CardType = 'VISA' | 'MASTERCARD' | 'DINERS' | null;
@@ -34,7 +36,15 @@ function cardNumberValidator(control: AbstractControl): ValidationErrors | null 
 @Component({
   selector: 'app-payment',
   standalone: true,
-  imports: [CommonModule, ButtonModule, CardModule, InputTextModule, ReactiveFormsModule, PaymentErrNotification],
+  imports: [
+    CommonModule,
+    ButtonModule,
+    CardModule,
+    InputTextModule,
+    ReactiveFormsModule,
+    PaymentErrNotification,
+    ToastModule
+  ],
   providers: [MessageService, PaymentErrorHandler],
   templateUrl: './payment.html',
   styleUrl: './payment.css',
@@ -62,7 +72,10 @@ export class Payment {
   cardForm = new FormGroup({
     cardNumber: new FormControl('', [Validators.required, cardNumberValidator]),
     cardHolder: new FormControl('', [Validators.required]),
-    expiry: new FormControl('', [Validators.required, Validators.pattern(/^(0[1-9]|1[0-2])\/\d{2}$/)]),
+    expiry: new FormControl('', [
+      Validators.required,
+      Validators.pattern(/^(0[1-9]|1[0-2])\/\d{2}$/),
+    ]),
     cvv: new FormControl('', [Validators.required, Validators.pattern(/^\d{3,4}$/)]),
   });
 
@@ -125,7 +138,7 @@ export class Payment {
 
         // Extract orders from response
         const ordersArray = response?.orders || [];
-        
+
         // Open PDF for each order
         ordersArray.forEach((order: any) => {
           const pdfUrl = order.pdf_url || order.url;
@@ -148,9 +161,9 @@ export class Payment {
           const parsed = this.errorHandler.parsePaymentError(err);
           const enriched = this.errorHandler.enrichErrorWithActions(
             parsed,
-            () => this.confirm(),  // Retry
-            undefined,             // No card change in this flow
-            () => this.contactSupport()  // Support
+            () => this.confirm(), // Retry
+            undefined, // No card change in this flow
+            () => this.contactSupport(), // Support
           );
           this.paymentError.set(enriched);
           this.errorNotification()?.showPaymentError(enriched);

@@ -3,11 +3,9 @@ import { Injectable, signal } from '@angular/core';
 import { tap } from 'rxjs';
 import { Cart } from '../../models/cart';
 import { CheckoutPayload } from '../../interfaces/payment';
-import { OrderResponse } from '../../interfaces/order';
+import { CheckoutResponse } from '../../interfaces/order';
 
-export interface CheckoutResponse {
-  orders: OrderResponse[];
-}
+export type { CheckoutResponse };
 
 @Injectable({
   providedIn: 'root',

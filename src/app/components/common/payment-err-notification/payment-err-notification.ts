@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
-import { ParsedPaymentError } from '../../../services/utils/payment-error-handler';
+import { ParsedPaymentError } from '../../../interfaces/payment';
 
 /**
  * Payment Error Notification Component
@@ -13,7 +13,6 @@ import { ParsedPaymentError } from '../../../services/utils/payment-error-handle
   selector: 'app-payment-err-notification',
   standalone: true,
   imports: [CommonModule, ToastModule, ButtonModule],
-  providers: [MessageService],
   templateUrl: './payment-err-notification.html',
   styleUrl: './payment-err-notification.css',
 })

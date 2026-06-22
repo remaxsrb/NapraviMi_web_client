@@ -1,44 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
+import {
+  PaymentErrorDetails,
+  PaymentErrorResponse,
+  ParsedPaymentError,
+  UserAction,
+} from '../../interfaces/payment';
 
-/**
- * Mirrors backend PaymentErrorDetails structure
- */
-export interface PaymentErrorDetails {
-  code: string;           // e.g., "PAYMENT_CIRCUIT_OPEN"
-  reason: string;         // e.g., "circuit_open"
-  retryable: boolean;
-  timestamp: string;
-}
-
-export interface PaymentErrorResponse {
-  error: string;          // User-friendly message from backend
-  details: PaymentErrorDetails;
-}
-
-/**
- * Frontend representation of payment error
- */
-export interface ParsedPaymentError {
-  code: string;
-  reason: string;
-  retryable: boolean;
-  timestamp: Date;
-  userMessage: string;                    // From backend or fallback
-  actionItems: UserAction[];              // What user should do
-  isPaymentError: boolean;
-  httpStatus: number;
-  originalError?: any;
-}
-
-/**
- * Actionable steps for user
- */
-export interface UserAction {
-  label: string;          // "Retry Payment", "Try Different Card", etc.
-  action: () => void;     // Callback function
-  primary?: boolean;      // Highlight as primary action
-}
+export type { PaymentErrorDetails, PaymentErrorResponse, ParsedPaymentError, UserAction };
 
 /**
  * Error code to user action mapping

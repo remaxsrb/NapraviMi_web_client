@@ -32,3 +32,7 @@ export interface GetAllOrdersResponse {
   total?: number;
   page?: number;
 }
+
+export interface CheckoutResponse {
+  orders: OrderResponse[];
+}
