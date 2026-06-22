@@ -1,0 +1,43 @@
+<p-toast position="top-right" [baseZIndex]="9999">
+  <ng-template #message let-message="message">
+    <div class="flex flex-col gap-3 w-full">
+      <!-- Error Message -->
+      <div class="flex gap-2">
+        <span class="font-semibold">{{ message.summary }}</span>
+        @if (message.data.retryable) {
+          <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
+            Može se pokušati ponovo
+          </span>
+        }
+      </div>
+
+      <!-- Detailed Message -->
+      <p class="text-sm text-gray-700 m-0">{{ message.detail }}</p>
+
+      <!-- Error Code (for support reference) -->
+      <div class="text-xs text-gray-500 bg-gray-50 p-2 rounded font-mono">
+        <span class="font-semibold">Kod greške:</span> {{ message.data.code }}
+        <br />
+        <span class="font-semibold">Razlog:</span> {{ message.data.reason }}
+        <br />
+        <span class="font-semibold">Vreme:</span>
+        {{ message.data.timestamp | date : 'dd.MM.yyyy HH:mm:ss' }}
+      </div>
+
+      <!-- Action Buttons -->
+      @if ((message.data.actionItems || []).length > 0) {
+        <div class="flex gap-2 flex-wrap">
+          @for (action of message.data.actionItems; track action.label) {
+            <button
+              pButton
+              [label]="action.label"
+              [severity]="action.primary ? 'success' : 'secondary'"
+              size="small"
+              (click)="onActionClick(action, message.key)"
+            ></button>
+          }
+        </div>
+      }
+    </div>
+  </ng-template>
+</p-toast>

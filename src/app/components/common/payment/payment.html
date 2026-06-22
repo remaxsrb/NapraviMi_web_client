@@ -1,9 +1,11 @@
 <div class="payment-container">
+  <app-payment-err-notification #errorNotification></app-payment-err-notification>
+
   <h2>Odaberite način plaćanja</h2>
 
-  @if (errorMessage) {
+  @if (errorMessage()) {
     <div class="error-banner">
-      {{ errorMessage }}
+      {{ errorMessage() }}
     </div>
   }
 
@@ -156,14 +158,14 @@
       label="Nazad"
       severity="secondary"
       (onClick)="goBack()"
-      [disabled]="isLoading"
+      [disabled]="isLoading()"
     />
     <p-button
       label="Potvrdi porudžbinu"
       severity="success"
-      [disabled]="!isFormValid || isLoading"
+      [disabled]="!isFormValid || isLoading()"
       (onClick)="confirm()"
-      [loading]="isLoading"
+      [loading]="isLoading()"
     />
   </div>
 </div>

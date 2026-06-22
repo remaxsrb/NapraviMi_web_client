@@ -5,6 +5,10 @@ import { Cart } from '../../models/cart';
 import { CheckoutPayload } from '../../interfaces/payment';
 import { OrderResponse } from '../../interfaces/order';
 
+export interface CheckoutResponse {
+  orders: OrderResponse[];
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -28,6 +32,6 @@ export class CartService {
   }
 
   checkout(payload: CheckoutPayload) {
-    return this.http.post<OrderResponse[]>(`${this.apiUrl}/checkout`, payload)
+    return this.http.post<CheckoutResponse>(`${this.apiUrl}/checkout`, payload)
   }
 }

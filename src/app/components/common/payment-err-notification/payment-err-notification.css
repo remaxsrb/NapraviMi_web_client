@@ -1,0 +1,60 @@
+/* Payment Error Notification Styling */
+
+:host ::ng-deep .p-toast {
+  top: 1rem;
+  right: 1rem;
+}
+
+:host ::ng-deep .p-toast-message {
+  margin: 0.5rem 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+:host ::ng-deep .p-toast-message.p-toast-message-error {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  border-left: 4px solid #dc2626;
+}
+
+:host ::ng-deep .p-toast-message.p-toast-message-warn {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-left: 4px solid #f59e0b;
+}
+
+:host ::ng-deep .p-toast-message.p-toast-message-success {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  border-left: 4px solid #16a34a;
+}
+
+:host ::ng-deep .p-toast-message.p-toast-message-info {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  border-left: 4px solid #0284c7;
+}
+
+:host ::ng-deep .p-toast-summary {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+:host ::ng-deep .p-toast-detail {
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+/* Button styling within toast */
+:host ::ng-deep .p-toast-message button {
+  margin-top: 0.5rem;
+}
+
+/* Mobile responsive */
+@media (max-width: 640px) {
+  :host ::ng-deep .p-toast {
+    left: 0.5rem;
+    right: 0.5rem;
+    top: 0.5rem;
+    width: auto;
+  }
+
+  :host ::ng-deep .p-toast-message {
+    margin: 0.25rem 0;
+  }
+}

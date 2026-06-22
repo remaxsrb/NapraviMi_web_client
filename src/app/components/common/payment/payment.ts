@@ -1,9 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, viewChild, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
+import { MessageService } from 'primeng/api';
 import {
   ReactiveFormsModule,
   FormGroup,
@@ -13,9 +14,12 @@ import {
   ValidationErrors,
 } from '@angular/forms';
 import { RegexPatterns } from '../../../regexPatterns';
-import { CartService } from '../../../services/cart/cart-service';
+import { CartService, CheckoutResponse } from '../../../services/cart/cart-service';
 import { AuthService } from '../../../services/utils/auth-service';
 import { CheckoutPayload } from '../../../interfaces/payment';
+import { PaymentErrNotification } from '../payment-err-notification/payment-err-notification';
+import { PaymentErrorHandler, ParsedPaymentError } from '../../../services/utils/payment-error-handler';
+import { HttpErrorResponse } from '@angular/common/http';
 
 export type PaymentType = 'CC' | 'COD' | null;
 export type CardType = 'VISA' | 'MASTERCARD' | 'DINERS' | null;
@@ -30,7 +34,8 @@ function cardNumberValidator(control: AbstractControl): ValidationErrors | null 
 @Component({
   selector: 'app-payment',
   standalone: true,
-  imports: [CommonModule, ButtonModule, CardModule, InputTextModule, ReactiveFormsModule],
+  imports: [CommonModule, ButtonModule, CardModule, InputTextModule, ReactiveFormsModule, PaymentErrNotification],
+  providers: [MessageService, PaymentErrorHandler],
   templateUrl: './payment.html',
   styleUrl: './payment.css',
 })
@@ -38,10 +43,15 @@ export class Payment {
   private router = inject(Router);
   private cartService = inject(CartService);
   private authService = inject(AuthService);
+  private messageService = inject(MessageService);
+  private errorHandler = inject(PaymentErrorHandler);
+
+  errorNotification = viewChild(PaymentErrNotification);
 
   selectedPayment: PaymentType = null;
-  isLoading = false;
-  errorMessage: string | null = null;
+  isLoading = signal(false);
+  errorMessage = signal<string | null>(null);
+  paymentError = signal<ParsedPaymentError | null>(null);
 
   addressForm = new FormGroup({
     street: new FormControl('', [Validators.required]),
@@ -78,8 +88,9 @@ export class Payment {
   confirm(): void {
     if (!this.isFormValid) return;
 
-    this.isLoading = true;
-    this.errorMessage = null;
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
+    this.paymentError.set(null);
 
     const addressForm = this.addressForm.value;
     const shippingAddress = `${addressForm.street}, ${addressForm.city} ${addressForm.postalCode}`;
@@ -100,24 +111,64 @@ export class Payment {
     }
 
     this.cartService.checkout(payload).subscribe({
-      next: (orders) => {
-        this.isLoading = false;
+      next: (response: CheckoutResponse) => {
+        this.isLoading.set(false);
         this.clearCartFromLocalState();
 
-        orders.forEach((order) => {
-          if (order.url) window.open(order.url, '_blank');
+        // Show success message
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Plaćanje uspešno',
+          detail: 'Vaša porudžbina je kreirana. Proverite email za detalje.',
+          life: 5000,
         });
 
-        this.router.navigate([this.getDashboardRouteByRole()]);
+        // Extract orders from response
+        const ordersArray = response?.orders || [];
+        
+        // Open PDF for each order
+        ordersArray.forEach((order: any) => {
+          const pdfUrl = order.pdf_url || order.url;
+          if (pdfUrl) {
+            console.log('Opening PDF:', pdfUrl);
+            window.open(pdfUrl, '_blank');
+          }
+        });
+
+        // Navigate after short delay to let user see success message
+        setTimeout(() => {
+          this.router.navigate([this.getDashboardRouteByRole()]);
+        }, 1500);
       },
-      error: (err: { error?: { message?: string } }) => {
-        this.isLoading = false;
-        this.errorMessage = err.error?.message || 'Greška pri kreiranju porudžbine';
+      error: (err: HttpErrorResponse | any) => {
+        this.isLoading.set(false);
+
+        // Handle structured payment errors
+        if (this.errorHandler.isPaymentError(err)) {
+          const parsed = this.errorHandler.parsePaymentError(err);
+          const enriched = this.errorHandler.enrichErrorWithActions(
+            parsed,
+            () => this.confirm(),  // Retry
+            undefined,             // No card change in this flow
+            () => this.contactSupport()  // Support
+          );
+          this.paymentError.set(enriched);
+          this.errorNotification()?.showPaymentError(enriched);
+        } else {
+          // Fallback for non-payment errors
+          this.errorMessage.set(err.error?.message || 'Greška pri kreiranju porudžbine');
+        }
       },
     });
   }
 
+  private contactSupport(): void {
+    // TODO: Implement support contact (chat, email form, etc.)
+    console.log('Opening support channel...');
+  }
+
   goBack(): void {
+    this.errorNotification()?.clearError();
     this.router.navigate(['/user/cart']);
   }
 
