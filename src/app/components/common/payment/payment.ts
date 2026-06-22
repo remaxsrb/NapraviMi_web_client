@@ -27,7 +27,7 @@ export type PaymentType = 'CC' | 'COD' | null;
 export type CardType = 'VISA' | 'MASTERCARD' | 'DINERS' | null;
 
 function cardNumberValidator(control: AbstractControl): ValidationErrors | null {
-  const value = (control.value || '').replace(/\s/g, '');
+  const value = (control.value || '').replace(/[\s-]/g, '');
   if (!value) return null;
   const valid = Object.values(RegexPatterns.cardPatterns).some((p) => p.test(value));
   return valid ? null : { invalidCard: true };
@@ -63,6 +63,9 @@ export class Payment {
   errorMessage = signal<string | null>(null);
   paymentError = signal<ParsedPaymentError | null>(null);
 
+  cardParts = ['', '', '', ''];
+  expiryParts = ['', ''];
+
   addressForm = new FormGroup({
     street: new FormControl('', [Validators.required]),
     city: new FormControl('', [Validators.required]),
@@ -80,7 +83,7 @@ export class Payment {
   });
 
   get detectedCardType(): CardType {
-    const num = (this.cardForm.get('cardNumber')?.value || '').replace(/\s/g, '');
+    const num = (this.cardForm.get('cardNumber')?.value || '').replace(/[\s-]/g, '');
     for (const [type, pattern] of Object.entries(RegexPatterns.cardPatterns)) {
       if (pattern.test(num)) return type as CardType;
     }
@@ -96,6 +99,11 @@ export class Payment {
 
   select(type: PaymentType): void {
     this.selectedPayment = type;
+    if (type !== 'CC') {
+      this.cardParts = ['', '', '', ''];
+      this.expiryParts = ['', ''];
+      this.cardForm.reset();
+    }
   }
 
   confirm(): void {
@@ -117,7 +125,7 @@ export class Payment {
       const cardForm = this.cardForm.value;
       payload.credit_card_data = {
         owner_name: cardForm.cardHolder!,
-        card_number: (cardForm.cardNumber || '').replace(/\s/g, ''),
+        card_number: (cardForm.cardNumber || '').replace(/[\s-]/g, ''),
         expiration_date: cardForm.expiry!,
         cvv: cardForm.cvv!,
       };
@@ -178,6 +186,40 @@ export class Payment {
   private contactSupport(): void {
     // TODO: Implement support contact (chat, email form, etc.)
     console.log('Opening support channel...');
+  }
+
+  onCardSegment(index: number, event: Event, nextEl: HTMLInputElement | null): void {
+    const input = event.target as HTMLInputElement;
+    const digits = input.value.replace(/\D/g, '').slice(0, 4);
+    input.value = digits;
+    this.cardParts[index] = digits;
+    this.cardForm.get('cardNumber')!.setValue(this.cardParts.join(''));
+    if (digits.length === 4 && nextEl) nextEl.focus();
+  }
+
+  onCardSegmentKey(event: KeyboardEvent, prevEl: HTMLInputElement | null): void {
+    const input = event.target as HTMLInputElement;
+    if (event.key === 'Backspace' && input.value === '' && prevEl) {
+      event.preventDefault();
+      prevEl.focus();
+    }
+  }
+
+  onExpirySegment(index: number, event: Event, nextEl: HTMLInputElement | null): void {
+    const input = event.target as HTMLInputElement;
+    const digits = input.value.replace(/\D/g, '').slice(0, 2);
+    input.value = digits;
+    this.expiryParts[index] = digits;
+    this.cardForm.get('expiry')!.setValue(this.expiryParts[0] + '/' + this.expiryParts[1]);
+    if (digits.length === 2 && nextEl) nextEl.focus();
+  }
+
+  onExpirySegmentKey(event: KeyboardEvent, prevEl: HTMLInputElement | null): void {
+    const input = event.target as HTMLInputElement;
+    if (event.key === 'Backspace' && input.value === '' && prevEl) {
+      event.preventDefault();
+      prevEl.focus();
+    }
   }
 
   goBack(): void {

@@ -87,14 +87,27 @@
       <div class="form-field">
         <label for="cardNumber">Broj kartice</label>
         <div class="card-number-wrapper">
-          <input
-            pInputText
-            id="cardNumber"
-            formControlName="cardNumber"
-            placeholder="1234567890123456"
-            maxlength="16"
-            class="w-full"
-          />
+          <div class="card-segments" [class.segments-invalid]="cardForm.get('cardNumber')?.invalid && cardForm.get('cardNumber')?.touched">
+            <input #seg0 type="text" inputmode="numeric" maxlength="4" placeholder="XXXX"
+                   (input)="onCardSegment(0, $event, seg1)"
+                   (keydown)="onCardSegmentKey($event, null)"
+                   (blur)="cardForm.get('cardNumber')!.markAsTouched()" />
+            <span class="seg-sep">-</span>
+            <input #seg1 type="text" inputmode="numeric" maxlength="4" placeholder="XXXX"
+                   (input)="onCardSegment(1, $event, seg2)"
+                   (keydown)="onCardSegmentKey($event, seg0)"
+                   (blur)="cardForm.get('cardNumber')!.markAsTouched()" />
+            <span class="seg-sep">-</span>
+            <input #seg2 type="text" inputmode="numeric" maxlength="4" placeholder="XXXX"
+                   (input)="onCardSegment(2, $event, seg3)"
+                   (keydown)="onCardSegmentKey($event, seg1)"
+                   (blur)="cardForm.get('cardNumber')!.markAsTouched()" />
+            <span class="seg-sep">-</span>
+            <input #seg3 type="text" inputmode="numeric" maxlength="4" placeholder="XXXX"
+                   (input)="onCardSegment(3, $event, null)"
+                   (keydown)="onCardSegmentKey($event, seg2)"
+                   (blur)="cardForm.get('cardNumber')!.markAsTouched()" />
+          </div>
           @if (detectedCardType) {
             <span class="card-badge card-{{ detectedCardType.toLowerCase() }}">
               {{ detectedCardType }}
@@ -123,14 +136,17 @@
       <div class="form-row">
         <div class="form-field">
           <label for="expiry">Datum isteka</label>
-          <input
-            pInputText
-            id="expiry"
-            formControlName="expiry"
-            placeholder="MM/GG"
-            maxlength="5"
-            class="w-full"
-          />
+          <div class="expiry-segments" [class.segments-invalid]="cardForm.get('expiry')?.invalid && cardForm.get('expiry')?.touched">
+            <input #exMM type="text" inputmode="numeric" maxlength="2" placeholder="MM"
+                   (input)="onExpirySegment(0, $event, exYY)"
+                   (keydown)="onExpirySegmentKey($event, null)"
+                   (blur)="cardForm.get('expiry')!.markAsTouched()" />
+            <span class="seg-sep">/</span>
+            <input #exYY type="text" inputmode="numeric" maxlength="2" placeholder="GG"
+                   (input)="onExpirySegment(1, $event, null)"
+                   (keydown)="onExpirySegmentKey($event, exMM)"
+                   (blur)="cardForm.get('expiry')!.markAsTouched()" />
+          </div>
           @if (cardForm.get('expiry')?.invalid && cardForm.get('expiry')?.touched) {
             <small class="field-error">Format: MM/GG</small>
           }

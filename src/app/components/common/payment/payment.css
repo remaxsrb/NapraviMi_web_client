@@ -111,7 +111,7 @@
   align-items: center;
 }
 
-.card-number-wrapper input {
+.card-number-wrapper .card-segments {
   flex: 1;
   padding-right: 6rem;
 }
@@ -140,6 +140,78 @@
 .card-diners {
   background-color: #4a4a4a;
   color: #fff;
+}
+
+/* Segmented inputs (card number, expiry) */
+.card-segments,
+.expiry-segments {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--p-inputtext-color);
+  background: var(--p-inputtext-background);
+  padding-block: var(--p-inputtext-padding-y);
+  padding-inline: var(--p-inputtext-padding-x);
+  border: 1px solid var(--p-inputtext-border-color);
+  border-radius: var(--p-inputtext-border-radius);
+  transition: border-color var(--p-inputtext-transition-duration), box-shadow var(--p-inputtext-transition-duration);
+}
+
+.card-segments {
+  width: 100%;
+}
+
+.card-segments:hover,
+.expiry-segments:hover {
+  border-color: var(--p-inputtext-hover-border-color);
+}
+
+.card-segments:focus-within,
+.expiry-segments:focus-within {
+  border-color: var(--p-inputtext-focus-border-color);
+  box-shadow: var(--p-inputtext-focus-ring-shadow);
+  outline: var(--p-inputtext-focus-ring-width) var(--p-inputtext-focus-ring-style) var(--p-inputtext-focus-ring-color);
+  outline-offset: var(--p-inputtext-focus-ring-offset);
+}
+
+.segments-invalid {
+  border-color: var(--p-inputtext-invalid-border-color) !important;
+}
+
+.card-segments input,
+.expiry-segments input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 1rem;
+  color: inherit;
+  padding: 0;
+  text-align: center;
+  font-family: monospace;
+  letter-spacing: 0.08em;
+}
+
+.card-segments input::placeholder,
+.expiry-segments input::placeholder {
+  color: var(--p-inputtext-placeholder-color);
+  letter-spacing: normal;
+}
+
+.card-segments input {
+  width: 4ch;
+}
+
+.expiry-segments input {
+  width: 2.5ch;
+}
+
+.seg-sep {
+  color: var(--p-inputtext-color);
+  opacity: 0.5;
+  user-select: none;
+  line-height: 1;
 }
 
 /* Actions */
