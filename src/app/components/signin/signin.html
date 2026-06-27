@@ -1,10 +1,6 @@
 <body>
   @let state = (state$ | async);
-  <div class="header">
-    <a routerLink="/" class="logo-link">
-    <img src="images/pilot-logo.png" alt="NapraviMi Logo" class="header-logo" />
-  </a>
-  </div>
+  <app-header [logoOnly]="true"></app-header>
   <div class="center-page">
     <p-card [style]="{ width: '450px' }">
       <ng-template pTemplate="header">

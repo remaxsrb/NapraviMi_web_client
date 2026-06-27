@@ -47,6 +47,11 @@
   border: none;
 }
 
+.header.logo-only .logo-link {
+  grid-column: 1 / -1;
+  justify-self: center;
+}
+
 .header-logo {
   max-width: 100%;
   height: auto;

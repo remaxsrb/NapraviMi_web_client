@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
@@ -27,6 +27,7 @@ interface HeaderState {
   styleUrl: './header.css',
 })
 export class Header {
+  @Input() logoOnly = false;
   searchQuery = '';
 
   private router = inject(Router);

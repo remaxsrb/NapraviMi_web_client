@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
-import { Message, MessageModule } from 'primeng/message';
+import { MessageModule } from 'primeng/message';
 import { RegexPatterns } from '../../regexPatterns';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
@@ -9,9 +9,10 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { UserService } from '../../services/user/user-service';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Header } from '../common/header/header/header';
+import { BehaviorSubject } from 'rxjs';
 
 interface RegistrationState {
   submissionError: boolean;
@@ -31,7 +32,7 @@ interface RegistrationState {
     RadioButtonModule,
     ButtonModule,
     CardModule,
-    RouterLink
+    Header,
   ],
   templateUrl: './user-registration.html',
   styleUrls: ['./user-registration.css'],

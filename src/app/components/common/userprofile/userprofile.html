@@ -18,7 +18,11 @@
           <p-card>
             <h2>{{ profileState.user.firstname }} {{ profileState.user.lastname }}</h2>
 
-            <p-rating [ngModel]="profileState.user.rating" readonly="true"></p-rating>
+            <p-rating
+              [ngModel]="canRate() ? ratingValue : profileState.user.rating"
+              (ngModelChange)="ratingValue = $event; onRateCraftsman()"
+              [readonly]="!canRate()">
+            </p-rating>
 
             <p>{{ profileState.user.craft }}</p>
             <p>{{ profileState.user.email }}</p>

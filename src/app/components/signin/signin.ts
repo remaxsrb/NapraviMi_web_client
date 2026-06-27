@@ -7,11 +7,10 @@ import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
 import { PasswordModule } from 'primeng/password';
-import { RegexPatterns } from '../../regexPatterns';
 import { UserService } from '../../services/user/user-service';
 import { AuthService } from '../../services/utils/auth-service';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { Header } from '../common/header/header/header';
+import { BehaviorSubject } from 'rxjs';
 
 interface SigninState {
   loginError: boolean;
@@ -30,6 +29,7 @@ interface SigninState {
     ButtonModule,
     CardModule,
     RouterLink,
+    Header,
   ],
   templateUrl: './signin.html',
   styleUrl: './signin.css',
