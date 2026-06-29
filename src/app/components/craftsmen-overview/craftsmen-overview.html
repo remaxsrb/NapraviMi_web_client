@@ -2,6 +2,13 @@
   @let state = (state$ | async);
   <div class="overview-header">
     <h2>{{ state?.activeCraft ? 'Zanatlije - ' + state?.activeCraftLabel : 'Pregled zanatlija' }}</h2>
+    <p-button
+      [icon]="state?.sortDirection === 'ASC' ? 'pi pi-arrow-up' : 'pi pi-arrow-down'"
+      [text]="true"
+      [rounded]="true"
+      pTooltip="Sortiraj po oceni"
+      (onClick)="toggleSortDirection()"
+    ></p-button>
     @if (state?.activeCraft) {
       <div class="active-filter">
         <span class="filter-label"

@@ -4,6 +4,7 @@ import { RatingModule } from 'primeng/rating';
 import { CardModule } from 'primeng/card';
 import { PaginatorModule } from 'primeng/paginator';
 import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CraftsmanService } from '../../services/craftsman/craftsman-service';
@@ -14,6 +15,7 @@ import { UserService } from '../../services/user/user-service';
 import { User } from '../../models/user';
 import { CraftOption } from '../../interfaces/craft';
 import { PaginationEvent } from '../../interfaces/pagination';
+import { SortDirection } from '../../interfaces/sort';
 
 interface CraftsmenState {
   craftsmen: User[];
@@ -23,6 +25,7 @@ interface CraftsmenState {
   activeCraftLabel: string | null;
   first: number;
   rows: number;
+  sortDirection: SortDirection;
 }
 
 @Component({
@@ -35,6 +38,7 @@ interface CraftsmenState {
     RatingModule,
     PaginatorModule,
     ButtonModule,
+    TooltipModule,
   ],
   templateUrl: './craftsmen-overview.html',
   styleUrl: './craftsmen-overview.css',
@@ -51,12 +55,15 @@ export class CraftsmenOverview {
     rows: 6,
   });
 
+  private sortDirectionSubject$ = new BehaviorSubject<SortDirection>('DESC');
+
   readonly state$: Observable<CraftsmenState> = combineLatest([
     this.route.queryParamMap,
     this.craftService.getCraftOptions(),
     this.paginationSubject$,
+    this.sortDirectionSubject$,
   ]).pipe(
-    switchMap(([params, craftOptions, pagination]) => {
+    switchMap(([params, craftOptions, pagination, sortDirection]) => {
       const craft = params.get('craft');
       const activeCraftLabel = craft
         ? craftOptions.find((c) => c.value === craft)?.label || craft
@@ -69,7 +76,7 @@ export class CraftsmenOverview {
         this.paginationSubject$.next(adjustedPagination);
       }
 
-      return this.fetchCraftsmen(craft, adjustedPagination).pipe(
+      return this.fetchCraftsmen(craft, adjustedPagination, sortDirection).pipe(
         map((response) => ({
           craftsmen: response?.data?.craftsmen || [],
           isLoading: false,
@@ -78,6 +85,7 @@ export class CraftsmenOverview {
           activeCraftLabel,
           first: adjustedPagination.first,
           rows: adjustedPagination.rows,
+          sortDirection,
         })),
         startWith({
           craftsmen: [],
@@ -87,6 +95,7 @@ export class CraftsmenOverview {
           activeCraftLabel,
           first: adjustedPagination.first,
           rows: adjustedPagination.rows,
+          sortDirection,
         }),
         catchError(() =>
           EMPTY.pipe(
@@ -98,6 +107,7 @@ export class CraftsmenOverview {
               activeCraftLabel,
               first: adjustedPagination.first,
               rows: adjustedPagination.rows,
+              sortDirection,
             })
           )
         )
@@ -111,6 +121,7 @@ export class CraftsmenOverview {
       activeCraftLabel: null,
       first: 0,
       rows: 6,
+      sortDirection: this.sortDirectionSubject$.value,
     })
   );
 
@@ -123,6 +134,13 @@ export class CraftsmenOverview {
       first: event.first,
       rows: event.rows,
     });
+  }
+
+  toggleSortDirection(): void {
+    this.sortDirectionSubject$.next(
+      this.sortDirectionSubject$.value === 'DESC' ? 'ASC' : 'DESC'
+    );
+    this.router.navigate([], { queryParams: {} });
   }
 
   onSelectCraftsman(craftsman: User): void {
@@ -138,15 +156,13 @@ export class CraftsmenOverview {
 
   private fetchCraftsmen(
     craft: string | null,
-    pagination: PaginationEvent
+    pagination: PaginationEvent,
+    sortDirection: SortDirection
   ): Observable<any> {
     if (craft) {
       return this.craftsmanService.getByCraft(craft, pagination.first, pagination.rows);
     } else {
-      return this.craftsmanService.all({
-        limit: pagination.rows,
-        skip: pagination.first,
-      });
+      return this.craftsmanService.sortByRating(sortDirection, pagination.first, pagination.rows);
     }
   }
 }

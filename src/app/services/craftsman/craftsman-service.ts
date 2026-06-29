@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { SortDirection } from '../../interfaces/sort';
 
 @Injectable({
   providedIn: 'root',
@@ -20,6 +21,12 @@ export class CraftsmanService {
 
   getByCraft(craft: string, skip: number, limit: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/craft/${craft}?skip=${skip}&limit=${limit}`);
+  }
+
+  sortByRating(direction: SortDirection, skip: number, limit: number): Observable<any> {
+    return this.http.request<any>('GET', `${this.apiUrl}/sort/${direction}`, {
+      body: { skip, limit },
+    });
   }
 
   rateCraftsman(craftsmanId: number, rating: number): Observable<any> {
