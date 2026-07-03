@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, ElementRef, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { MessageModule } from 'primeng/message';
@@ -13,11 +13,27 @@ import { Router } from '@angular/router';
 import { UserService } from '../../services/user/user-service';
 import { Header } from '../common/header/header/header';
 import { BehaviorSubject } from 'rxjs';
+import { TURNSTILE_SITE_KEY } from '../../env';
 
 interface RegistrationState {
   submissionError: boolean;
   submissionErrorMessage: string;
 }
+
+interface TurnstileRenderOptions {
+  sitekey: string;
+  callback: (token: string) => void;
+  'error-callback'?: () => void;
+  'expired-callback'?: () => void;
+}
+
+interface TurnstileApi {
+  render(container: HTMLElement, options: TurnstileRenderOptions): string;
+  reset(widgetId: string): void;
+  remove(widgetId: string): void;
+}
+
+declare const turnstile: TurnstileApi | undefined;
 
 @Component({
   selector: 'app-user-registration',
@@ -39,6 +55,11 @@ interface RegistrationState {
 })
 export class UserRegistration {
   signUpForm!: FormGroup;
+
+  @ViewChild('turnstileContainer', { static: true })
+  private turnstileContainer!: ElementRef<HTMLDivElement>;
+
+  private turnstileWidgetId: string | null = null;
 
   private fb = inject(FormBuilder);
   private router = inject(Router);
@@ -85,16 +106,59 @@ export class UserRegistration {
     return `${year}-${month}-${day}`;
   }
 
-  submit(): void {
+  onRegisterClick(): void {
     this.errorSubject$.next({
       submissionError: false,
       submissionErrorMessage: '',
     });
 
+    if (this.signUpForm.invalid) {
+      this.signUpForm.markAllAsTouched();
+      return;
+    }
+
+    this.renderTurnstile();
+  }
+
+  private renderTurnstile(): void {
+    if (typeof turnstile === 'undefined') {
+      this.errorSubject$.next({
+        submissionError: true,
+        submissionErrorMessage: 'Verifikacija trenutno nije dostupna. Pokušajte ponovo.',
+      });
+      return;
+    }
+
+    if (this.turnstileWidgetId !== null) {
+      turnstile.reset(this.turnstileWidgetId);
+      return;
+    }
+
+    this.turnstileWidgetId = turnstile.render(this.turnstileContainer.nativeElement, {
+      sitekey: TURNSTILE_SITE_KEY,
+      callback: (token: string) => this.submit(token),
+      'error-callback': () => {
+        this.errorSubject$.next({
+          submissionError: true,
+          submissionErrorMessage: 'Verifikacija nije uspela. Pokušajte ponovo.',
+        });
+      },
+      'expired-callback': () => this.resetTurnstile(),
+    });
+  }
+
+  private resetTurnstile(): void {
+    if (typeof turnstile !== 'undefined' && this.turnstileWidgetId !== null) {
+      turnstile.reset(this.turnstileWidgetId);
+    }
+  }
+
+  submit(turnstileToken: string): void {
     const formValue = this.signUpForm.value;
     const userData = {
       ...formValue,
       date_of_birth: formValue.date_of_birth ? this.formatDate(formValue.date_of_birth) : null,
+      turnstileToken,
     };
 
     this.userService.register(userData).subscribe({
@@ -102,6 +166,7 @@ export class UserRegistration {
         this.router.navigate(['/']);
       },
       error: (error) => {
+        this.resetTurnstile();
         const errorMessage = this.getSignupErrorMessage(error);
         this.errorSubject$.next({
           submissionError: true,

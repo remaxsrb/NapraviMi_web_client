@@ -9,3 +9,5 @@ export const API_BASE_URL = `${API_HOST}/api`;
 
 /** Host used to authorize JWT attachment (no protocol). */
 export const API_ALLOWED_DOMAIN = 'api.napravimi.com';
+
+export const TURNSTILE_SITE_KEY = '0x4AAAAAADvDa6C1XKrZfYPm';

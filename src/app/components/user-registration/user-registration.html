@@ -14,7 +14,7 @@
         </div>
       }
 
-      <form [formGroup]="signUpForm" (ngSubmit)="submit()" class="p-fluid">
+      <form [formGroup]="signUpForm" (ngSubmit)="onRegisterClick()" class="p-fluid">
         <!-- Username -->
         <div class="field flex flex-column">
           <label for="username">Korisničko ime</label>
@@ -109,6 +109,8 @@
             style="width: 100%"
           ></button>
         </div>
+
+        <div #turnstileContainer class="turnstile-container flex justify-content-center mt-3"></div>
       </form>
     </p-card>
   </div>
