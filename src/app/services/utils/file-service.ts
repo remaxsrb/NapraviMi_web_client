@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { API_BASE_URL } from '../../env';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +11,7 @@ export class FileService {
     private http: HttpClient
   ) { }
 
-  private apiUrl = 'http://localhost:8080/api/files';
+  private apiUrl = `${API_BASE_URL}/files`;
 
    uploadFile(file:File, purpose: string) {
 

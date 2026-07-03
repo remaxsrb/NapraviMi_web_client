@@ -2,12 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { SortDirection } from '../../interfaces/sort';
+import { API_BASE_URL } from '../../env';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CraftsmanService {
-  private apiUrl = 'http://localhost:8080/api/craftsmen';
+  private apiUrl = `${API_BASE_URL}/craftsmen`;
 
   constructor(private http: HttpClient) {}
 

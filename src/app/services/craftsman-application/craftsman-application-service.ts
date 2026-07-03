@@ -1,13 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { API_BASE_URL } from '../../env';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CraftsmanApplicationService {
-  private publicApiUrl = 'http://localhost:8080/api/craftsman-applications';
-  private adminApiUrl = 'http://localhost:8080/api/admin/craftsman-applications';
+  private publicApiUrl = `${API_BASE_URL}/craftsman-applications`;
+  private adminApiUrl = `${API_BASE_URL}/admin/craftsman-applications`;
   
 
   constructor(private http: HttpClient) {}

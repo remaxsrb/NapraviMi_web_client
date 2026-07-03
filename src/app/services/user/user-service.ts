@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
 import { map } from 'rxjs/operators';
 import { User } from '../../models/user';
+import { API_BASE_URL } from '../../env';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +11,7 @@ import { User } from '../../models/user';
 export class UserService {
   constructor(private http: HttpClient) {}
 
-    private apiUrl = 'http://localhost:8080/api/users';
+    private apiUrl = `${API_BASE_URL}/users`;
 
   // Store the user here right before navigating
   setPreviewUser(user: any) {

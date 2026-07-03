@@ -2,12 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, shareReplay } from 'rxjs';
 import { Craft, CraftOption } from '../../interfaces/craft';
+import { API_BASE_URL } from '../../env';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CraftService {
-  private apiUrl = 'http://localhost:8080/api/crafts';
+  private apiUrl = `${API_BASE_URL}/crafts`;
   private crafts$;
 
   constructor(private http: HttpClient) {

@@ -4,6 +4,7 @@ import { tap } from 'rxjs';
 import { Cart } from '../../models/cart';
 import { CheckoutPayload } from '../../interfaces/payment';
 import { CheckoutResponse } from '../../interfaces/order';
+import { API_BASE_URL } from '../../env';
 
 export type { CheckoutResponse };
 
@@ -11,7 +12,7 @@ export type { CheckoutResponse };
   providedIn: 'root',
 })
 export class CartService {
-  private apiUrl = 'http://localhost:8080/api/carts';
+  private apiUrl = `${API_BASE_URL}/carts`;
 
   cartItemCount = signal(0);
 

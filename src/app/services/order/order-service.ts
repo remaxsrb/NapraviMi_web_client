@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { GetAllOrdersResponse } from '../../interfaces/order';
+import { API_BASE_URL } from '../../env';
 
 @Injectable({
   providedIn: 'root',
@@ -8,7 +9,7 @@ import { GetAllOrdersResponse } from '../../interfaces/order';
 export class OrderService {
 
 
-  private url = 'http://localhost:8080/api/orders';
+  private url = `${API_BASE_URL}/orders`;
 
   constructor(
     private http: HttpClient

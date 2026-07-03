@@ -12,6 +12,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './app/interceptors/auth-interceptor';
 import { JwtModule } from '@auth0/angular-jwt';
 import { importProvidersFrom } from '@angular/core';
+import { API_ALLOWED_DOMAIN } from './app/env';
 
 
 bootstrapApplication(App, {
@@ -33,7 +34,7 @@ bootstrapApplication(App, {
       JwtModule.forRoot({
         config: {
           tokenGetter: () => localStorage.getItem('authToken'),
-          allowedDomains: ["http://localhost:8080"], 
+          allowedDomains: [API_ALLOWED_DOMAIN], 
           disallowedRoutes: [],
         },
       })
