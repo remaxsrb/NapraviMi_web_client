@@ -120,7 +120,13 @@ export class CraftsmanApplications {
         application.resolved_at && !application.resolved_at.startsWith('0001-01-01')
           ? new Date(application.resolved_at)
           : undefined,
+      resumeUrl: application.resume_url,
     };
+  }
+
+  openResume(app: ApplicationRow): void {
+    if (!app.resumeUrl) return;
+    window.open(app.resumeUrl, '_blank', 'noopener,noreferrer');
   }
 
   onStatusChange(event: StatusChangeEvent, app: ApplicationRow): void {

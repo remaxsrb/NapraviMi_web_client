@@ -22,6 +22,7 @@
         <th>Zanat</th>
         <th>Status</th>
         <th>Datum podnošenja</th>
+        <th>CV</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-app>
@@ -47,6 +48,13 @@
           </p-select>
         </td>
         <td>{{ app.createdAt | date: 'short' }}</td>
+        <td>
+          @if (app.resumeUrl) {
+            <p-button label="Otvori" size="small" severity="help" (onClick)="openResume(app)" />
+          } @else {
+            <span>-</span>
+          }
+        </td>
       </tr>
     </ng-template>
   </p-table>

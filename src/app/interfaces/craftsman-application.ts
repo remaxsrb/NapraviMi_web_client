@@ -5,6 +5,7 @@ export interface ApiApplication {
   craft: string;
   created_at: string;
   resolved_at?: string;
+  resume_url?: string;
 }
 
 export interface StatusOption {
@@ -21,6 +22,7 @@ export interface ApplicationRow {
   newStatus: string;
   createdAt: Date;
   resolvedAt?: Date;
+  resumeUrl?: string;
 }
 
 export interface GetApplicationsResponse {

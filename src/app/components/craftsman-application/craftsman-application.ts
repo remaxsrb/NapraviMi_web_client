@@ -118,10 +118,13 @@ export class CraftsmanApplication {
 
   onSubmit(): void {
     this.fileService.uploadFile(this.resumeFile!, 'resume').subscribe({
-      next: () => {
+      next: (response) => {
+        const resumeUrl = response?.data?.url || response?.url || '';
+
         const applicationData = {
           email: this.applicationForm.value.email,
           craft: this.applicationForm.value.craft,
+          resume_url: resumeUrl,
         };
 
         this.caService.create(applicationData).subscribe({
