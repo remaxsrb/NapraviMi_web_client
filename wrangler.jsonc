@@ -1,9 +1,15 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "napravimi-web-client",
+	"name": "napravi-mi",
 	// Update to the actual current date before first deploy
 	"compatibility_date": "2026-07-03",
 	"main": "worker/index.js",
+	"routes": [
+		{
+			"pattern": "napravimi.com",
+			"custom_domain": true
+		}
+	],
 	"assets": {
 		// Matches angular.json's default output for the "web_client" project
 		// (no outputPath override -> dist/<project-name>/browser)
