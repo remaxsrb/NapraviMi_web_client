@@ -119,7 +119,7 @@ export class CraftsmanApplication {
   onSubmit(): void {
     this.fileService.uploadFile(this.resumeFile!, 'resume').subscribe({
       next: (response) => {
-        const resumeUrl = response?.url || response?.url || '';
+        const resumeUrl = response?.url || '';
 
         const applicationData = {
           email: this.applicationForm.value.email,
