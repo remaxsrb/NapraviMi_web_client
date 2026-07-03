@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { MessageModule } from 'primeng/message';
@@ -53,13 +53,14 @@ declare const turnstile: TurnstileApi | undefined;
   templateUrl: './user-registration.html',
   styleUrls: ['./user-registration.css'],
 })
-export class UserRegistration {
+export class UserRegistration implements AfterViewInit, OnDestroy {
   signUpForm!: FormGroup;
 
   @ViewChild('turnstileContainer', { static: true })
   private turnstileContainer!: ElementRef<HTMLDivElement>;
 
   private turnstileWidgetId: string | null = null;
+  private turnstileToken: string | null = null;
 
   private fb = inject(FormBuilder);
   private router = inject(Router);
@@ -74,6 +75,16 @@ export class UserRegistration {
 
   constructor() {
     this.initSignUpForm();
+  }
+
+  ngAfterViewInit(): void {
+    this.renderTurnstile();
+  }
+
+  ngOnDestroy(): void {
+    if (typeof turnstile !== 'undefined' && this.turnstileWidgetId !== null) {
+      turnstile.remove(this.turnstileWidgetId);
+    }
   }
 
   initSignUpForm(): void {
@@ -117,37 +128,45 @@ export class UserRegistration {
       return;
     }
 
-    this.renderTurnstile();
-  }
-
-  private renderTurnstile(): void {
-    if (typeof turnstile === 'undefined') {
+    if (!this.turnstileToken) {
       this.errorSubject$.next({
         submissionError: true,
-        submissionErrorMessage: 'Verifikacija trenutno nije dostupna. Pokušajte ponovo.',
+        submissionErrorMessage: 'Molimo potvrdite da niste robot.',
       });
       return;
     }
 
+    this.submit(this.turnstileToken);
+  }
+
+  private renderTurnstile(): void {
+    if (typeof turnstile === 'undefined') {
+      // The Turnstile script is loaded with `defer`; retry until it is ready.
+      setTimeout(() => this.renderTurnstile(), 300);
+      return;
+    }
+
     if (this.turnstileWidgetId !== null) {
-      turnstile.reset(this.turnstileWidgetId);
       return;
     }
 
     this.turnstileWidgetId = turnstile.render(this.turnstileContainer.nativeElement, {
       sitekey: TURNSTILE_SITE_KEY,
-      callback: (token: string) => this.submit(token),
-      'error-callback': () => {
-        this.errorSubject$.next({
-          submissionError: true,
-          submissionErrorMessage: 'Verifikacija nije uspela. Pokušajte ponovo.',
-        });
+      callback: (token: string) => {
+        this.turnstileToken = token;
       },
-      'expired-callback': () => this.resetTurnstile(),
+      'error-callback': () => {
+        this.turnstileToken = null;
+      },
+      'expired-callback': () => {
+        this.turnstileToken = null;
+        this.resetTurnstile();
+      },
     });
   }
 
   private resetTurnstile(): void {
+    this.turnstileToken = null;
     if (typeof turnstile !== 'undefined' && this.turnstileWidgetId !== null) {
       turnstile.reset(this.turnstileWidgetId);
     }
@@ -158,7 +177,7 @@ export class UserRegistration {
     const userData = {
       ...formValue,
       date_of_birth: formValue.date_of_birth ? this.formatDate(formValue.date_of_birth) : null,
-      turnstileToken,
+      turnstile_token: turnstileToken,
     };
 
     this.userService.register(userData).subscribe({
