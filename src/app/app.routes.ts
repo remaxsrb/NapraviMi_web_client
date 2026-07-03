@@ -1,100 +1,176 @@
 import { Routes } from '@angular/router';
-import { Homepage } from './components/homepage/homepage';
-import { HomepageWelcome } from './components/homepage-welcome/homepage-welcome';
-import { CraftsmenOverview } from './components/craftsmen-overview/craftsmen-overview';
-import { CraftsmanApplication } from './components/craftsman-application/craftsman-application';
-import { UserRegistration } from './components/user-registration/user-registration';
-import { Signin } from './components/signin/signin';
-import { UserDashboard } from './components/user/user-dashboard/user-dashboard';
 import { authGuard } from './guards/auth-guard';
-import { Userprofile } from './components/common/userprofile/userprofile';
 import { roleGuard } from './guards/role-guard';
-import { ChangePassword } from './components/user/change-password/change-password';
-import { AdminDashboard } from './components/admin/admin-dashboard/admin-dashboard';
-import { AdminLogin } from './components/admin/admin-login/admin-login';
-import { CraftsmanApplications } from './components/admin/craftsman-applications/craftsman-applications';
-import { SetRoles } from './components/admin/set-roles/set-roles';
-import { ProfileSettings } from './components/common/profile-settings/profile-settings';
-import { ProductsByCraftsman } from './components/products/products-by-craftsman/products-by-craftsman/products-by-craftsman';
-import { ProductPage } from './components/products/product-page/product-page/product-page';
-import { AddProduct } from './components/products/add-product/add-product';
-import { Cart } from './components/common/cart/cart';
-import { Payment } from './components/common/payment/payment';
-import { OrderOverview } from './components/common/order-overview/order-overview';
+
 export const routes: Routes = [
   {
     path: '',
-    component: Homepage,
+    loadComponent: () =>
+      import('./components/homepage/homepage').then((m) => m.Homepage),
     children: [
-      { path: '', component: HomepageWelcome },
-      { path: 'craftsmen', component: CraftsmenOverview },
+      {
+        path: '',
+        loadComponent: () =>
+          import('./components/homepage-welcome/homepage-welcome').then(
+            (m) => m.HomepageWelcome,
+          ),
+      },
+      {
+        path: 'craftsmen',
+        loadComponent: () =>
+          import('./components/craftsmen-overview/craftsmen-overview').then(
+            (m) => m.CraftsmenOverview,
+          ),
+      },
     ],
   },
-  { path: 'craftsman-apply', component: CraftsmanApplication },
-  { path: 'user-registration', component: UserRegistration },
-  { path: 'login', component: Signin },
-  { path: 'change-password', component: ChangePassword},
-  { path: 'settings', component: ProfileSettings, canActivate: [authGuard] },
+  {
+    path: 'craftsman-apply',
+    loadComponent: () =>
+      import('./components/craftsman-application/craftsman-application').then(
+        (m) => m.CraftsmanApplication,
+      ),
+  },
+  {
+    path: 'user-registration',
+    loadComponent: () =>
+      import('./components/user-registration/user-registration').then(
+        (m) => m.UserRegistration,
+      ),
+  },
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('./components/signin/signin').then((m) => m.Signin),
+  },
+  {
+    path: 'change-password',
+    loadComponent: () =>
+      import('./components/user/change-password/change-password').then(
+        (m) => m.ChangePassword,
+      ),
+  },
+  {
+    path: 'settings',
+    loadComponent: () =>
+      import('./components/common/profile-settings/profile-settings').then(
+        (m) => m.ProfileSettings,
+      ),
+    canActivate: [authGuard],
+  },
   {
     path: 'user',
-    component: UserDashboard,
+    loadComponent: () =>
+      import('./components/user/user-dashboard/user-dashboard').then(
+        (m) => m.UserDashboard,
+      ),
     canActivate: [authGuard, roleGuard],
     data: { expected_role: 'user' },
     children: [
       {
         path: 'cart',
-        component: Cart,
+        loadComponent: () =>
+          import('./components/common/cart/cart').then((m) => m.Cart),
       },
       {
         path: 'orders',
-        component: OrderOverview,
+        loadComponent: () =>
+          import('./components/common/order-overview/order-overview').then(
+            (m) => m.OrderOverview,
+          ),
       },
     ],
   },
   {
     path: 'profile',
-    component: Userprofile,
+    loadComponent: () =>
+      import('./components/common/userprofile/userprofile').then(
+        (m) => m.Userprofile,
+      ),
     canActivate: [authGuard],
   },
   {
     path: 'internal-login',
-    component: AdminLogin,
+    loadComponent: () =>
+      import('./components/admin/admin-login/admin-login').then(
+        (m) => m.AdminLogin,
+      ),
   },
   {
     path: 'admin',
-    component: AdminDashboard,
+    loadComponent: () =>
+      import('./components/admin/admin-dashboard/admin-dashboard').then(
+        (m) => m.AdminDashboard,
+      ),
     canActivate: [authGuard, roleGuard],
     data: { expected_role: 'admin' },
     children: [
-      { path: 'craftsman-applications', component: CraftsmanApplications },
-      { path: 'set-roles', component: SetRoles },
+      {
+        path: 'craftsman-applications',
+        loadComponent: () =>
+          import(
+            './components/admin/craftsman-applications/craftsman-applications'
+          ).then((m) => m.CraftsmanApplications),
+      },
+      {
+        path: 'set-roles',
+        loadComponent: () =>
+          import('./components/admin/set-roles/set-roles').then(
+            (m) => m.SetRoles,
+          ),
+      },
     ],
   },
   {
     path: 'craftsman',
-    component: UserDashboard,
+    loadComponent: () =>
+      import('./components/user/user-dashboard/user-dashboard').then(
+        (m) => m.UserDashboard,
+      ),
     canActivate: [authGuard, roleGuard],
     data: { expected_role: 'craftsman' },
     children: [
-      { path: 'add-product', component: AddProduct },
-      { path: 'orders', component: OrderOverview },
+      {
+        path: 'add-product',
+        loadComponent: () =>
+          import('./components/products/add-product/add-product').then(
+            (m) => m.AddProduct,
+          ),
+      },
+      {
+        path: 'orders',
+        loadComponent: () =>
+          import('./components/common/order-overview/order-overview').then(
+            (m) => m.OrderOverview,
+          ),
+      },
     ],
   },
   {
     path: 'profile/:username',
-    component: Userprofile,
+    loadComponent: () =>
+      import('./components/common/userprofile/userprofile').then(
+        (m) => m.Userprofile,
+      ),
   },
   {
     path: 'products/:username',
-    component: ProductsByCraftsman,
+    loadComponent: () =>
+      import(
+        './components/products/products-by-craftsman/products-by-craftsman/products-by-craftsman'
+      ).then((m) => m.ProductsByCraftsman),
   },
   {
     path: 'product/:id',
-    component: ProductPage,
+    loadComponent: () =>
+      import(
+        './components/products/product-page/product-page/product-page'
+      ).then((m) => m.ProductPage),
   },
   {
     path: 'payment',
-    component: Payment,
+    loadComponent: () =>
+      import('./components/common/payment/payment').then((m) => m.Payment),
     canActivate: [authGuard, roleGuard],
     data: { expected_role: 'user' },
   },

@@ -20,8 +20,6 @@
     "@angular/router": "^21.2.0",
     "@auth0/angular-jwt": "^5.2.0",
     "@primeuix/themes": "^2.0.3",
-    "bootstrap": "^5.3.8",
-    "primeflex": "^4.0.0",
     "primeicons": "^7.0.0",
     "primeng": "^21.1.6",
     "rxjs": "~7.8.0",
