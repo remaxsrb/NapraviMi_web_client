@@ -1,0 +1,17 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "napravimi-web-client",
+	// Update to the actual current date before first deploy
+	"compatibility_date": "2026-07-03",
+	"main": "worker/index.js",
+	"assets": {
+		// Matches angular.json's default output for the "web_client" project
+		// (no outputPath override -> dist/<project-name>/browser)
+		"directory": "./dist/web_client/browser",
+		"binding": "ASSETS",
+		"not_found_handling": "single-page-application",
+		// Worker must run before every request (not just unmatched ones) so it
+		// can gate static asset requests too, not just missing routes.
+		"run_worker_first": true
+	}
+}
