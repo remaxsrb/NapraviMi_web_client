@@ -177,7 +177,7 @@ export class UserRegistration implements AfterViewInit, OnDestroy {
     const userData = {
       ...formValue,
       date_of_birth: formValue.date_of_birth ? this.formatDate(formValue.date_of_birth) : null,
-     turnstileToken,
+      turnstile_token: turnstileToken,
     };
 
     this.userService.register(userData).subscribe({
