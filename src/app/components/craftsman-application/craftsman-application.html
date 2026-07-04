@@ -1,7 +1,5 @@
   @let state = (state$ | async);
-  <div class="header">
-    <h1 routerLink="/">NapraviMi</h1>
-  </div>
+  <app-header [logoOnly]="true"></app-header>
 
   <div class="center-page">
     <div class="form-wrapper flex flex-column">
@@ -20,7 +18,7 @@
         ></p-message>
       </div>
 
-      <p-card [style]="{ width: '520px' }">
+      <p-card [style]="{ width: '100%' }">
         <ng-template pTemplate="header">
           <div class="application-header">Prijava za zanatliju</div>
         </ng-template>

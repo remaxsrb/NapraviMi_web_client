@@ -1,8 +1,6 @@
 <body>
-  @let state = (state$ | async);
   <app-header></app-header>
 
-  <div class="user-role">Uloga: {{ state?.userRole }}</div>
   <app-navbar (addProductClick)="showAddProduct = !showAddProduct"></app-navbar>
   @if (showAddProduct) {
     <div class="add-product-section">

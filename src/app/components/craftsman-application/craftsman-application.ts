@@ -10,10 +10,10 @@ import { SelectModule } from 'primeng/select';
 import { CraftService } from '../../services/craft/craft-service';
 import { FileService } from '../../services/utils/file-service';
 import { UserService } from '../../services/user/user-service';
-import { RouterLink } from "@angular/router";
+import { Header } from '../common/header/header/header';
 import { CraftsmanApplicationService } from '../../services/craftsman-application/craftsman-application-service';
 import { CraftOption } from '../../interfaces/craft';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
 interface ApplicationState {
@@ -35,7 +35,7 @@ interface ApplicationState {
     InputTextModule,
     ButtonModule,
     SelectModule,
-    RouterLink
+    Header
 ],
   templateUrl: './craftsman-application.html',
   styleUrls: ['./craftsman-application.css'],
@@ -62,19 +62,17 @@ export class CraftsmanApplication {
 
   private resumeNameSubject$ = new BehaviorSubject<string>('');
 
-  readonly state$: Observable<ApplicationState> = this.craftService.getCraftOptions().pipe(
-    map((craftOptions) => ({
+  readonly state$: Observable<ApplicationState> = combineLatest([
+    this.craftService.getCraftOptions().pipe(startWith([] as CraftOption[])),
+    this.resumeNameSubject$,
+    this.statusSubject$,
+  ]).pipe(
+    map(([craftOptions, selectedResumeName, status]) => ({
       craftOptions,
-      selectedResumeName: this.resumeNameSubject$.value,
-      statusMessage: this.statusSubject$.value.message,
-      statusSeverity: this.statusSubject$.value.severity,
-    })),
-    startWith({
-      craftOptions: [],
-      selectedResumeName: '',
-      statusMessage: '',
-      statusSeverity: 'info' as const,
-    })
+      selectedResumeName,
+      statusMessage: status.message,
+      statusSeverity: status.severity,
+    }))
   );
 
   constructor() {

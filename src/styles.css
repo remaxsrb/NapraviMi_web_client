@@ -60,6 +60,14 @@ h1 {
   margin: auto 0;
 }
 
+/* app-header's own icon row already positions app-user-actions via flex;
+   the absolute positioning above is only meant for the plain `.header` divs
+   (admin-dashboard, admin-login, change-password, craftsman-application). */
+.header-icons .user-actions {
+  position: static;
+  margin: 0;
+}
+
 .center-page {
   display: flex;
   justify-content: center;

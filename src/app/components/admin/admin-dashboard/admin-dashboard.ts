@@ -11,7 +11,6 @@ import { map, startWith } from 'rxjs/operators';
 
 interface AdminDashboardState {
   user: User;
-  role: string;
 }
 
 @Component({
@@ -34,7 +33,6 @@ export class AdminDashboard {
     const user = storedUser ? (JSON.parse(storedUser) as User) : new User();
     return {
       user,
-      role: this.authService.get_role(),
     };
   }
 }
