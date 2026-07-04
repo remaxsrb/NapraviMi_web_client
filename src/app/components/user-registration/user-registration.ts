@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
 import { UserService } from '../../services/user/user-service';
 import { Header } from '../common/header/header/header';
 import { BehaviorSubject } from 'rxjs';
-import { TURNSTILE_SITE_KEY } from '../../env';
+import { ENABLE_TURNSTILE, TURNSTILE_SITE_KEY } from '../../env';
 
 interface RegistrationState {
   submissionError: boolean;
@@ -78,7 +78,9 @@ export class UserRegistration implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.renderTurnstile();
+    if (ENABLE_TURNSTILE) {
+      this.renderTurnstile();
+    }
   }
 
   ngOnDestroy(): void {
@@ -128,7 +130,7 @@ export class UserRegistration implements AfterViewInit, OnDestroy {
       return;
     }
 
-    if (!this.turnstileToken) {
+    if (ENABLE_TURNSTILE && !this.turnstileToken) {
       this.errorSubject$.next({
         submissionError: true,
         submissionErrorMessage: 'Molimo potvrdite da niste robot.',
@@ -136,7 +138,7 @@ export class UserRegistration implements AfterViewInit, OnDestroy {
       return;
     }
 
-    this.submit(this.turnstileToken);
+    this.submit(this.turnstileToken ?? '');
   }
 
   private renderTurnstile(): void {

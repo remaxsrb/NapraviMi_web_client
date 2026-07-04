@@ -14,7 +14,7 @@
   grid-column: 2;
 }
 
-.page-top-actions {
+.actions-row {
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -22,6 +22,19 @@
   grid-column: 3;
   flex-wrap: wrap;
   justify-content: flex-end;
+}
+
+.page-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.header-icons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .search-wrapper {
@@ -74,7 +87,7 @@
     width: auto;
   }
 
-  .page-top-actions {
+  .actions-row {
     grid-column: 1 / -1;
     grid-row: 2;
     justify-self: stretch;
@@ -92,22 +105,36 @@
   }
 }
 
-/* Mobile: stack everything vertically */
+/* Mobile: logo + cart/user actions share the top row, search drops below */
 @media (max-width: 480px) {
   .header {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas:
+      'logo . icons'
+      'search search search';
+    align-items: center;
     padding: 0.5rem 0.75rem;
     gap: 0.5rem;
   }
 
   .logo-link {
-    width: 50%;
-    align-self: center;
+    grid-area: logo;
+    width: auto;
+    justify-content: flex-start;
+  }
+
+  .actions-row {
+    display: contents;
+  }
+
+  .header-icons {
+    grid-area: icons;
+    justify-self: end;
   }
 
   .page-top-actions {
+    grid-area: search;
     flex-direction: column;
     align-items: stretch;
     gap: 0.5rem;
@@ -120,6 +147,10 @@
   .search-wrapper input {
     max-width: none;
     flex: 1;
+  }
+
+  .search-wrapper button {
+    display: none;
   }
 }
 

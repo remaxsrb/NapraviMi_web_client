@@ -5,37 +5,41 @@
     <img src="images/napravimi_logo.png" alt="NapraviMi Logo" class="header-logo" />
   </a>
   @if (!logoOnly) {
-    <div class="page-top-actions">
-      <div class="search-wrapper">
-        <input
-          pInputText
-          [(ngModel)]="searchQuery"
-          placeholder="Pretraži zanatlije..."
-          (keyup.enter)="onSearch()"
-        />
-        <button pButton label="Pretraži" icon="pi pi-search" (click)="onSearch()"></button>
+    <div class="actions-row">
+      <div class="page-top-actions">
+        <div class="search-wrapper">
+          <input
+            pInputText
+            [(ngModel)]="searchQuery"
+            placeholder="Pretraži zanatlije..."
+            (keyup.enter)="onSearch()"
+          />
+          <button pButton label="Pretraži" icon="pi pi-search" (click)="onSearch()"></button>
+        </div>
+        @if (!headerState.isLoggedIn) {
+          <button
+            pButton
+            label="Registruj se"
+            icon="pi pi-user-plus"
+            routerLink="/user-registration"
+          ></button>
+          <button pButton label="Prijavi se" icon="pi pi-sign-in" routerLink="/login"></button>
+        }
       </div>
-      @if (!headerState.isLoggedIn) {
-        <button
-          pButton
-          label="Registruj se"
-          icon="pi pi-user-plus"
-          routerLink="/user-registration"
-        ></button>
-        <button pButton label="Prijavi se" icon="pi pi-sign-in" routerLink="/login"></button>
-      }
-      @if (headerState.isUser) {
-        <p-button
-          icon="pi pi-shopping-cart"
-          [badge]="headerState.cartItemCount > 0 ? headerState.cartItemCount.toString() : ''"
-          badgeSeverity="danger"
-          routerLink="/user/cart"
-          text="true"
-        ></p-button>
-      }
-      @if (headerState.isLoggedIn) {
-        <app-user-actions [user]="headerState.currentUser"></app-user-actions>
-      }
+      <div class="header-icons">
+        @if (headerState.isUser) {
+          <p-button
+            icon="pi pi-shopping-cart"
+            [badge]="headerState.cartItemCount > 0 ? headerState.cartItemCount.toString() : ''"
+            badgeSeverity="danger"
+            routerLink="/user/cart"
+            text="true"
+          ></p-button>
+        }
+        @if (headerState.isLoggedIn) {
+          <app-user-actions [user]="headerState.currentUser"></app-user-actions>
+        }
+      </div>
     </div>
   }
   }
