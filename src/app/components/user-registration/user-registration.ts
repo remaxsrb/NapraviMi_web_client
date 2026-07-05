@@ -175,7 +175,7 @@ export class UserRegistration implements AfterViewInit, OnDestroy {
   }
 
   submit(turnstileToken: string): void {
-    const formValue = this.signUpForm.value;
+    const { passwordConfirm, ...formValue } = this.signUpForm.value;
     const userData = {
       ...formValue,
       date_of_birth: formValue.date_of_birth ? this.formatDate(formValue.date_of_birth) : null,

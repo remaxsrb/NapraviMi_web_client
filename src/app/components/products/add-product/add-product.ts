@@ -77,7 +77,7 @@ export class AddProduct {
   private allFilesSubject$ = new BehaviorSubject<File[]>([]);
 
   private categories$: Observable<ProductCategoryOption[]> = this.pcService
-    .getProductCategoryOptions()
+    .getProductCategoryOptions(this.getUsername())
     .pipe(
       startWith([] as ProductCategoryOption[]),
       catchError(() => of([] as ProductCategoryOption[]))
@@ -160,6 +160,11 @@ export class AddProduct {
 
   removeFile(index: number): void {
     this.allFilesSubject$.next(this.allFilesSubject$.value.filter((_, i) => i !== index));
+  }
+
+  private getUsername(): string {
+    const userData = localStorage.getItem('userData');
+    return userData ? JSON.parse(userData).username : '';
   }
 
   async onSubmit(): Promise<void> {
