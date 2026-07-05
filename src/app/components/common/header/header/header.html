@@ -2,28 +2,50 @@
   @let state = (state$ | async);
   @if (state; as headerState) {
   <a routerLink="/" class="logo-link">
-    <img src="images/napravimi_logo.png" alt="NapraviMi Logo" class="header-logo" />
+    <img
+      [src]="themeService.isDark() ? 'images/napravimi-logo-dark.svg' : 'images/napravimi-logo-light.svg'"
+      alt="НаправиМи"
+      class="header-logo"
+    />
   </a>
   @if (!logoOnly) {
     <div class="actions-row">
       <div class="page-top-actions">
-        <div class="search-wrapper">
-          <input
-            pInputText
-            [(ngModel)]="searchQuery"
-            placeholder="Pretraži zanatlije..."
-            (keyup.enter)="onSearch()"
-          />
-          <button pButton label="Pretraži" icon="pi pi-search" (click)="onSearch()"></button>
+        <div class="search-row">
+          <div class="search-wrapper">
+            <input
+              pInputText
+              [(ngModel)]="searchQuery"
+              placeholder="Претражи занатлије..."
+              (keyup.enter)="onSearch()"
+            />
+            <button
+              type="button"
+              class="search-icon-btn"
+              aria-label="Претражи"
+              (click)="onSearch()"
+            >
+              <i class="pi pi-search"></i>
+            </button>
+          </div>
+          <button
+            type="button"
+            class="theme-toggle-btn"
+            [attr.aria-label]="themeService.isDark() ? 'Укључи светлу тему' : 'Укључи тамну тему'"
+            (click)="themeService.toggle()"
+          >
+            <i class="pi" [class.pi-sun]="themeService.isDark()" [class.pi-moon]="!themeService.isDark()"></i>
+          </button>
         </div>
         @if (!headerState.isLoggedIn) {
           <button
             pButton
-            label="Registruj se"
+            [outlined]="true"
+            label="Региструј се"
             icon="pi pi-user-plus"
             routerLink="/user-registration"
           ></button>
-          <button pButton label="Prijavi se" icon="pi pi-sign-in" routerLink="/login"></button>
+          <button pButton severity="contrast" label="Пријави се" icon="pi pi-sign-in" routerLink="/login"></button>
         }
       </div>
       <div class="header-icons">

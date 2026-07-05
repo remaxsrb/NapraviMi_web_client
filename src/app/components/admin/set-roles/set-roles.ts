@@ -26,8 +26,8 @@ export class SetRoles {
   isLoading = false;
   private initialLazyLoadHandled = false;
   roleOptions: RoleOption[] = [
-    { label: 'Korisnik', value: 'user' },
-    { label: 'Zanatlija', value: 'craftsman' },
+    { label: 'Корисник', value: 'user' },
+    { label: 'Занатлија', value: 'craftsman' },
     { label: 'Admin', value: 'admin' },
   ];
 
@@ -100,11 +100,11 @@ export class SetRoles {
     const roleLabel = this.roleOptions.find((r) => r.value === newRole)?.label ?? newRole;
 
     this.confirmationService.confirm({
-      message: `Da li ste sigurni da želite da promenite ulogu korisnika <b>${user.email}</b> na <b>${roleLabel}</b>?`,
-      header: 'Potvrda promene uloge',
+      message: `Да ли сте сигурни да желите да промените улогу корисника <b>${user.email}</b> на <b>${roleLabel}</b>?`,
+      header: 'Потврда промене улоге',
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Da',
-      rejectLabel: 'Ne',
+      acceptLabel: 'Да',
+      rejectLabel: 'Не',
       accept: () => {
         const requestData = {
           username: user.username,
@@ -114,12 +114,12 @@ export class SetRoles {
           next: () => {
             user.role = newRole;
             user.newRole = newRole;
-            this.messageService.add({ severity: 'success', summary: 'Uspeh', detail: `Uloga korisnika ${user.email} je uspešno promenjena na ${roleLabel}.` });
+            this.messageService.add({ severity: 'success', summary: 'Успех', detail: `Улога корисника ${user.email} је успешно промењена на ${roleLabel}.` });
             this.cdr.detectChanges();
           },
           error: () => {
             user.newRole = user.role;
-            this.messageService.add({ severity: 'error', summary: 'Greška', detail: `Došlo je do greške prilikom promene uloge korisnika ${user.email}.` });
+            this.messageService.add({ severity: 'error', summary: 'Грешка', detail: `Дошло је до грешке приликом промене улоге корисника ${user.email}.` });
             this.cdr.detectChanges();
           },
         });

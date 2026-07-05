@@ -54,8 +54,8 @@ export class PaymentErrorInterceptor implements HttpInterceptor {
               // Notify user that we're retrying
               this.messageService.add({
                 severity: 'info',
-                summary: 'Ponavljam zahtev',
-                detail: 'Pokušavam ponovo Vašu transakciju...',
+                summary: 'Понављам захтев',
+                detail: 'Покушавам поново Вашу трансакцију...',
                 sticky: false,
                 life: 3000,
               });

@@ -1,4 +1,4 @@
-<p-card header="Dodaj proizvod">
+<p-card header="Додај производ">
   @let state = (state$ | async);
   @if (state; as addProductState) {
   <div class="flex-column">
@@ -9,38 +9,38 @@
       <p-message severity="error" [text]="addProductState.errorMessage" />
     }
     <div class="field">
-      <label for="product-name">Naziv</label>
+      <label for="product-name">Назив</label>
       <input
         type="text"
         pInputText
         id="product-name"
         name="productName"
         [(ngModel)]="product.name"
-        placeholder="Naziv proizvoda"
+        placeholder="Назив производа"
         fluid
       />
     </div>
 
     <div class="field">
-      <label for="product-desc">Opis</label>
+      <label for="product-desc">Опис</label>
       <textarea
         pInputTextarea
         id="product-desc"
         name="productDesc"
         [(ngModel)]="product.description"
         rows="4"
-        placeholder="Opis proizvoda"
+        placeholder="Опис производа"
         fluid
       ></textarea>
     </div>
 
     <div class="field">
-      <label for="cena">Cena</label>
+      <label for="cena">Цена</label>
       <p-inputnumber
         id="cena"
         name="cena"
         [(ngModel)]="product.price"
-        placeholder="Cena"
+        placeholder="Цена"
         [min]="0"
         mode="decimal"
         fluid
@@ -48,20 +48,20 @@
     </div>
 
     <div class="field flex flex-column">
-      <label for="craft">Kategorija</label>
+      <label for="craft">Категорија</label>
       <p-select
         id="craft"
         [options]="addProductState.productCategories"
         optionLabel="label"
         optionValue="value"
-        placeholder="Izaberi kategoriju"
+        placeholder="Изабери категорију"
         [(ngModel)]="product.category"
         appendTo="body"
       ></p-select>
     </div>
 
     <div class="field">
-      <label>Slike i videi</label>
+      <label>Слике и видеи</label>
 
       <!-- hidden native file input -->
       <input
@@ -83,8 +83,8 @@
         (click)="openFilePicker()"
       >
         <span class="drop-zone-icon">&#128247;</span>
-        <span>Prevuci slike/videe ovde ili <strong>klikni da odabereš</strong></span>
-        <small>Dozvoljeni formati: slike i videi</small>
+        <span>Превуци слике/видее овде или <strong>кликни да одабереш</strong></span>
+        <small>Дозвољени формати: слике и видеи</small>
       </div>
 
       <!-- file list -->
@@ -94,7 +94,7 @@
             <li class="file-item">
               <span class="file-icon">{{ file.type.startsWith('image/') ? '🖼️' : '🎬' }}</span>
               <span class="file-name" [title]="file.name">{{ file.name }}</span>
-              <button class="remove-btn" type="button" (click)="removeFile(i)" title="Ukloni">
+              <button class="remove-btn" type="button" (click)="removeFile(i)" title="Уклони">
                 ✕
               </button>
             </li>
@@ -104,7 +104,7 @@
     </div>
 
     <p-button
-      label="Dodaj proizvod"
+      label="Додај производ"
       icon="pi pi-plus"
       (onClick)="onSubmit()"
       [loading]="addProductState.isSubmitting"

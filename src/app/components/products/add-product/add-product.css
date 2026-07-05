@@ -1,5 +1,7 @@
 p-card {
+  display: block;
   max-width: 540px;
+  margin: 2rem auto;
 }
 
 .drop-zone {
@@ -8,7 +10,7 @@ p-card {
   align-items: center;
   justify-content: center;
   gap: 0.35rem;
-  border: 2px dashed var(--p-primary-color, #6366f1);
+  border: 2px dashed var(--p-primary-color, #b21f2d);
   border-radius: 8px;
   padding: 1.5rem 1rem;
   cursor: pointer;
@@ -20,8 +22,8 @@ p-card {
 
 .drop-zone:hover,
 .drop-zone.drag-over {
-  background: color-mix(in srgb, var(--p-primary-color, #6366f1) 8%, transparent);
-  border-color: var(--p-primary-color, #6366f1);
+  background: color-mix(in srgb, var(--p-primary-color, #b21f2d) 8%, transparent);
+  border-color: var(--p-primary-color, #b21f2d);
 }
 
 .drop-zone small {
@@ -79,5 +81,5 @@ p-card {
 
 .remove-btn:hover {
   opacity: 1;
-  color: #e53935;
+  color: var(--red);
 }

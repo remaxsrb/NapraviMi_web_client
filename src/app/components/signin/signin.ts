@@ -94,6 +94,6 @@ export class Signin {
 
   private getLoginErrorMessage(error: any): string {
     const { error: backendErrorMessage, message: backendMessage } = error?.error ?? {};
-    return backendErrorMessage || backendMessage || 'Greška pri prijavi. Pokušajte ponovo.';
+    return backendErrorMessage || backendMessage || 'Грешка при пријави. Покушајте поново.';
   }
 }

@@ -1,6 +1,6 @@
 <section class="orders-wrapper">
 	<div class="orders-header">
-		<h2>Porudžbine</h2>
+		<h2>Поруџбине</h2>
 		
 	</div>
 
@@ -9,21 +9,21 @@
 	}
 
 	@if (isLoading()) {
-		<p>Učitavanje porudžbina...</p>
+		<p>Учитавање поруџбина...</p>
 	} @else if (!orders().length) {
-		<p>Nema porudžbina za prikaz.</p>
+		<p>Нема поруџбина за приказ.</p>
 	} @else {
 		<div class="orders-table-container">
 			<table class="orders-table">
 				<thead>
 					<tr>
 						<th>ID</th>
-						<th>Datum porudžbine</th>
-						<th>Datum završetka</th>
+						<th>Датум поруџбине</th>
+						<th>Датум завршетка</th>
 						<th>Status</th>
-						<th>Potvrda</th>
+						<th>Потврда</th>
 						@if (isCraftsman()) {
-							<th>Akcije</th>
+							<th>Акције</th>
 						}
 					</tr>
 				</thead>
@@ -36,7 +36,7 @@
 							<td>{{ getStatus(order) }}</td>
 							<td>
 								@if (order.url) {
-									<p-button label="Otvori" size="small" severity="help" (onClick)="openOrderDocument(order)" />
+									<p-button label="Отвори" size="small" severity="help" (onClick)="openOrderDocument(order)" />
 								} @else {
 									<span>-</span>
 								}
@@ -46,13 +46,13 @@
 									@if (hasAvailableActions(order)) {
 										<div class="orders-actions-content">
 											@if (canReject(order)) {
-												<p-button label="Odbij" size="small" severity="danger" (onClick)="onReject(order.order_id)" [disabled]="actionLoading()" />
+												<p-button label="Одбиј" size="small" severity="danger" (onClick)="onReject(order.order_id)" [disabled]="actionLoading()" />
 											}
 											@if (canAccept(order)) {
-												<p-button label="Prihvati" size="small" severity="success" (onClick)="onAccept(order.order_id)" [disabled]="actionLoading()" />
+												<p-button label="Прихвати" size="small" severity="success" (onClick)="onAccept(order.order_id)" [disabled]="actionLoading()" />
 											}
 											@if (canDeliver(order)) {
-												<p-button label="Isporuci" size="small" severity="contrast" (onClick)="onDeliver(order.order_id)" [disabled]="actionLoading()" />
+												<p-button label="Испоруци" size="small" severity="contrast" (onClick)="onDeliver(order.order_id)" [disabled]="actionLoading()" />
 											}
 										</div>
 									} @else {

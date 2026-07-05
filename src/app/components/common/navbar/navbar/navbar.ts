@@ -38,20 +38,20 @@ export class Navbar {
 
     if (role === 'admin') {
       return [
-        { label: 'Zahtevi zanatlija', icon: 'pi pi-list', routerLink: '/admin/craftsman-applications' },
-        { label: 'Postavi uloge', icon: 'pi pi-user-edit', routerLink: '/admin/set-roles' },
+        { label: 'Захтеви занатлија', icon: 'pi pi-list', routerLink: '/admin/craftsman-applications' },
+        { label: 'Постави улоге', icon: 'pi pi-user-edit', routerLink: '/admin/set-roles' },
       ];
     } else if (role === 'craftsman') {
       return [
-        { label: 'Pregled zanatlija', icon: 'pi pi-users', command: () => this.router.navigate(['craftsmen']) },
-        { label: 'Porudžbine', icon: 'pi pi-shopping-bag', routerLink: '/craftsman/orders' },
-        { label: 'Dodaj proizvod', icon: 'pi pi-plus', routerLink: '/craftsman/add-product' },
+        { label: 'Преглед занатлија', icon: 'pi pi-users', command: () => this.router.navigate(['craftsmen']) },
+        { label: 'Поруџбине', icon: 'pi pi-shopping-bag', routerLink: '/craftsman/orders' },
+        { label: 'Додај производ', icon: 'pi pi-plus', routerLink: '/craftsman/add-product' },
       ];
     } else {
       return [
-        ...(!isLoggedIn || role === 'user' ? [{ label: 'Postani Zanatlija', icon: 'pi pi-list', routerLink: '/craftsman-apply' }] : []),
-        { label: 'Pregled zanatlija', icon: 'pi pi-users', command: () => this.router.navigate(['craftsmen']) },
-        ...(isLoggedIn && role === 'user' && !this.isGuestView() ? [{ label: 'Porudžbine', icon: 'pi pi-shopping-bag', routerLink: '/user/orders' }] : []),
+        ...(!isLoggedIn || role === 'user' ? [{ label: 'Постани Занатлија', icon: 'pi pi-list', routerLink: '/craftsman-apply' }] : []),
+        { label: 'Преглед занатлија', icon: 'pi pi-users', command: () => this.router.navigate(['craftsmen']) },
+        ...(isLoggedIn && role === 'user' && !this.isGuestView() ? [{ label: 'Поруџбине', icon: 'pi pi-shopping-bag', routerLink: '/user/orders' }] : []),
       ];
     }
   }

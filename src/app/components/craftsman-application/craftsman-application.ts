@@ -44,11 +44,11 @@ export class CraftsmanApplication {
   applicationForm!: FormGroup;
   resumeFile?: File;
   messageText =
-    'Molimo priložite svoj rezime u PDF formatu pre nego što pošaljete prijavu.<br/>Podržan je samo PDF format.' +
+    'Молимо приложите своју радну биографију у PDF формату пре него што пошаљете пријаву.<br/>Подржан је само PDF формат.' +
     '<br/><br/>' +
-    'Svako od korisnika moze da se prijavi da postane zanatlija.' +
+    'Свако од корисника може да се пријави да постане занатлија.' +
     '<br/> ' +
-    'Nakon slanja prijave, naš tim će pregledati vaš rezime i kontaktirati vas putem emaila sa daljim informacijama o procesu odobrenja.';
+    'Након слања пријаве, наш тим ће прегледати ваш резиме и контактирати вас путем е-поште са даљим информацијама о процесу одобрења.';
 
   private fb = inject(FormBuilder);
   private fileService = inject(FileService);
@@ -99,7 +99,7 @@ export class CraftsmanApplication {
     }
 
     if (file.type !== 'application/pdf') {
-      alert('Molimo izaberite PDF datoteku za rezime.');
+      alert('Молимо изаберите PDF датотеку за резиме.');
       this.resumeNameSubject$.next('');
       this.resumeFile = undefined;
       return;
@@ -129,18 +129,18 @@ export class CraftsmanApplication {
           next: () => {
             this.applicationForm.reset();
             this.onResumeRemoved();
-            this.setStatus('success', 'Prijava je uspešno kreirana. Pratite email za dalji postupak.');
+            this.setStatus('success', 'Пријава је успешно креирана. Пратите email за даљи поступак.');
             setTimeout(() => {
               this.setStatus('info', '');
             }, 3000);
           },
           error: () => {
-            this.setStatus('error', 'Došlo je do greške prilikom kreiranja prijave. Molimo pokušajte ponovo.');
+            this.setStatus('error', 'Дошло је до грешке приликом креирања пријаве. Молимо покушајте поново.');
           },
         });
       },
       error: () => {
-        this.setStatus('error', 'Došlo je do greške pri otpremanju fajla. Molimo pokušajte ponovo.');
+        this.setStatus('error', 'Дошло је до грешке при отпремању фајла. Молимо покушајте поново.');
       },
     });
   }

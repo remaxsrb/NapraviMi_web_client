@@ -2,7 +2,7 @@
 
 @let state = (state$ | async);
 @if (state?.isLoading) {
-  <p>Učitavanje...</p>
+  <p>Учитавање...</p>
 } @else if (state; as productState) {
   @if (productState.product; as product) {
   <div class="product-page">
@@ -35,10 +35,10 @@
           </div>
         }
         @if (productState.isOwner) {
-          <p-button label="Obriši proizvod" severity="danger" (onClick)="deleteProduct()" />
+          <p-button label="Обриши производ" severity="danger" (onClick)="deleteProduct()" />
         }
         @if (productState.isCustomer) {
-          <p-button label="Dodaj u korpu" severity="success" (onClick)="addToCart()" />
+          <p-button label="Додај у корпу" severity="success" (onClick)="addToCart()" />
         }
       </div>
     </p-card>

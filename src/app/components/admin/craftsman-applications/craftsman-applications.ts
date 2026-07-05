@@ -35,8 +35,8 @@ interface CraftsmanApplicationsState {
 })
 export class CraftsmanApplications {
   statusOptions: StatusOption[] = [
-    { label: 'Odbij', value: 'rejected' },
-    { label: 'Odobri', value: 'approved' },
+    { label: 'Одбиј', value: 'rejected' },
+    { label: 'Одобри', value: 'approved' },
   ];
 
   private craftsmanApplicationService = inject(CraftsmanApplicationService);
@@ -138,11 +138,11 @@ export class CraftsmanApplications {
     const statusLabel = this.statusOptions.find((s) => s.value === newStatus)?.label ?? newStatus;
 
     this.confirmationService.confirm({
-      message: `Da li ste sigurni da želite da <b>${statusLabel.toLowerCase()}</b> zahtev korisnika <b>${app.email}</b>?`,
-      header: 'Potvrda promene statusa',
+      message: `Да ли сте сигурни да желите да <b>${statusLabel.toLowerCase()}</b> захтев корисника <b>${app.email}</b>?`,
+      header: 'Потврда промене статуса',
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Da',
-      rejectLabel: 'Ne',
+      acceptLabel: 'Да',
+      rejectLabel: 'Не',
       accept: () => {
         if (newStatus === 'approved') {
           const requestData = { id: app.id };
@@ -150,8 +150,8 @@ export class CraftsmanApplications {
             next: () => {
               this.messageService.add({
                 severity: 'success',
-                summary: 'Uspeh',
-                detail: `Zahtev odobren.`,
+                summary: 'Успех',
+                detail: `Захтев одобрен.`,
               });
               this.refreshPage();
 
@@ -165,8 +165,8 @@ export class CraftsmanApplications {
                 error: () => {
                   this.messageService.add({
                     severity: 'error',
-                    summary: 'Greška',
-                    detail: `Došlo je do greške prilikom kreiranja zanatlije nakon odobrenja zahteva.`,
+                    summary: 'Грешка',
+                    detail: `Дошло је до грешке приликом креирања занатлије након одобрења захтева.`,
                   });
                 },
               });
@@ -174,8 +174,8 @@ export class CraftsmanApplications {
             error: () => {
               this.messageService.add({
                 severity: 'error',
-                summary: 'Greška',
-                detail: `Došlo je do greške prilikom odobravanja zahteva.`,
+                summary: 'Грешка',
+                detail: `Дошло је до грешке приликом одобравања захтева.`,
               });
               app.newStatus = app.status;
             },
@@ -186,16 +186,16 @@ export class CraftsmanApplications {
             next: () => {
               this.messageService.add({
                 severity: 'success',
-                summary: 'Uspeh',
-                detail: `Zahtev odbijen.`,
+                summary: 'Успех',
+                detail: `Захтев одбијен.`,
               });
               this.refreshPage();
             },
             error: () => {
               this.messageService.add({
                 severity: 'error',
-                summary: 'Greška',
-                detail: `Došlo je do greške prilikom odbijanja zahteva.`,
+                summary: 'Грешка',
+                detail: `Дошло је до грешке приликом одбијања захтева.`,
               });
               app.newStatus = app.status;
             },

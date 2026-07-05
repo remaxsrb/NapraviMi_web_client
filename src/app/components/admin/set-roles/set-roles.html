@@ -1,6 +1,6 @@
 <p-confirmDialog></p-confirmDialog>
 <div class="set-roles-page">
-  <h2>Postavljanje uloga</h2>
+  <h2>Постављање улога</h2>
 
   <p-table
     [value]="displayedUsers"
@@ -16,8 +16,8 @@
       <tr>
         <th>ID</th>
         <th>Email</th>
-        <th>Uloga</th>
-        <th>Datum pridruženja</th>
+        <th>Улога</th>
+        <th>Датум придружења</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-user>
@@ -30,7 +30,7 @@
             optionLabel="label"
             optionValue="value"
             [(ngModel)]="user.newRole"
-            placeholder="Izaberi ulogu"
+            placeholder="Изабери улогу"
             (onChange)="onRoleChange($event,user)"
             appendTo="body"
           >

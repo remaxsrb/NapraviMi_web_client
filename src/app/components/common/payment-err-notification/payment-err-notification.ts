@@ -67,15 +67,15 @@ export class PaymentErrNotification {
 
   private getErrorTitle(code: string): string {
     const titles: Record<string, string> = {
-      PAYMENT_CIRCUIT_OPEN: 'Sistem privremeno nedostupan',
-      PAYMENT_CIRCUIT_HALF_OPEN: 'Oporavak sistema',
-      PAYMENT_RESERVATION_FAILED_INSUFFICIENT_FUNDS: 'Nedovoljno sredstava',
-      PAYMENT_RESERVATION_FAILED_CARD_DECLINED: 'Kartica odbijena',
-      PAYMENT_RESERVATION_FAILED_INVALID_CARD: 'Neispravna kartica',
-      PAYMENT_CAPTURE_FAILED: 'Greška pri finalizaciji plaćanja',
-      PAYMENT_REFUND_FAILED: 'Greška pri povraćaju sredstava',
-      PAYMENT_GATEWAY_ERROR: 'Greška sistema za plaćanje',
+      PAYMENT_CIRCUIT_OPEN: 'Систем привремено недоступан',
+      PAYMENT_CIRCUIT_HALF_OPEN: 'Опоравак система',
+      PAYMENT_RESERVATION_FAILED_INSUFFICIENT_FUNDS: 'Недовољно средстава',
+      PAYMENT_RESERVATION_FAILED_CARD_DECLINED: 'Картица одбијена',
+      PAYMENT_RESERVATION_FAILED_INVALID_CARD: 'Неисправна картица',
+      PAYMENT_CAPTURE_FAILED: 'Грешка при финализацији плаћања',
+      PAYMENT_REFUND_FAILED: 'Грешка при повраћају средстава',
+      PAYMENT_GATEWAY_ERROR: 'Грешка система за плаћање',
     };
-    return titles[code] || 'Greška pri plaćanju';
+    return titles[code] || 'Грешка при плаћању';
   }
 }

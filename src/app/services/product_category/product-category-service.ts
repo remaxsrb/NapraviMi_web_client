@@ -11,21 +11,29 @@ import { API_BASE_URL } from '../../env';
 export class ProductCategoryService {
   private apiUrl = `${API_BASE_URL}/product-categories`;
 
-  private categories$;
-  
-    constructor(private http: HttpClient) {
-      this.categories$ = this.http.get<ProductCategory[]>(`${this.apiUrl}/all`).pipe(shareReplay(1));
+  private categoriesByUsername = new Map<string, Observable<ProductCategoryOption[]>>();
+
+  constructor(private http: HttpClient) {}
+
+  getProductCategoryOptions(username: string): Observable<ProductCategoryOption[]> {
+    let categories$ = this.categoriesByUsername.get(username);
+
+    if (!categories$) {
+      categories$ = this.http
+        .get<ProductCategory[]>(`${this.apiUrl}/craftsman/${username}`)
+        .pipe(
+          map((categories) =>
+            categories.map((c): ProductCategoryOption => ({
+              label: c.name,
+              value: c.name,
+              keywords: [...(c.Keywords || []), ...(c.SearchKeywords || [])],
+            })),
+          ),
+          shareReplay(1),
+        );
+      this.categoriesByUsername.set(username, categories$);
     }
-  
-    getProductCategoryOptions() {
-      return this.categories$.pipe(
-        map((categories) =>
-          categories.map((c): ProductCategoryOption => ({
-            label: c.name,
-            value: c.name,
-            keywords: [...(c.Keywords || []), ...(c.SearchKeywords || [])],
-          })),
-        ),
-      );
-    }
+
+    return categories$;
+  }
 }

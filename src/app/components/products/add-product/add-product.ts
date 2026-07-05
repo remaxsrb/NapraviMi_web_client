@@ -77,7 +77,7 @@ export class AddProduct {
   private allFilesSubject$ = new BehaviorSubject<File[]>([]);
 
   private categories$: Observable<ProductCategoryOption[]> = this.pcService
-    .getProductCategoryOptions()
+    .getProductCategoryOptions(this.getUsername())
     .pipe(
       startWith([] as ProductCategoryOption[]),
       catchError(() => of([] as ProductCategoryOption[]))
@@ -138,7 +138,7 @@ export class AddProduct {
     const rejected = incoming.length - valid.length;
     if (rejected > 0) {
       this.patchUiState({
-        errorMessage: `${rejected} fajl(a) je odbačeno - dozvoljene su samo slike i videi.`,
+        errorMessage: `${rejected} фајл(а) је одбачено - дозвољене су само слике и видеи.`,
       });
       setTimeout(() => {
         this.patchUiState({ errorMessage: '' });
@@ -162,10 +162,15 @@ export class AddProduct {
     this.allFilesSubject$.next(this.allFilesSubject$.value.filter((_, i) => i !== index));
   }
 
+  private getUsername(): string {
+    const userData = localStorage.getItem('userData');
+    return userData ? JSON.parse(userData).username : '';
+  }
+
   async onSubmit(): Promise<void> {
     const userData = localStorage.getItem('userData');
     if (!userData) {
-      this.patchUiState({ errorMessage: 'Niste prijavljeni.' });
+      this.patchUiState({ errorMessage: 'Нисте пријављени.' });
       return;
     }
 
@@ -194,14 +199,14 @@ export class AddProduct {
 
       this.clearForm();
       this.patchUiState({
-        successMessage: 'Proizvod je uspešno dodat.',
+        successMessage: 'Производ је успешно додат.',
       });
 
       setTimeout(() => {
         this.patchUiState({ successMessage: '' });
       }, 5000);
     } catch {
-      this.patchUiState({ errorMessage: 'Greška pri dodavanju proizvoda. Pokušajte ponovo.' });
+      this.patchUiState({ errorMessage: 'Грешка при додавању производа. Покушајте поново.' });
     } finally {
       this.patchUiState({ isSubmitting: false });
     }

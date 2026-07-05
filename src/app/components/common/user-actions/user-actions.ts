@@ -21,18 +21,18 @@ export class UserActions {
   constructor(private authService: AuthService) {
     this.menuItems = [
       {
-        label: 'Moj profil',
+        label: 'Мој профил',
         icon: 'pi pi-user',
         routerLink: '/profile'
 
       },
       {
-        label: 'Podešavanja',
+        label: 'Подешавања',
         icon: 'pi pi-cog',
         routerLink: '/settings',
       },
       {
-        label: 'Odjavi se',
+        label: 'Одјави се',
         icon: 'pi pi-sign-in',
         command: () => this.logout(),
       },

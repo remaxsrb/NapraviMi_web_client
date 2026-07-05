@@ -11,9 +11,9 @@
 }
 
 .error-banner {
-  background-color: #f8d7da;
-  border: 1px solid #f5c6cb;
-  color: #721c24;
+  background-color: color-mix(in srgb, var(--red) 12%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--red) 35%, transparent);
+  color: var(--red-deep);
   padding: 0.75rem 1.25rem;
   border-radius: 4px;
   margin-bottom: 1.5rem;
@@ -33,7 +33,7 @@
   align-items: center;
   gap: 0.75rem;
   padding: 1.5rem 2rem;
-  border: 2px solid #dee2e6;
+  border: 2px solid var(--hair);
   border-radius: 12px;
   cursor: pointer;
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -41,12 +41,12 @@
 }
 
 .payment-option:hover {
-  border-color: #6c757d;
+  border-color: var(--silver);
 }
 
 .payment-option.selected {
-  border-color: #198754;
-  box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.2);
+  border-color: var(--sage-deep);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--sage) 35%, transparent);
 }
 
 .payment-icon {
@@ -62,7 +62,7 @@
 .payment-form {
   text-align: left;
   margin-bottom: 2rem;
-  border: 1px solid #dee2e6;
+  border: 1px solid var(--hair);
   border-radius: 12px;
   padding: 1.5rem;
 }
@@ -70,7 +70,7 @@
 .payment-form h3 {
   margin: 0 0 1.25rem;
   font-size: 1.1rem;
-  color: #495057;
+  color: var(--ink-soft);
 }
 
 .form-field {
@@ -83,7 +83,7 @@
 .form-field label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #495057;
+  color: var(--ink-soft);
 }
 
 .form-field input {
@@ -100,7 +100,7 @@
 }
 
 .field-error {
-  color: #dc3545;
+  color: var(--red);
   font-size: 0.8rem;
 }
 

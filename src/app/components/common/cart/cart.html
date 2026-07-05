@@ -4,10 +4,10 @@
    
     <ng-template #header>
       <tr>
-        <th>Naziv</th>
-        <th>Kolicina</th>
-        <th>Cena</th>
-        <th>Ocena</th>
+        <th>Назив</th>
+        <th>Количина</th>
+        <th>Цена</th>
+        <th>Оцена</th>
         <th></th>
       </tr>
     </ng-template>
@@ -17,10 +17,10 @@
         <td>
           {{item.quantity}}
         </td>
-        <td>{{ item.product.price }} RSD</td>
+        <td>{{ item.product.price }} РСД</td>
         <td><p-rating [(ngModel)]="item.product.rating" [readonly]="true" /></td>
         <td>
-          <p-button label="Izbaci iz korpe" severity="danger" (onClick)="removeFromCart(item)" />
+          <p-button label="Избаци из корпе" severity="danger" (onClick)="removeFromCart(item)" />
         </td>
       </tr>
     </ng-template>
@@ -28,8 +28,8 @@
       <tr>
         <td colspan="6">
           <div class="cart-footer">
-            <span>Ukupna cena: {{ state?.total_price }}</span>
-            <p-button label="Proceed to checkout" severity="success" (onClick)="placeOrder()" />
+            <span>Укупна цена: {{ state?.total_price }}</span>
+            <p-button label="Плаћање" severity="success" (onClick)="placeOrder()" />
           </div>
         </td>
       </tr>

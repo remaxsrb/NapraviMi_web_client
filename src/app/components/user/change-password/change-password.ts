@@ -82,7 +82,7 @@ export class ChangePassword {
       next: () => {
         this.stateSubject$.next({
           submitting: false,
-          successMessage: 'Lozinka je uspešno izmenjena.',
+          successMessage: 'Лозинка је успешно измењена.',
           errorMessage: '',
         });
         setTimeout(() => this.router.navigate(['']), 1200);
@@ -91,7 +91,7 @@ export class ChangePassword {
         this.stateSubject$.next({
           submitting: false,
           successMessage: '',
-          errorMessage: err?.error?.message || 'Došlo je do greške pri promeni lozinke.',
+          errorMessage: err?.error?.message || 'Дошло је до грешке при промени лозинке.',
         });
       },
     });

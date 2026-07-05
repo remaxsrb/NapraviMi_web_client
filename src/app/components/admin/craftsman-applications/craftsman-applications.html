@@ -2,7 +2,7 @@
 <p-toast></p-toast>
 <div class="craftsman-applications-page">
   @let state = (state$ | async);
-  <h2>Zahtevi za ulogu zanatlije</h2>
+  <h2>Захтеви за улогу занатлије</h2>
 
   <p-table
     [value]="state?.applications ?? []"
@@ -19,9 +19,9 @@
       <tr>
         <th>ID</th>
         <th>Email</th>
-        <th>Zanat</th>
+        <th>Занат</th>
         <th>Status</th>
-        <th>Datum podnošenja</th>
+        <th>Датум подношења</th>
         <th>CV</th>
       </tr>
     </ng-template>
@@ -36,7 +36,7 @@
             optionLabel="label"
             optionValue="value"
             [(ngModel)]="app.newStatus"
-            placeholder="Izaberi status"
+            placeholder="Изабери status"
             appendTo="body"
             (onChange)="onStatusChange($event, app)"
           >
@@ -50,7 +50,7 @@
         <td>{{ app.createdAt | date: 'short' }}</td>
         <td>
           @if (app.resumeUrl) {
-            <p-button label="Otvori" size="small" severity="help" (onClick)="openResume(app)" />
+            <p-button label="Отвори" size="small" severity="help" (onClick)="openResume(app)" />
           } @else {
             <span>-</span>
           }

@@ -7,7 +7,7 @@ import { providePrimeNG } from 'primeng/config';
 
 import {routes} from './app/app.routes';
 
-import Aura from '@primeuix/themes/aura';
+import { NapraviMiPreset } from './app/theme';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './app/interceptors/auth-interceptor';
 import { JwtModule } from '@auth0/angular-jwt';
@@ -22,7 +22,10 @@ bootstrapApplication(App, {
     providePrimeNG({
       ripple: true,
       theme: {
-        preset: Aura,
+        preset: NapraviMiPreset,
+        options: {
+          darkModeSelector: '.app-dark',
+        },
       }
     }),
     provideHttpClient(

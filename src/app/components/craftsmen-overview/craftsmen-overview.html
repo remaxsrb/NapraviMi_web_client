@@ -1,28 +1,28 @@
 <div class="craftsmen-overview">
   @let state = (state$ | async);
   <div class="overview-header">
-    <h2>{{ state?.activeCraft ? 'Zanatlije - ' + state?.activeCraftLabel : 'Pregled zanatlija' }}</h2>
+    <h2>{{ state?.activeCraft ? 'Занатлије - ' + state?.activeCraftLabel : 'Преглед занатлија' }}</h2>
     <p-button
       [icon]="state?.sortDirection === 'ASC' ? 'pi pi-arrow-up' : 'pi pi-arrow-down'"
       [text]="true"
       [rounded]="true"
-      pTooltip="Sortiraj po oceni"
+      pTooltip="Сортирај по оцени"
       (onClick)="toggleSortDirection()"
     ></p-button>
     @if (state?.activeCraft) {
       <div class="active-filter">
         <span class="filter-label"
-          >Filtar: <strong>{{ state?.activeCraftLabel }}</strong></span
+          >Филтар: <strong>{{ state?.activeCraftLabel }}</strong></span
         >
-        <button class="clear-filter-btn" (click)="clearFilter()" title="Ukloni filtar">✕</button>
+        <button class="clear-filter-btn" (click)="clearFilter()" title="Уклони филтар">✕</button>
       </div>
     }
   </div>
 
   @if (state?.isLoading) {
-    <p>Učitavanje zanatlija...</p>
+    <p>Учитавање занатлија...</p>
   } @else if ((state?.craftsmen?.length ?? 0) === 0) {
-    <p>Nema zanatlija za prikaz.</p>
+    <p>Нема занатлија за приказ.</p>
   } @else {
     <div class="craftsmen-grid">
       @for (craftsman of state?.craftsmen; track craftsman.email) {

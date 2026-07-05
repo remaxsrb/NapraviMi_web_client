@@ -133,7 +133,7 @@ export class UserRegistration implements AfterViewInit, OnDestroy {
     if (ENABLE_TURNSTILE && !this.turnstileToken) {
       this.errorSubject$.next({
         submissionError: true,
-        submissionErrorMessage: 'Molimo potvrdite da niste robot.',
+        submissionErrorMessage: 'Молимо потврдите да нисте робот.',
       });
       return;
     }
@@ -175,7 +175,7 @@ export class UserRegistration implements AfterViewInit, OnDestroy {
   }
 
   submit(turnstileToken: string): void {
-    const formValue = this.signUpForm.value;
+    const { passwordConfirm, ...formValue } = this.signUpForm.value;
     const userData = {
       ...formValue,
       date_of_birth: formValue.date_of_birth ? this.formatDate(formValue.date_of_birth) : null,
@@ -206,9 +206,9 @@ export class UserRegistration implements AfterViewInit, OnDestroy {
     }
 
     if (error?.status) {
-      return `Registracija nije uspela. Status: ${error.status}.`;
+      return `Регистрација није успела. Status: ${error.status}.`;
     }
 
-    return 'Došlo je do greške pri registraciji. Pokušajte ponovo.';
+    return 'Дошло је до грешке при регистрацији. Покушајте поново.';
   }
 }

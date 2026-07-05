@@ -139,8 +139,8 @@ export class Payment {
         // Show success message
         this.messageService.add({
           severity: 'success',
-          summary: 'Plaćanje uspešno',
-          detail: 'Vaša porudžbina je kreirana. Proverite email za detalje.',
+          summary: 'Плаћање успешно',
+          detail: 'Ваша поруџбина је креирана. Проверите email за детаље.',
           life: 5000,
         });
 
@@ -177,7 +177,7 @@ export class Payment {
           this.errorNotification()?.showPaymentError(enriched);
         } else {
           // Fallback for non-payment errors
-          this.errorMessage.set(err.error?.message || 'Greška pri kreiranju porudžbine');
+          this.errorMessage.set(err.error?.message || 'Грешка при креирању поруџбине');
         }
       },
     });

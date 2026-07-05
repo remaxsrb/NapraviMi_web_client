@@ -19,50 +19,50 @@ const ERROR_ACTION_MAP: Record<string, {
   severity: 'error' | 'warning' | 'info';
 }> = {
   PAYMENT_CIRCUIT_OPEN: {
-    title: 'Privremeno nedostupno',
-    message: 'Šištem za plaćanje je privremeno nedostupan. Pokušajte ponovo za nekoliko trenutaka.',
+    title: 'Привремено недоступно',
+    message: 'Систем за плаћање је привремено недоступан. Покушајте поново за неколико тренутака.',
     actions: ['retry', 'contact_support'],
     severity: 'warning',
   },
   PAYMENT_CIRCUIT_HALF_OPEN: {
-    title: 'Oporavak sistema',
-    message: 'Sistem se oporavlja. Pokušajte ponovo za trenutak.',
+    title: 'Опоравак система',
+    message: 'Систем се опоравља. Покушајте поново за тренутак.',
     actions: ['retry'],
     severity: 'info',
   },
   PAYMENT_RESERVATION_FAILED_INSUFFICIENT_FUNDS: {
-    title: 'Nedovoljno sredstava',
-    message: 'Nema dovoljno sredstava na kartici. Koristite drugu karticu ili pokušajte sa više sredstava.',
+    title: 'Недовољно средстава',
+    message: 'Нема довољно средстава на картици. Користите другу картицу или покушајте са више средстава.',
     actions: ['change_card', 'contact_support'],
     severity: 'error',
   },
   PAYMENT_RESERVATION_FAILED_CARD_DECLINED: {
-    title: 'Kartica odbijena',
-    message: 'Izdavač kartice je odbio transakciju. Proverite podatke i pokušajte ponovo.',
+    title: 'Картица одбијена',
+    message: 'Издавач картице је одбио трансакцију. Проверите податке и покушајте поново.',
     actions: ['verify_card', 'change_card', 'contact_support'],
     severity: 'error',
   },
   PAYMENT_RESERVATION_FAILED_INVALID_CARD: {
-    title: 'Neispravna kartica',
-    message: 'Podaci kartice nisu ispravni. Proverite broj kartice i pokušajte ponovo.',
+    title: 'Неисправна картица',
+    message: 'Подаци картице нису исправни. Проверите број картице и покушајте поново.',
     actions: ['verify_card', 'change_card'],
     severity: 'error',
   },
   PAYMENT_CAPTURE_FAILED: {
-    title: 'Greška pri finalizaciji plaćanja',
-    message: 'Greška pri finalizaciji plaćanja. Pokušajte ponovo ili kontaktirajte podršku.',
+    title: 'Грешка при финализацији плаћања',
+    message: 'Грешка при финализацији плаћања. Покушајте поново или контактирајте подршку.',
     actions: ['retry', 'contact_support'],
     severity: 'error',
   },
   PAYMENT_REFUND_FAILED: {
-    title: 'Greška pri povraćaju sredstava',
-    message: 'Povraćaj sredstava je neuspešan. Kontaktirajte podršku.',
+    title: 'Грешка при повраћају средстава',
+    message: 'Повраћај средстава је неуспешан. Контактирајте подршку.',
     actions: ['contact_support'],
     severity: 'error',
   },
   PAYMENT_GATEWAY_ERROR: {
-    title: 'Greška šišitema za plaćanje',
-    message: 'Privremena greška. Pokušajte ponovo kasnije.',
+    title: 'Грешка система за плаћање',
+    message: 'Привремена грешка. Покушајте поново касније.',
     actions: ['retry', 'contact_support'],
     severity: 'error',
   },
@@ -113,7 +113,7 @@ export class PaymentErrorHandler {
       reason: 'unknown',
       retryable: false,
       timestamp: new Date(),
-      userMessage: error.message || 'Došlo je do greške. Pokušajte ponovo.',
+      userMessage: error.message || 'Дошло је до грешке. Покушајте поново.',
       actionItems: [],
       isPaymentError: false,
       httpStatus: error.status,
@@ -136,7 +136,7 @@ export class PaymentErrorHandler {
 
     if (config.actions.includes('retry') && onRetry && error.retryable) {
       error.actionItems.push({
-        label: 'Pokušaj ponovo',
+        label: 'Покушај поново',
         action: onRetry,
         primary: true,
       });
@@ -144,7 +144,7 @@ export class PaymentErrorHandler {
 
     if (config.actions.includes('change_card') && onChangeCard) {
       error.actionItems.push({
-        label: 'Koristi drugu karticu',
+        label: 'Користи другу картицу',
         action: onChangeCard,
         primary: !config.actions.includes('retry'),
       });
@@ -152,7 +152,7 @@ export class PaymentErrorHandler {
 
     if (config.actions.includes('verify_card')) {
       error.actionItems.push({
-        label: 'Proverite podatke kartice',
+        label: 'Проверите податке картице',
         action: () => {
           console.log('User should verify card details');
           onChangeCard?.();
@@ -162,7 +162,7 @@ export class PaymentErrorHandler {
 
     if (config.actions.includes('contact_support') && onContactSupport) {
       error.actionItems.push({
-        label: 'Kontaktiraj podršku',
+        label: 'Контактирај подршку',
         action: onContactSupport,
       });
     }
