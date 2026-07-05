@@ -4,18 +4,14 @@
   <app-header></app-header>
 
   <app-navbar></app-navbar>
-  <div class="grid">
-    <div class="flex-row">
-      <div class="col-4">
-        <div class="mb-4 p-8">
-          <p-card>
-            <p-image [src]="profileState.user.profilePicture || ''"></p-image>
-          </p-card>
-        </div>
-      </div>
-      <div class="col-8">
-        <div class="mb-4 p-8">
-          <p-card>
+
+  <div class="profile-card-wrapper">
+    <p-card>
+      <div class="profile-card-content">
+        <div class="profile-main-block">
+          <p-image [src]="profileState.user.profilePicture || ''" class="profile-picture"></p-image>
+
+          <div class="profile-details">
             <h2>{{ profileState.user.firstname }} {{ profileState.user.lastname }}</h2>
 
             <p-rating
@@ -26,10 +22,18 @@
 
             <p>{{ profileState.user.craft }}</p>
             <p>{{ profileState.user.email }}</p>
-          </p-card>
+          </div>
         </div>
+
+        @if (profileState.user.craft) {
+          <div class="profile-biography-block">
+            <p class="profile-biography">
+              {{ profileState.user.biography || 'Занатлија још није додао биографију.' }}
+            </p>
+          </div>
+        }
       </div>
-    </div>
+    </p-card>
   </div>
 
   @if (profileState.user.craft) {

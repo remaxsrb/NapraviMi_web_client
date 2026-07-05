@@ -10,10 +10,12 @@ import { MessageModule } from 'primeng/message';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { UserService } from '../../../services/user/user-service';
+import { CraftsmanService } from '../../../services/craftsman/craftsman-service';
 import { FileService } from '../../../services/utils/file-service';
 import { AuthService } from '../../../services/utils/auth-service';
 import { RegexPatterns } from '../../../regexPatterns';
 import { DividerModule } from 'primeng/divider';
+import { TextareaModule } from 'primeng/textarea';
 import { Header } from "../header/header/header";
 import { BehaviorSubject } from 'rxjs';
 
@@ -26,9 +28,13 @@ interface ProfileSettingsState {
   passwordErrorMessage: string;
   username: string;
   userRole: string;
+  craftsmanId?: number;
   dashboardLink: string;
   deletingAccount: boolean;
   deleteAccountError: string;
+  biographySubmitting: boolean;
+  biographySuccessMessage: string;
+  biographyErrorMessage: string;
 }
 
 interface SelectedFilesEvent {
@@ -49,6 +55,7 @@ interface SelectedFilesEvent {
     FileUploadModule,
     ProgressSpinnerModule,
     DividerModule,
+    TextareaModule,
     Header
 ],
   templateUrl: './profile-settings.html',
@@ -56,8 +63,10 @@ interface SelectedFilesEvent {
 })
 export class ProfileSettings {
   passwordForm!: FormGroup;
+  biographyForm!: FormGroup;
   private fb = inject(FormBuilder);
   private userService = inject(UserService);
+  private craftsmanService = inject(CraftsmanService);
   private fileService = inject(FileService);
   private authService = inject(AuthService);
   private router = inject(Router);
@@ -75,6 +84,12 @@ export class ProfileSettings {
       },
       { validators: this.matchPasswords },
     );
+
+    const userData = localStorage.getItem('userData');
+    const biography = userData ? JSON.parse(userData).biography ?? '' : '';
+    this.biographyForm = this.fb.group({
+      biography: [biography],
+    });
   }
 
   matchPasswords(group: FormGroup) {
@@ -114,6 +129,45 @@ export class ProfileSettings {
         this.patchState({
           passwordSubmitting: false,
           passwordErrorMessage: err?.error?.message || 'Дошло је до грешке при промени лозинке.',
+        });
+      },
+    });
+  }
+
+  submitBiographyChange(): void {
+    const currentState = this.stateSubject$.value;
+    this.patchState({
+      biographyErrorMessage: '',
+      biographySuccessMessage: '',
+      biographySubmitting: true,
+    });
+
+    const biography = this.biographyForm.get('biography')?.value ?? '';
+
+    if (!currentState.craftsmanId) {
+      this.patchState({
+        biographySubmitting: false,
+        biographyErrorMessage: 'Дошло је до грешке при промени биографије.',
+      });
+      return;
+    }
+
+    this.craftsmanService.setBiography(currentState.craftsmanId, biography).subscribe({
+      next: () => {
+        this.patchState({
+          biographySubmitting: false,
+          biographySuccessMessage: 'Биографија је успешно измењена.',
+        });
+
+        const currentDataString = localStorage.getItem('userData') || '{}';
+        const currentDataObject = JSON.parse(currentDataString);
+        currentDataObject.biography = biography;
+        localStorage.setItem('userData', JSON.stringify(currentDataObject));
+      },
+      error: (err) => {
+        this.patchState({
+          biographySubmitting: false,
+          biographyErrorMessage: err?.error?.message || 'Дошло је до грешке при промени биографије.',
         });
       },
     });
@@ -220,7 +274,10 @@ export class ProfileSettings {
       userRole === 'admin' ? '/admin' : userRole === 'craftsman' ? '/craftsman' : '/user';
 
     const userData = localStorage.getItem('userData');
-    const username = userData ? JSON.parse(userData).username ?? '' : '';
+    const parsedUserData = userData ? JSON.parse(userData) : null;
+    const username = parsedUserData?.username ?? '';
+    const craftsmanIdRaw = this.authService.get_craftsman_id();
+    const craftsmanId = craftsmanIdRaw ? Number(craftsmanIdRaw) : undefined;
 
     return {
       uploadingFile: false,
@@ -231,9 +288,13 @@ export class ProfileSettings {
       passwordErrorMessage: '',
       username,
       userRole,
+      craftsmanId,
       dashboardLink,
       deletingAccount: false,
       deleteAccountError: '',
+      biographySubmitting: false,
+      biographySuccessMessage: '',
+      biographyErrorMessage: '',
     };
   }
 }

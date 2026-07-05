@@ -11,32 +11,34 @@
   @if (!logoOnly) {
     <div class="actions-row">
       <div class="page-top-actions">
-        <div class="search-row">
-          <div class="search-wrapper">
-            <input
-              pInputText
-              [(ngModel)]="searchQuery"
-              placeholder="Претражи занатлије..."
-              (keyup.enter)="onSearch()"
-            />
+        @if (!hideSearchAndTheme) {
+          <div class="search-row">
+            <div class="search-wrapper">
+              <input
+                pInputText
+                [(ngModel)]="searchQuery"
+                placeholder="Претражи занатлије..."
+                (keyup.enter)="onSearch()"
+              />
+              <button
+                type="button"
+                class="search-icon-btn"
+                aria-label="Претражи"
+                (click)="onSearch()"
+              >
+                <i class="pi pi-search"></i>
+              </button>
+            </div>
             <button
               type="button"
-              class="search-icon-btn"
-              aria-label="Претражи"
-              (click)="onSearch()"
+              class="theme-toggle-btn"
+              [attr.aria-label]="themeService.isDark() ? 'Укључи светлу тему' : 'Укључи тамну тему'"
+              (click)="themeService.toggle()"
             >
-              <i class="pi pi-search"></i>
+              <i class="pi" [class.pi-sun]="themeService.isDark()" [class.pi-moon]="!themeService.isDark()"></i>
             </button>
           </div>
-          <button
-            type="button"
-            class="theme-toggle-btn"
-            [attr.aria-label]="themeService.isDark() ? 'Укључи светлу тему' : 'Укључи тамну тему'"
-            (click)="themeService.toggle()"
-          >
-            <i class="pi" [class.pi-sun]="themeService.isDark()" [class.pi-moon]="!themeService.isDark()"></i>
-          </button>
-        </div>
+        }
         @if (!headerState.isLoggedIn) {
           <button
             pButton
