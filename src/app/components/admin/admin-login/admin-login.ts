@@ -9,6 +9,7 @@ import { MessageModule } from 'primeng/message';
 import { PasswordModule } from 'primeng/password';
 import { UserService } from '../../../services/user/user-service';
 import { AuthService } from '../../../services/utils/auth-service';
+import { Header } from '../../common/header/header/header';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
@@ -29,6 +30,7 @@ interface AdminLoginState {
     ButtonModule,
     CardModule,
     RouterLink,
+    Header,
   ],
   templateUrl: './admin-login.html',
   styleUrl: './admin-login.css',

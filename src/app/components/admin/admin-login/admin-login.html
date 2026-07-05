@@ -1,8 +1,6 @@
 <body>
   @let state = (state$ | async);
-  <div class="header">
-    <h1>НаправиМи</h1>
-  </div>
+  <app-header [logoOnly]="true"></app-header>
   <div class="center-page">
     <p-card [style]="{ width: '450px' }">
       <ng-template pTemplate="header">
