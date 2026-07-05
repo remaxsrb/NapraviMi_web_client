@@ -1,12 +1,12 @@
 <body>
   @let state = (state$ | async);
   <div class="header">
-    <h1>NapraviMi</h1>
+    <h1>НаправиМи</h1>
   </div>
   <div class="center-page">
     <p-card [style]="{ width: '450px' }">
       <ng-template pTemplate="header">
-        <div class="login-header">Prijavi se</div>
+        <div class="login-header">Пријави се</div>
       </ng-template>
 
       @if (state?.loginError) {
@@ -18,13 +18,13 @@
       <form [formGroup]="loginForm" (ngSubmit)="submit()" class="p-fluid">
         <!-- Username -->
         <div class="field flex flex-column">
-          <label for="username">Korisničko ime</label>
+          <label for="username">Корисничко име</label>
           <input pInputText id="username" formControlName="username" />
         </div>
 
         <!-- Password -->
         <div class="field flex flex-column">
-          <label for="password">Lozinka</label>
+          <label for="password">Лозинка</label>
           <p-password
             id="password"
             formControlName="password"
@@ -33,7 +33,7 @@
             [feedback]="false"
           >
           </p-password>
-          <a class="forgot-password" routerLink="/change-password">Zaboravili ste lozinku?</a>
+          <a class="forgot-password" routerLink="/change-password">Заборавили сте лозинку?</a>
         </div>
 
         <!-- Submit -->
@@ -41,7 +41,7 @@
           <button
             pButton
             type="submit"
-            label="Prijavi se"
+            label="Пријави се"
             [disabled]="loginForm.invalid"
             style="width: 100%"
           ></button>

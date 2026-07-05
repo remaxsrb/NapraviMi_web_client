@@ -28,7 +28,7 @@
 .application-note {
   margin: 1rem 0 1.5rem;
   line-height: 1.6;
-  color: #4d4d4d;
+  color: var(--ink-soft);
 }
 
 .p-fileupload {

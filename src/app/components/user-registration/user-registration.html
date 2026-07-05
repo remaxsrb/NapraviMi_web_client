@@ -5,7 +5,7 @@
   <div class="center-page">
     <p-card [style]="{ width: '450px' }">
       <ng-template pTemplate="header">
-        <div class="registration-header">Registruj se</div>
+        <div class="registration-header">Региструј се</div>
       </ng-template>
 
       @if (state?.submissionError) {
@@ -17,7 +17,7 @@
       <form [formGroup]="signUpForm" (ngSubmit)="onRegisterClick()" class="p-fluid">
         <!-- Username -->
         <div class="field flex flex-column">
-          <label for="username">Korisničko ime</label>
+          <label for="username">Корисничко име</label>
           <input pInputText id="username" formControlName="username" />
         </div>
 
@@ -29,7 +29,7 @@
 
         <!-- Password -->
         <div class="field flex flex-column">
-          <label for="password">Lozinka</label>
+          <label for="password">Лозинка</label>
           <p-password
             id="password"
             formControlName="password"
@@ -41,7 +41,7 @@
 
         <!-- Confirm Password -->
         <div class="field flex flex-column">
-          <label for="passwordConfirm">Potvrdi lozinku</label>
+          <label for="passwordConfirm">Потврди лозинку</label>
           <p-password
             id="passwordConfirm"
             formControlName="passwordConfirm"
@@ -55,26 +55,26 @@
         <!-- Name fields -->
         <div class="formgrid grid">
           <div class="field col flex flex-column">
-            <label for="firstName">Ime</label>
+            <label for="firstName">Име</label>
             <input pInputText id="firstName" formControlName="firstName" />
           </div>
 
           <div class="field col flex flex-column">
-            <label for="lastName">Prezime</label>
+            <label for="lastName">Презиме</label>
             <input pInputText id="lastName" formControlName="lastName" />
           </div>
         </div>
 
         <!-- Date of birth -->
         <div class="field flex flex-column">
-          <label for="date_of_birth">Datum rođenja</label>
+          <label for="date_of_birth">Датум рођења</label>
           <p-datepicker formControlName="date_of_birth" [showIcon]="true" appendTo="body">
           </p-datepicker>
         </div>
 
         <!-- Gender -->
         <div class="field gender-field">
-          <label class="gender-label">Pol</label>
+          <label class="gender-label">Пол</label>
 
           <div class="gender-group">
             <div class="gender-option">
@@ -84,7 +84,7 @@
                 formControlName="gender"
                 inputId="male"
               ></p-radioButton>
-              <label for="male">Muškarac</label>
+              <label for="male">Мушкарац</label>
             </div>
 
             <div class="gender-option">
@@ -94,7 +94,7 @@
                 formControlName="gender"
                 inputId="female"
               ></p-radioButton>
-              <label for="female">Žena</label>
+              <label for="female">Жена</label>
             </div>
           </div>
         </div>
@@ -104,7 +104,7 @@
           <button
             pButton
             type="submit"
-            label="Registruj se"
+            label="Региструј се"
             [disabled]="signUpForm.invalid"
             style="width: 100%"
           ></button>

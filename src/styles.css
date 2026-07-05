@@ -1,7 +1,163 @@
 @import "primeicons/primeicons.css";
+
+/* PT Serif / PT Sans / PT Mono — one type family drawn together for Cyrillic
+   and Latin, so Serbian text renders without a fallback face stepping in. */
+@font-face {
+  font-family: 'PT Serif';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/ptserif-400-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122;
+}
+@font-face {
+  font-family: 'PT Serif';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/ptserif-400-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1E00-1EFF, U+2020, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'PT Serif';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/ptserif-700-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122;
+}
+@font-face {
+  font-family: 'PT Serif';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/ptserif-700-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1E00-1EFF, U+2020, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'PT Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/ptsans-400-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122;
+}
+@font-face {
+  font-family: 'PT Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/ptsans-400-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1E00-1EFF, U+2020, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'PT Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/ptsans-700-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122;
+}
+@font-face {
+  font-family: 'PT Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/ptsans-700-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1E00-1EFF, U+2020, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'PT Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/ptmono-400-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122;
+}
+@font-face {
+  font-family: 'PT Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/ptmono-400-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1E00-1EFF, U+2020, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* Palette pulled from the beaded keychain: white bead canvas, black key-pattern
+   ink, red diamond thread, sage tip accents, pewter chain/findings. */
+:root {
+  --canvas: #f6f4ef;
+  --surface: #ffffff;
+  --ink: #1b1815;
+  --ink-soft: #55504a;
+  --muted: #6e6a63;
+  --hair: #e3dfd5;
+  --silver: #8e8b85;
+  --red: #b21f2d;
+  --red-deep: #8f1822;
+  --sage: #93a575;
+  --sage-deep: #5f7444;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --canvas: #15130f;
+    --surface: #1e1b16;
+    --ink: #f3efe6;
+    --ink-soft: #c9c2b6;
+    --muted: #b0aba0;
+    --hair: #322e27;
+    --silver: #948f86;
+    --red: #e8555d;
+    --red-deep: #f0797f;
+    --sage: #b7c89a;
+    --sage-deep: #d3dfbd;
+  }
+}
+
+/* Explicit overrides from the header's light/dark toggle (ThemeService),
+   taking precedence over the OS-level media query above in both directions. */
+:root.app-dark {
+  --canvas: #15130f;
+  --surface: #1e1b16;
+  --ink: #f3efe6;
+  --ink-soft: #c9c2b6;
+  --muted: #b0aba0;
+  --hair: #322e27;
+  --silver: #948f86;
+  --red: #e8555d;
+  --red-deep: #f0797f;
+  --sage: #b7c89a;
+  --sage-deep: #d3dfbd;
+}
+
+:root.app-light {
+  --canvas: #f6f4ef;
+  --surface: #ffffff;
+  --ink: #1b1815;
+  --ink-soft: #55504a;
+  --muted: #6e6a63;
+  --hair: #e3dfd5;
+  --silver: #8e8b85;
+  --red: #b21f2d;
+  --red-deep: #8f1822;
+  --sage: #93a575;
+  --sage-deep: #5f7444;
+}
+
+body {
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: 'PT Sans', sans-serif;
+}
+
 /* Ensure the radio button component doesn't stretch to 100% width */
 .p-radiobutton {
     width: auto !important;
+}
+
+h1, h2, h3 {
+    font-family: 'PT Serif', serif;
 }
 
 h1 {

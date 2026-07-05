@@ -104,7 +104,7 @@ export class ProfileSettings {
       next: () => {
         this.patchState({
           passwordSubmitting: false,
-          passwordSuccessMessage: 'Lozinka je uspešno izmenjena.',
+          passwordSuccessMessage: 'Лозинка је успешно измењена.',
           passwordErrorMessage: '',
         });
         this.passwordForm.reset();
@@ -113,7 +113,7 @@ export class ProfileSettings {
       error: (err) => {
         this.patchState({
           passwordSubmitting: false,
-          passwordErrorMessage: err?.error?.message || 'Došlo je do greške pri promeni lozinke.',
+          passwordErrorMessage: err?.error?.message || 'Дошло је до грешке при промени лозинке.',
         });
       },
     });
@@ -143,7 +143,7 @@ export class ProfileSettings {
         if (!profilePictureUrl) {
           this.patchState({
             uploadingFile: false,
-            fileUploadError: 'Greška: Server nije vratio URL slike.',
+            fileUploadError: 'Грешка: Сервер није вратио URL слике.',
           });
           return;
         }
@@ -157,7 +157,7 @@ export class ProfileSettings {
           next: () => {
             this.patchState({
               uploadingFile: false,
-              fileUploadMessage: 'Profilna slika je uspešno izmenjena.',
+              fileUploadMessage: 'Профилна слика је успешно измењена.',
             });
 
             const currentDataString = localStorage.getItem('userData') || '{}';
@@ -172,7 +172,7 @@ export class ProfileSettings {
             this.patchState({
               uploadingFile: false,
               fileUploadError:
-                err?.error?.message || 'Došlo je do greške pri promeni profilne slike.',
+                err?.error?.message || 'Дошло је до грешке при промени профилне слике.',
             });
           },
         });
@@ -180,7 +180,7 @@ export class ProfileSettings {
       error: (err) => {
         this.patchState({
           uploadingFile: false,
-          fileUploadError: err?.error?.message || 'Došlo je do greške pri uploadu fajla.',
+          fileUploadError: err?.error?.message || 'Дошло је до грешке при уплоаду фајла.',
         });
       },
     });
@@ -201,7 +201,7 @@ export class ProfileSettings {
       error: (err) => {
         this.patchState({
           deletingAccount: false,
-          deleteAccountError: err?.error?.message || 'Došlo je do greške pri brisanju naloga.',
+          deleteAccountError: err?.error?.message || 'Дошло је до грешке при брисању налога.',
         });
       },
     });

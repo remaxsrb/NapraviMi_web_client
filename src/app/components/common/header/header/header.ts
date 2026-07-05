@@ -7,6 +7,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../services/utils/auth-service';
 import { CartService } from '../../../../services/cart/cart-service';
+import { ThemeService } from '../../../../services/utils/theme-service';
 import { UserActions } from '../../user-actions/user-actions';
 import { User } from '../../../../models/user';
 import { Observable } from 'rxjs';
@@ -33,6 +34,7 @@ export class Header {
   private router = inject(Router);
   private authService = inject(AuthService);
   private cartService = inject(CartService);
+  readonly themeService = inject(ThemeService);
 
   readonly state$: Observable<HeaderState> = this.authService.authChanged$.pipe(
     map(() => this.buildState()),

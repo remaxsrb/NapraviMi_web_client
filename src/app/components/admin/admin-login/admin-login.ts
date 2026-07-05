@@ -77,7 +77,7 @@ export class AdminLogin {
         } else {
           this.errorSubject$.next({
             loginError: true,
-            loginErrorMessage: 'Nije dozvoljen pristup. Samo administratori mogu da se prijave ovde.',
+            loginErrorMessage: 'Није дозвољен приступ. Само администратори могу да се пријаве овде.',
           });
         }
       },
@@ -100,9 +100,9 @@ export class AdminLogin {
     }
 
     if (error?.status) {
-      return `Prijavljivanje nije uspelo. Status: ${error.status}.`;
+      return `Пријављивање није успело. Status: ${error.status}.`;
     }
 
-    return 'Došlo je do greške pri prijavljivanju. Pokušajte ponovo.';
+    return 'Дошло је до грешке при пријављивању. Покушајте поново.';
   }
 }

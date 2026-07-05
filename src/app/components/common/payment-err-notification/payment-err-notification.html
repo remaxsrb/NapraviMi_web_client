@@ -6,7 +6,7 @@
         <span class="font-semibold">{{ message.summary }}</span>
         @if (message.data.retryable) {
           <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
-            Može se pokušati ponovo
+            Може се покушати поново
           </span>
         }
       </div>
@@ -16,11 +16,11 @@
 
       <!-- Error Code (for support reference) -->
       <div class="text-xs text-gray-500 bg-gray-50 p-2 rounded font-mono">
-        <span class="font-semibold">Kod greške:</span> {{ message.data.code }}
+        <span class="font-semibold">Код грешке:</span> {{ message.data.code }}
         <br />
-        <span class="font-semibold">Razlog:</span> {{ message.data.reason }}
+        <span class="font-semibold">Разлог:</span> {{ message.data.reason }}
         <br />
-        <span class="font-semibold">Vreme:</span>
+        <span class="font-semibold">Време:</span>
         {{ message.data.timestamp | date : 'dd.MM.yyyy HH:mm:ss' }}
       </div>
 

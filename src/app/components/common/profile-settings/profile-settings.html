@@ -8,13 +8,13 @@
       <p-card>
         <ng-template pTemplate="title">
           <div style="font-size: 1.5rem; font-weight: bold; padding-bottom: 0.5rem">
-            Podešavanja profila
+            Подешавања профила
           </div>
         </ng-template>
 
         <div class="section-container mb-5">
           <h3 style="font-size: 1.1rem; font-weight: 600; margin-top: 0; margin-bottom: 1rem">
-            Promena profilne slike
+            Промена профилне слике
           </h3>
 
           @if (profileState.fileUploadError) {
@@ -40,7 +40,7 @@
               (onSelect)="onFileSelect($event)"
               (uploadHandler)="onFileUpload()"
               [disabled]="profileState.uploadingFile"
-              chooseLabel="Odaberite sliku"
+              chooseLabel="Одаберите слику"
             ></p-fileUpload>
           </div>
 
@@ -49,7 +49,7 @@
               <p-progressSpinner
                 [style]="{ width: '40px', height: '40px', marginRight: '1rem' }"
               ></p-progressSpinner>
-              <span>Učitavanje...</span>
+              <span>Учитавање...</span>
             </div>
           }
         </div>
@@ -57,7 +57,7 @@
         <p-divider></p-divider>
 
         <div class="section-container mt-4">
-          <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem">Promena lozinke</h3>
+          <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem">Промена лозинке</h3>
 
           @if (profileState.passwordErrorMessage) {
             <div class="mb-3">
@@ -72,7 +72,7 @@
 
           <form [formGroup]="passwordForm" (ngSubmit)="submitPasswordChange()" class="p-fluid">
             <div class="field flex flex-column mb-3">
-              <label for="new_password" class="mb-2">Nova lozinka</label>
+              <label for="new_password" class="mb-2">Нова лозинка</label>
               <p-password
                 id="new_password"
                 formControlName="new_password"
@@ -81,7 +81,7 @@
             </div>
 
             <div class="field flex flex-column mb-4">
-              <label for="confirm_password" class="mb-2">Potvrdite novu lozinku</label>
+              <label for="confirm_password" class="mb-2">Потврдите нову лозинку</label>
               <p-password
                 id="confirm_password"
                 formControlName="confirm_password"
@@ -90,7 +90,7 @@
               ></p-password>
               @if (passwordForm.errors?.['passwordsMismatch']) {
                 <div class="p-error mt-1">
-                Lozinke se ne poklapaju.
+                Лозинке се не поклапају.
                 </div>
               }
             </div>
@@ -100,7 +100,7 @@
               <button
                 pButton
                 type="submit"
-                label="Promeni lozinku"
+                label="Промени лозинку"
                 [disabled]="passwordForm.invalid || profileState.passwordSubmitting"
                 [loading]="profileState.passwordSubmitting"
                 class="w-full"
@@ -112,7 +112,7 @@
           <h3
             style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; color: var(--red-500)"
           >
-            Brisanje naloga
+            Брисање налога
           </h3>
 
           @if (profileState.deleteAccountError) {
@@ -122,14 +122,14 @@
           }
 
           <p class="mb-4" style="color: var(--text-color-secondary); font-size: 0.9rem">
-            Brisanje naloga je trajno i ne može se poništiti. Svi vaši podaci biće zauvek obrisani.
+            Брисање налога је трајно и не може се поништити. Сви ваши подаци биће заувек обрисани.
           </p>
 
           <div class="w-full">
             <button
               pButton
               type="button"
-              label="Obriši nalog"
+              label="Обриши налог"
               icon="pi pi-trash"
               class="p-button-danger w-full"
               (click)="onDeleteAccount()"

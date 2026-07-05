@@ -45,7 +45,7 @@ export class OrderOverview implements OnInit {
 
     if (roleId === null) {
       this.orders.set([]);
-      this.errorMessage.set('Nije moguće učitati porudžbine za trenutnu ulogu.');
+      this.errorMessage.set('Није могуће учитати поруџбине за тренутну улогу.');
       this.isLoading.set(false);
       return;
     }
@@ -68,7 +68,7 @@ export class OrderOverview implements OnInit {
         error: () => {
           this.orders.set([]);
           this.totalRecords.set(0);
-          this.errorMessage.set('Greška prilikom učitavanja porudžbina.');
+          this.errorMessage.set('Грешка приликом учитавања поруџбина.');
         },
       });
   }
@@ -92,7 +92,7 @@ export class OrderOverview implements OnInit {
   }
 
   getStatus(order: OrderResponse): string {
-    return order.status ?? 'U obradi';
+    return order.status ?? 'У обради';
   }
 
   canAccept(order: OrderResponse): boolean {
@@ -121,7 +121,7 @@ export class OrderOverview implements OnInit {
   onReject(orderId: number): void {
     const craftsmanId = this.getRoleId('craftsman');
     if (craftsmanId === null) {
-      this.errorMessage.set('Greška: ID zanatlije nije dostupan.');
+      this.errorMessage.set('Грешка: ID занатлије није доступан.');
       return;
     }
 
@@ -133,14 +133,14 @@ export class OrderOverview implements OnInit {
       .pipe(finalize(() => this.actionLoading.set(false)))
       .subscribe({
         next: () => this.loadOrders(this.currentPage()),
-        error: () => this.errorMessage.set('Greška prilikom odbijanja porudžbine.'),
+        error: () => this.errorMessage.set('Грешка приликом одбијања поруџбине.'),
       });
   }
 
   onAccept(orderId: number): void {
     const craftsmanId = this.getRoleId('craftsman');
     if (craftsmanId === null) {
-      this.errorMessage.set('Greška: ID zanatlije nije dostupan.');
+      this.errorMessage.set('Грешка: ID занатлије није доступан.');
       return;
     }
 
@@ -152,21 +152,21 @@ export class OrderOverview implements OnInit {
       .pipe(finalize(() => this.actionLoading.set(false)))
       .subscribe({
         next: () => this.loadOrders(this.currentPage()),
-        error: () => this.errorMessage.set('Greška prilikom prihvatanja porudžbine.'),
+        error: () => this.errorMessage.set('Грешка приликом прихватања поруџбине.'),
       });
   }
 
   onDeliver(orderId: number): void {
     const craftsmanId = this.getRoleId('craftsman');
     if (craftsmanId === null) {
-      this.errorMessage.set('Greška: ID zanatlije nije dostupan.');
+      this.errorMessage.set('Грешка: ID занатлије није доступан.');
       return;
     }
 
     const customerId = this.orders().find((item) => item.order_id === orderId)?.customer_id;
 
     if (!Number.isFinite(customerId) || customerId! <= 0) {
-      this.errorMessage.set('Greška: ID kupca nije dostupan za isporuku porudžbine.');
+      this.errorMessage.set('Грешка: ID купца није доступан за испоруку поруџбине.');
       return;
     }
 
@@ -178,7 +178,7 @@ export class OrderOverview implements OnInit {
       .pipe(finalize(() => this.actionLoading.set(false)))
       .subscribe({
         next: () => this.loadOrders(this.currentPage()),
-        error: () => this.errorMessage.set('Greška prilikom isporuke porudžbine.'),
+        error: () => this.errorMessage.set('Грешка приликом испоруке поруџбине.'),
       });
   }
 

@@ -20,35 +20,35 @@
 
       <p-card [style]="{ width: '100%' }">
         <ng-template pTemplate="header">
-          <div class="application-header">Prijava za zanatliju</div>
+          <div class="application-header">Пријава за занатлију</div>
         </ng-template>
 
         <form [formGroup]="applicationForm" (ngSubmit)="onSubmit()" class="p-fluid">
         <div class="field flex flex-column">
-          <label for="email">Email</label>
+          <label for="email">Е-пошта</label>
           <input pInputText id="email" type="email" formControlName="email" />
         </div>
 
         <div class="field flex flex-column">
-          <label for="craft">Zanat</label>
+          <label for="craft">Занат</label>
           <p-select
             id="craft"
             [options]="state?.craftOptions"
             optionLabel="label"
             optionValue="value"
             formControlName="craft"
-            placeholder="Izaberi zanat"
+            placeholder="Изабери занат"
             appendTo="body"
           ></p-select>
         </div>
 
         <div class="field flex flex-column">
-          <label for="resumeUpload">Rezime (PDF)</label>
+          <label for="resumeUpload">Биографија (PDF)</label>
           <p-fileUpload
             name="resume"
             accept="application/pdf"
             customUpload="true"
-            chooseLabel="Izaberi PDF"
+            chooseLabel="Изабери PDF"
             [showUploadButton]="false"
             [showCancelButton]="true"
             [auto]="false"
@@ -59,7 +59,7 @@
 
         @if (state?.selectedResumeName) {
           <div class="field">
-            <small>Izabrani fajl: {{ state?.selectedResumeName }}</small>
+            <small>Изабрани фајл: {{ state?.selectedResumeName }}</small>
           </div>
         }
 
@@ -67,7 +67,7 @@
           <button
             pButton
             type="submit"
-            label="Pošalji prijavu"
+            label="Пошаљи пријаву"
             [disabled]="!resumeFile || applicationForm.invalid"
             style="width: 100%"
           ></button>

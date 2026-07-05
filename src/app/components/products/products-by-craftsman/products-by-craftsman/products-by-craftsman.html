@@ -1,11 +1,11 @@
 <div class="products-page">
   @let state = (state$ | async);
-  <h2>Proizvodi</h2>
+  <h2>Производи</h2>
 
   @if (state?.isLoading) {
-    <p>Učitavanje proizvoda...</p>
+    <p>Учитавање производа...</p>
   } @else if ((state?.products?.length ?? 0) === 0) {
-    <p>Nema dostupnih proizvoda.</p>
+    <p>Нема доступних производа.</p>
   } @else {
     <p-dataview
       [value]="state?.products"
