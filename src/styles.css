@@ -97,6 +97,21 @@
   --red-deep: #8f1822;
   --sage: #93a575;
   --sage-deep: #5f7444;
+  /* Horizontal gutter shared with the header/navbar so page content never
+     extends past their edges. Breakpoints mirror header.css/navbar.css. */
+  --page-padding-x: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --page-padding-x: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --page-padding-x: 0.75rem;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -154,6 +169,14 @@ body {
 /* Ensure the radio button component doesn't stretch to 100% width */
 .p-radiobutton {
     width: auto !important;
+}
+
+/* Cards blend into the page background instead of standing out with their
+   own fill; a hairline border marks the boundary instead. */
+.p-card {
+  background: transparent !important;
+  border: 1px solid var(--hair) !important;
+  box-shadow: none !important;
 }
 
 h1, h2, h3 {
@@ -228,6 +251,6 @@ h1 {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
   width: 100%;
 }

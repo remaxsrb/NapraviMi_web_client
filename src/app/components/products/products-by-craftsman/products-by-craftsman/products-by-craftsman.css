@@ -1,5 +1,9 @@
 .products-page {
-  padding: 1rem;
+  padding: 1rem var(--page-padding-x, 1.5rem);
+}
+
+.products-page ::ng-deep .p-dataview-content {
+  background: transparent;
 }
 
 .product-grid {

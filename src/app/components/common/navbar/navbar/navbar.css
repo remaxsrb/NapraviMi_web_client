@@ -1,19 +1,5 @@
 nav {
   display: block;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-}
-
-@media (max-width: 768px) {
-  nav {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-}
-
-@media (max-width: 480px) {
-  nav {
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
-  }
+  padding-left: var(--page-padding-x, 1.5rem);
+  padding-right: var(--page-padding-x, 1.5rem);
 }

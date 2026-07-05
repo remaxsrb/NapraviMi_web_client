@@ -13,4 +13,5 @@ export class User {
     craft?: string;
     rating?: number;
     numberOfRatings?: number;
+    biography?: string;
 }

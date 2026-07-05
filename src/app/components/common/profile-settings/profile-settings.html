@@ -1,7 +1,7 @@
 <body>
   @let state = (state$ | async);
   @if (state; as profileState) {
-  <app-header></app-header>
+  <app-header [hideSearchAndTheme]="true"></app-header>
 
   <div class="center-page">
     <div class="settings-container">
@@ -41,6 +41,7 @@
               (uploadHandler)="onFileUpload()"
               [disabled]="profileState.uploadingFile"
               chooseLabel="Одаберите слику"
+              [chooseButtonProps]="{ severity: 'contrast' }"
             ></p-fileUpload>
           </div>
 
@@ -53,6 +54,52 @@
             </div>
           }
         </div>
+
+        @if (profileState.userRole === 'craftsman') {
+          <p-divider></p-divider>
+
+          <div class="section-container mb-5">
+            <h3 style="font-size: 1.1rem; font-weight: 600; margin-top: 0; margin-bottom: 1rem">
+              Промена биографије
+            </h3>
+
+            @if (profileState.biographyErrorMessage) {
+              <div class="mb-3">
+                <p-message severity="error">{{ profileState.biographyErrorMessage }}</p-message>
+              </div>
+            }
+            @if (profileState.biographySuccessMessage) {
+              <div class="mb-3">
+                <p-message severity="success">{{ profileState.biographySuccessMessage }}</p-message>
+              </div>
+            }
+
+            <form [formGroup]="biographyForm" (ngSubmit)="submitBiographyChange()" class="p-fluid">
+              <div class="field flex flex-column mb-3">
+                <label for="biography" class="mb-2">Биографија</label>
+                <textarea
+                  pInputTextarea
+                  id="biography"
+                  formControlName="biography"
+                  rows="4"
+                  placeholder="Напишите нешто о себи..."
+                ></textarea>
+              </div>
+
+              <div class="w-full mt-2">
+                <button
+                  pButton
+                  type="submit"
+                  label="Сачувај биографију"
+                  severity="contrast"
+                  [disabled]="profileState.biographySubmitting"
+                  [loading]="profileState.biographySubmitting"
+                  class="w-full"
+                ></button>
+              </div>
+            </form>
+          </div>
+        }
 
         <p-divider></p-divider>
 
@@ -101,6 +148,7 @@
                 pButton
                 type="submit"
                 label="Промени лозинку"
+                severity="contrast"
                 [disabled]="passwordForm.invalid || profileState.passwordSubmitting"
                 [loading]="profileState.passwordSubmitting"
                 class="w-full"

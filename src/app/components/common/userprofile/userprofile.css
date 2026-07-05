@@ -9,3 +9,77 @@
 .page-top-actions p-button {
   min-width: 150px;
 }
+
+.profile-card-wrapper {
+  padding: 0 var(--page-padding-x, 1.5rem);
+  margin-bottom: 1.5rem;
+}
+
+.profile-card-content {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.profile-main-block {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.profile-card-content ::ng-deep .profile-picture img {
+  width: 160px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.profile-details h2,
+.profile-details p {
+  margin: 0;
+}
+
+.profile-biography-block {
+  flex: 1 1 320px;
+  min-width: 0;
+}
+
+.profile-biography {
+  margin: 0;
+  color: var(--muted);
+}
+
+@media (max-width: 768px) {
+  .profile-card-content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .profile-main-block {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  .profile-details {
+    width: 100%;
+    align-items: center;
+  }
+
+  .profile-biography-block {
+    flex: 0 1 auto;
+    width: 100%;
+    text-align: center;
+  }
+}

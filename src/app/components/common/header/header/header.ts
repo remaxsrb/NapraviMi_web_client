@@ -29,6 +29,7 @@ interface HeaderState {
 })
 export class Header {
   @Input() logoOnly = false;
+  @Input() hideSearchAndTheme = false;
   searchQuery = '';
 
   private router = inject(Router);

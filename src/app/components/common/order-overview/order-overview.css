@@ -1,5 +1,5 @@
 .orders-wrapper {
-	padding: 1rem;
+	padding: 1rem var(--page-padding-x, 1.5rem);
 }
 
 .orders-header {
