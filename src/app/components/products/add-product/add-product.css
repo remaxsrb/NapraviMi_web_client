@@ -1,5 +1,7 @@
 p-card {
+  display: block;
   max-width: 540px;
+  margin: 2rem auto;
 }
 
 .drop-zone {
