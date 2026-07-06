@@ -131,6 +131,13 @@ export const routes: Routes = [
     data: { expected_role: 'craftsman' },
     children: [
       {
+        path: '',
+        loadComponent: () =>
+          import(
+            './components/craftsman/craftsman-dashboard-home/craftsman-dashboard-home'
+          ).then((m) => m.CraftsmanDashboardHome),
+      },
+      {
         path: 'add-product',
         loadComponent: () =>
           import('./components/products/add-product/add-product').then(

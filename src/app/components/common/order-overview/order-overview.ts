@@ -41,19 +41,28 @@ export class OrderOverview implements OnInit {
     this.currentPage.set(page);
 
     const role = this.role();
-    const roleId = this.getRoleId(role);
+    const skip = (page - 1) * this.PAGE_SIZE;
 
-    if (roleId === null) {
+    if (role === 'unknown') {
       this.orders.set([]);
       this.errorMessage.set('Није могуће учитати поруџбине за тренутну улогу.');
       this.isLoading.set(false);
       return;
     }
 
-    const skip = (page - 1) * this.PAGE_SIZE;
-    const request$ = role === 'craftsman'
-      ? this.orderService.getOrdersByCraftsman(roleId, skip, this.PAGE_SIZE)
-      : this.orderService.getOrdersByCustomer(roleId, skip, this.PAGE_SIZE);
+    let request$;
+    if (role === 'craftsman') {
+      request$ = this.orderService.getOrdersByCraftsman(skip, this.PAGE_SIZE);
+    } else {
+      const customerId = this.getCustomerId();
+      if (customerId === null) {
+        this.orders.set([]);
+        this.errorMessage.set('Није могуће учитати поруџбине за тренутну улогу.');
+        this.isLoading.set(false);
+        return;
+      }
+      request$ = this.orderService.getOrdersByCustomer(customerId, skip, this.PAGE_SIZE);
+    }
 
     request$
       .pipe(finalize(() => this.isLoading.set(false)))
@@ -119,17 +128,11 @@ export class OrderOverview implements OnInit {
   }
 
   onReject(orderId: number): void {
-    const craftsmanId = this.getRoleId('craftsman');
-    if (craftsmanId === null) {
-      this.errorMessage.set('Грешка: ID занатлије није доступан.');
-      return;
-    }
-
     this.actionLoading.set(true);
     this.errorMessage.set('');
 
     this.orderService
-      .rejectOrder(orderId, craftsmanId)
+      .rejectOrder(orderId)
       .pipe(finalize(() => this.actionLoading.set(false)))
       .subscribe({
         next: () => this.loadOrders(this.currentPage()),
@@ -138,17 +141,11 @@ export class OrderOverview implements OnInit {
   }
 
   onAccept(orderId: number): void {
-    const craftsmanId = this.getRoleId('craftsman');
-    if (craftsmanId === null) {
-      this.errorMessage.set('Грешка: ID занатлије није доступан.');
-      return;
-    }
-
     this.actionLoading.set(true);
     this.errorMessage.set('');
 
     this.orderService
-      .acceptOrder(orderId, craftsmanId)
+      .acceptOrder(orderId)
       .pipe(finalize(() => this.actionLoading.set(false)))
       .subscribe({
         next: () => this.loadOrders(this.currentPage()),
@@ -157,12 +154,6 @@ export class OrderOverview implements OnInit {
   }
 
   onDeliver(orderId: number): void {
-    const craftsmanId = this.getRoleId('craftsman');
-    if (craftsmanId === null) {
-      this.errorMessage.set('Грешка: ID занатлије није доступан.');
-      return;
-    }
-
     const customerId = this.orders().find((item) => item.order_id === orderId)?.customer_id;
 
     if (!Number.isFinite(customerId) || customerId! <= 0) {
@@ -174,7 +165,7 @@ export class OrderOverview implements OnInit {
     this.errorMessage.set('');
 
     this.orderService
-      .deliverOrder(orderId, craftsmanId, customerId!)
+      .deliverOrder(orderId, customerId!)
       .pipe(finalize(() => this.actionLoading.set(false)))
       .subscribe({
         next: () => this.loadOrders(this.currentPage()),
@@ -192,12 +183,8 @@ export class OrderOverview implements OnInit {
     return 'unknown';
   }
 
-  private getRoleId(role: DashboardRole): number | null {
-    const value = role === 'craftsman'
-      ? this.authService.get_craftsman_id()
-      : this.authService.get_id();
-
-    const parsed = Number(value);
+  private getCustomerId(): number | null {
+    const parsed = Number(this.authService.get_id());
     return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
   }
 

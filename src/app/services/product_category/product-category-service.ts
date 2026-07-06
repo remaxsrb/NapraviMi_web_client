@@ -11,16 +11,14 @@ import { API_BASE_URL } from '../../env';
 export class ProductCategoryService {
   private apiUrl = `${API_BASE_URL}/product-categories`;
 
-  private categoriesByUsername = new Map<string, Observable<ProductCategoryOption[]>>();
+  private categories$?: Observable<ProductCategoryOption[]>;
 
   constructor(private http: HttpClient) {}
 
-  getProductCategoryOptions(username: string): Observable<ProductCategoryOption[]> {
-    let categories$ = this.categoriesByUsername.get(username);
-
-    if (!categories$) {
-      categories$ = this.http
-        .get<ProductCategory[]>(`${this.apiUrl}/craftsman/${username}`)
+  getProductCategoryOptions(): Observable<ProductCategoryOption[]> {
+    if (!this.categories$) {
+      this.categories$ = this.http
+        .get<ProductCategory[]>(`${this.apiUrl}/craftsman`)
         .pipe(
           map((categories) =>
             categories.map((c): ProductCategoryOption => ({
@@ -31,9 +29,8 @@ export class ProductCategoryService {
           ),
           shareReplay(1),
         );
-      this.categoriesByUsername.set(username, categories$);
     }
 
-    return categories$;
+    return this.categories$;
   }
 }

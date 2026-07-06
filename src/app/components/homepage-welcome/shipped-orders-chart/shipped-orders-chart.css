@@ -1,0 +1,12 @@
+.shipped-orders-chart {
+  border: 1px solid var(--hair);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  background: var(--surface);
+}
+
+.shipped-orders-chart h3 {
+  margin: 0 0 1rem;
+  color: var(--ink);
+}

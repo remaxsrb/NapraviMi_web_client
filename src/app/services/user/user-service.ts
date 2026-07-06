@@ -76,9 +76,7 @@ export class UserService {
     return this.http.get<any>(`${this.apiUrl}/username/${username}`);
   }
 
-  deleteAccount(username: string): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/delete/`, {
-      body: { username },
-    });
+  deleteAccount(): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/delete/`);
   }
 }

@@ -1,0 +1,11 @@
+.category-orders-chart {
+  border: 1px solid var(--hair);
+  border-radius: 12px;
+  padding: 1.5rem;
+  background: var(--surface);
+}
+
+.category-orders-chart h3 {
+  margin: 0 0 1rem;
+  color: var(--ink);
+}
