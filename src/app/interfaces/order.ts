@@ -27,12 +27,23 @@ export interface OrderResponse {
   craftsman_id?: number;
 }
 
+export interface CategoryOrderCount {
+  category: string;
+  count: number;
+}
+
 export interface GetAllOrdersResponse {
   orders: OrderResponse[];
   total?: number;
   page?: number;
+  category_counts?: CategoryOrderCount[];
 }
 
 export interface CheckoutResponse {
   orders: OrderResponse[];
+}
+
+export interface MonthlyOrderStat {
+  month: string;
+  count: number;
 }

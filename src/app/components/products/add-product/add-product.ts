@@ -77,7 +77,7 @@ export class AddProduct {
   private allFilesSubject$ = new BehaviorSubject<File[]>([]);
 
   private categories$: Observable<ProductCategoryOption[]> = this.pcService
-    .getProductCategoryOptions(this.getUsername())
+    .getProductCategoryOptions()
     .pipe(
       startWith([] as ProductCategoryOption[]),
       catchError(() => of([] as ProductCategoryOption[]))
@@ -162,19 +162,12 @@ export class AddProduct {
     this.allFilesSubject$.next(this.allFilesSubject$.value.filter((_, i) => i !== index));
   }
 
-  private getUsername(): string {
-    const userData = localStorage.getItem('userData');
-    return userData ? JSON.parse(userData).username : '';
-  }
-
   async onSubmit(): Promise<void> {
     const userData = localStorage.getItem('userData');
     if (!userData) {
       this.patchUiState({ errorMessage: 'Нисте пријављени.' });
       return;
     }
-
-    const username = JSON.parse(userData).username;
 
     this.patchUiState({
       isSubmitting: true,
@@ -191,7 +184,6 @@ export class AddProduct {
         price: this.product.price ?? 0,
         images: tagged.filter((t) => t.kind === 'image').map((t) => t.url),
         videos: tagged.filter((t) => t.kind === 'video').map((t) => t.url),
-        username: username,
         category: this.product.category,
       };
 

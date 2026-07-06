@@ -29,7 +29,7 @@ export class ProductService {
     return this.http.get<any>(`${this.apiUrl}/all/${username}?skip=${skip}&limit=${limit}`);
   }
 
-  delete(id: number, craftsmanId: number): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/delete`, { body: { id, craftsmanId } });
+  delete(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/delete`, { body: { id } });
   }
 }

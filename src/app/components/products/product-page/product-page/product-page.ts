@@ -64,7 +64,7 @@ export class ProductPage {
     const cachedProduct = this.productService.getPreviewProduct();
     if (!cachedProduct) return;
 
-    this.productService.delete(cachedProduct.id!, cachedProduct.craftsmanId!).subscribe({
+    this.productService.delete(cachedProduct.id!).subscribe({
       next: () => this.router.navigate(['/profile']),
       error: () => {},
     });

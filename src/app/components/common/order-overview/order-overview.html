@@ -52,7 +52,7 @@
 												<p-button label="Прихвати" size="small" severity="success" (onClick)="onAccept(order.order_id)" [disabled]="actionLoading()" />
 											}
 											@if (canDeliver(order)) {
-												<p-button label="Испоруци" size="small" severity="contrast" (onClick)="onDeliver(order.order_id)" [disabled]="actionLoading()" />
+												<p-button label="Испоручи" size="small" severity="contrast" (onClick)="onDeliver(order.order_id)" [disabled]="actionLoading()" />
 											}
 										</div>
 									} @else {

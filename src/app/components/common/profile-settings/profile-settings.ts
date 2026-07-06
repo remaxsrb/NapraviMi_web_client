@@ -26,9 +26,7 @@ interface ProfileSettingsState {
   passwordSubmitting: boolean;
   passwordSuccessMessage: string;
   passwordErrorMessage: string;
-  username: string;
   userRole: string;
-  craftsmanId?: number;
   dashboardLink: string;
   deletingAccount: boolean;
   deleteAccountError: string;
@@ -103,7 +101,6 @@ export class ProfileSettings {
       return;
     }
 
-    const currentState = this.stateSubject$.value;
     this.patchState({
       passwordErrorMessage: '',
       passwordSuccessMessage: '',
@@ -111,7 +108,6 @@ export class ProfileSettings {
     });
 
     const payload = {
-      username: currentState.username,
       new_password: this.passwordForm.get('new_password')?.value,
     };
 
@@ -135,7 +131,6 @@ export class ProfileSettings {
   }
 
   submitBiographyChange(): void {
-    const currentState = this.stateSubject$.value;
     this.patchState({
       biographyErrorMessage: '',
       biographySuccessMessage: '',
@@ -144,15 +139,7 @@ export class ProfileSettings {
 
     const biography = this.biographyForm.get('biography')?.value ?? '';
 
-    if (!currentState.craftsmanId) {
-      this.patchState({
-        biographySubmitting: false,
-        biographyErrorMessage: 'Дошло је до грешке при промени биографије.',
-      });
-      return;
-    }
-
-    this.craftsmanService.setBiography(currentState.craftsmanId, biography).subscribe({
+    this.craftsmanService.setBiography(biography).subscribe({
       next: () => {
         this.patchState({
           biographySubmitting: false,
@@ -183,8 +170,6 @@ export class ProfileSettings {
       return;
     }
 
-    const currentState = this.stateSubject$.value;
-
     this.patchState({
       uploadingFile: true,
       fileUploadError: '',
@@ -203,7 +188,6 @@ export class ProfileSettings {
         }
 
         const payload = {
-          username: currentState.username,
           newProfilePicture: profilePictureUrl,
         };
 
@@ -241,13 +225,12 @@ export class ProfileSettings {
   }
 
   onDeleteAccount() {
-    const currentState = this.stateSubject$.value;
     this.patchState({
       deletingAccount: true,
       deleteAccountError: '',
     });
 
-    this.userService.deleteAccount(currentState.username).subscribe({
+    this.userService.deleteAccount().subscribe({
       next: () => {
         this.authService.logout();
         this.router.navigate(['/']);
@@ -273,12 +256,6 @@ export class ProfileSettings {
     const dashboardLink =
       userRole === 'admin' ? '/admin' : userRole === 'craftsman' ? '/craftsman' : '/user';
 
-    const userData = localStorage.getItem('userData');
-    const parsedUserData = userData ? JSON.parse(userData) : null;
-    const username = parsedUserData?.username ?? '';
-    const craftsmanIdRaw = this.authService.get_craftsman_id();
-    const craftsmanId = craftsmanIdRaw ? Number(craftsmanIdRaw) : undefined;
-
     return {
       uploadingFile: false,
       fileUploadMessage: '',
@@ -286,9 +263,7 @@ export class ProfileSettings {
       passwordSubmitting: false,
       passwordSuccessMessage: '',
       passwordErrorMessage: '',
-      username,
       userRole,
-      craftsmanId,
       dashboardLink,
       deletingAccount: false,
       deleteAccountError: '',

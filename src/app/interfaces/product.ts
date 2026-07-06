@@ -4,6 +4,5 @@ export interface CreateProductRequest {
   price: number;
   images: string[];
   videos: string[];
-  username?: string;
   category: string;
 }
