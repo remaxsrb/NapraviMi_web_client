@@ -30,11 +30,11 @@
 				<tbody>
 					@for (order of orders(); track order.order_id) {
 						<tr>
-							<td>#{{ order.order_id }}</td>
-							<td>{{ formatDate(order.order_date) }}</td>
-							<td>{{ formatDate(order.completion_date) }}</td>
-							<td>{{ getStatus(order) }}</td>
-							<td>
+							<td data-label="ID">#{{ order.order_id }}</td>
+							<td data-label="Датум поруџбине">{{ formatDate(order.order_date) }}</td>
+							<td data-label="Датум завршетка">{{ formatDate(order.completion_date) }}</td>
+							<td data-label="Status">{{ getStatus(order) }}</td>
+							<td data-label="Потврда">
 								@if (order.url) {
 									<p-button label="Отвори" size="small" severity="help" (onClick)="openOrderDocument(order)" />
 								} @else {
@@ -42,7 +42,7 @@
 								}
 							</td>
 							@if (isCraftsman()) {
-								<td class="orders-actions">
+								<td class="orders-actions" data-label="Акције">
 									@if (hasAvailableActions(order)) {
 										<div class="orders-actions-content">
 											@if (canReject(order)) {

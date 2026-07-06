@@ -106,6 +106,13 @@ export const routes: Routes = [
     data: { expected_role: 'admin' },
     children: [
       {
+        path: '',
+        loadComponent: () =>
+          import(
+            './components/admin/admin-dashboard-home/admin-dashboard-home'
+          ).then((m) => m.AdminDashboardHome),
+      },
+      {
         path: 'craftsman-applications',
         loadComponent: () =>
           import(

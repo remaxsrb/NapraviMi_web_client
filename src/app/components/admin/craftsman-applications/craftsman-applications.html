@@ -5,6 +5,7 @@
   <h2>Захтеви за улогу занатлије</h2>
 
   <p-table
+    class="craftsman-applications-table"
     [value]="state?.applications ?? []"
     [paginator]="true"
     [first]="state?.first ?? 0"
@@ -17,7 +18,6 @@
   >
     <ng-template pTemplate="header">
       <tr>
-        <th>ID</th>
         <th>Email</th>
         <th>Занат</th>
         <th>Status</th>
@@ -27,10 +27,9 @@
     </ng-template>
     <ng-template pTemplate="body" let-app>
       <tr>
-        <td>{{ app.id }}</td>
-        <td>{{ app.email }}</td>
-        <td>{{ app.craftLabel }}</td>
-        <td>
+        <td data-label="Email">{{ app.email }}</td>
+        <td data-label="Занат">{{ app.craftLabel }}</td>
+        <td data-label="Status">
           <p-select
             [options]="statusOptions"
             optionLabel="label"
@@ -47,8 +46,8 @@
             </ng-template>
           </p-select>
         </td>
-        <td>{{ app.createdAt | date: 'short' }}</td>
-        <td>
+        <td data-label="Датум подношења">{{ app.createdAt ? (app.createdAt | date: 'short') : '-' }}</td>
+        <td data-label="CV">
           @if (app.resumeUrl) {
             <p-button label="Отвори" size="small" severity="help" (onClick)="openResume(app)" />
           } @else {

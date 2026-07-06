@@ -1,0 +1,50 @@
+.set-roles-page {
+  padding: 1rem var(--page-padding-x, 1.5rem);
+}
+
+@media (max-width: 700px) {
+  .set-roles-table ::ng-deep .p-datatable-table-container {
+    overflow-x: visible;
+  }
+
+  .set-roles-table ::ng-deep table {
+    min-width: 0;
+  }
+
+  .set-roles-table ::ng-deep thead {
+    display: none !important;
+  }
+
+  .set-roles-table ::ng-deep tbody,
+  .set-roles-table tr,
+  .set-roles-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .set-roles-table tr {
+    border: 1px solid var(--hair);
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+  }
+
+  .set-roles-table td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    text-align: right;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--hair);
+  }
+
+  .set-roles-table tr td:last-child {
+    border-bottom: none;
+  }
+
+  .set-roles-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    text-align: left;
+  }
+}

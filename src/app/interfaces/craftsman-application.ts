@@ -20,7 +20,7 @@ export interface ApplicationRow {
   craftLabel: string;
   status: string;
   newStatus: string;
-  createdAt: Date;
+  createdAt?: Date;
   resolvedAt?: Date;
   resumeUrl?: string;
 }

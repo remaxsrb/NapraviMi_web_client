@@ -79,4 +79,10 @@ export class UserService {
   deleteAccount(): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/delete/`);
   }
+
+  getRegisteredCount(from: string, to: string): Observable<{ data: { total: number } }> {
+    return this.http.get<{ data: { total: number } }>(`${this.apiUrl}/registered`, {
+      params: { from, to },
+    });
+  }
 }

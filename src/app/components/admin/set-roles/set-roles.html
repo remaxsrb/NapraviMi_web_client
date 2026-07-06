@@ -3,6 +3,7 @@
   <h2>Постављање улога</h2>
 
   <p-table
+    class="set-roles-table"
     [value]="displayedUsers"
     [paginator]="true"
     [first]="first"
@@ -14,7 +15,6 @@
   >
     <ng-template pTemplate="header">
       <tr>
-        <th>ID</th>
         <th>Email</th>
         <th>Улога</th>
         <th>Датум придружења</th>
@@ -22,9 +22,8 @@
     </ng-template>
     <ng-template pTemplate="body" let-user>
       <tr>
-        <td>{{ user.id }}</td>
-        <td>{{ user.email }}</td>
-        <td>
+        <td data-label="Email">{{ user.email }}</td>
+        <td data-label="Улога">
           <p-select
             [options]="roleOptions"
             optionLabel="label"
@@ -36,12 +35,12 @@
           >
             <ng-template let-selectedItem pTemplate="selectedItem">
               <span>
-                {{ selectedItem?.label || (user.role | titlecase) }}
+                {{ selectedItem?.label || getRoleLabel(user.role) }}
               </span>
             </ng-template>
           </p-select>
         </td>
-        <td>{{ user.createdAt | date: 'short' }}</td>
+        <td data-label="Датум придружења">{{ user.createdAt ? (user.createdAt | date: 'short') : '-' }}</td>
       </tr>
     </ng-template>
   </p-table>

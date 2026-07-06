@@ -2,11 +2,19 @@
   border: 1px solid var(--hair);
   border-radius: 12px;
   padding: 1.5rem;
-  margin-top: 2rem;
+  margin: 2rem auto 0;
   background: var(--surface);
+  max-width: 33vw;
+  min-width: 320px;
 }
 
 .shipped-orders-chart h3 {
   margin: 0 0 1rem;
   color: var(--ink);
+}
+
+@media (max-width: 960px) {
+  .shipped-orders-chart {
+    max-width: 100%;
+  }
 }

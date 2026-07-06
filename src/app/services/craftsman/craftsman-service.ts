@@ -38,4 +38,10 @@ export class CraftsmanService {
   setBiography(biography: string): Observable<any> {
     return this.http.patch<any>(`${this.apiUrl}/set-biography`, { biography });
   }
+
+  getApprovedCount(from: string, to: string): Observable<{ data: { total: number } }> {
+    return this.http.get<{ data: { total: number } }>(`${this.adminUrl}/approved`, {
+      params: { from, to },
+    });
+  }
 }

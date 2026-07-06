@@ -20,7 +20,7 @@ export interface UserRoleRow {
   fullName: string;
   role: string;
   newRole: string;
-  createdAt: Date;
+  createdAt?: Date;
 }
 
 export interface GetUsersResponse {
