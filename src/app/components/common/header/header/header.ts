@@ -18,6 +18,7 @@ interface HeaderState {
   isLoggedIn: boolean;
   isUser: boolean;
   cartItemCount: number;
+  homeLink: string;
 }
 
 @Component({
@@ -45,13 +46,24 @@ export class Header {
   private buildState(): HeaderState {
     const userData = localStorage.getItem('userData');
     const currentUser = userData ? JSON.parse(userData) : undefined;
+    const isLoggedIn = this.authService.is_LoggedIn();
+    const role = this.authService.get_role();
 
     return {
       currentUser,
-      isLoggedIn: this.authService.is_LoggedIn(),
-      isUser: this.authService.get_role() === 'user',
+      isLoggedIn,
+      isUser: role === 'user',
       cartItemCount: this.cartService.cartItemCount(),
+      homeLink: this.resolveHomeLink(isLoggedIn, role),
     };
+  }
+
+  private resolveHomeLink(isLoggedIn: boolean, role: string): string {
+    if (!isLoggedIn) return '/';
+    if (role === 'admin') return '/admin';
+    if (role === 'craftsman') return '/craftsman';
+    if (role === 'user') return '/user';
+    return '/';
   }
 
   onSearch(): void {

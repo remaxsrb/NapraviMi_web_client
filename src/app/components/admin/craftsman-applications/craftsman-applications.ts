@@ -115,7 +115,10 @@ export class CraftsmanApplications {
       craftLabel: craftOptions.find((c) => c.value === application.craft)?.label ?? application.craft,
       status: application.status,
       newStatus: application.status,
-      createdAt: new Date(application.created_at),
+      createdAt:
+        application.created_at && !application.created_at.startsWith('0001-01-01')
+          ? new Date(application.created_at)
+          : undefined,
       resolvedAt:
         application.resolved_at && !application.resolved_at.startsWith('0001-01-01')
           ? new Date(application.resolved_at)

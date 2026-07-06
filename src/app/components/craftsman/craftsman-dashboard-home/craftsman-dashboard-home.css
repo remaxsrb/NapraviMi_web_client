@@ -4,10 +4,13 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
   align-items: start;
+  max-width: 70vw;
+  margin: 0 auto;
 }
 
 @media (max-width: 900px) {
   .craftsman-dashboard-home {
     grid-template-columns: 1fr;
+    max-width: 100%;
   }
 }

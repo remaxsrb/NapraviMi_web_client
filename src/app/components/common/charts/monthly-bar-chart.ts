@@ -6,17 +6,33 @@ const MONTH_NAMES = [
 export interface MonthBucket {
   key: string;
   label: string;
+  from: string;
+  to: string;
+}
+
+function toDateParam(d: Date): string {
+  return d.toISOString().slice(0, 10);
+}
+
+export function lastNMonths(n: number): MonthBucket[] {
+  const today = new Date();
+  const months: MonthBucket[] = [];
+  for (let i = n - 1; i >= 0; i--) {
+    const start = new Date(today.getFullYear(), today.getMonth() - i, 1);
+    const end = new Date(today.getFullYear(), today.getMonth() - i + 1, 1);
+    const key = `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, '0')}`;
+    months.push({
+      key,
+      label: MONTH_NAMES[start.getMonth()],
+      from: toDateParam(start),
+      to: toDateParam(end),
+    });
+  }
+  return months;
 }
 
 export function lastFourMonths(): MonthBucket[] {
-  const to = new Date();
-  const months: MonthBucket[] = [];
-  for (let i = 3; i >= 0; i--) {
-    const d = new Date(to.getFullYear(), to.getMonth() - i, 1);
-    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-    months.push({ key, label: MONTH_NAMES[d.getMonth()] });
-  }
-  return months;
+  return lastNMonths(4);
 }
 
 export function buildMonthlyBarChartData(labels: string[], counts: number[], datasetLabel: string) {

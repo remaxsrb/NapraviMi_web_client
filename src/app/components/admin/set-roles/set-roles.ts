@@ -28,7 +28,7 @@ export class SetRoles {
   roleOptions: RoleOption[] = [
     { label: 'Корисник', value: 'user' },
     { label: 'Занатлија', value: 'craftsman' },
-    { label: 'Admin', value: 'admin' },
+    { label: 'Админ', value: 'admin' },
   ];
 
   private userService: UserService = inject(UserService);
@@ -59,7 +59,9 @@ export class SetRoles {
 
     this.userService.all(requestData).subscribe({
       next: (response) => {
-        this.users = response.users.map((user) => this.mapApiUserToRoleRow(user));
+        this.users = response.users
+          .filter((user) => user.role !== 'admin')
+          .map((user) => this.mapApiUserToRoleRow(user));
         this.displayedUsers = this.users;
         this.first = skip;
         this.backendLimit = limit;
@@ -87,8 +89,15 @@ export class SetRoles {
       fullName: `${user.first_name} ${user.last_name}`,
       role: currentRole,
       newRole: currentRole,
-      createdAt: new Date(user.created_at),
+      createdAt:
+        user.created_at && !user.created_at.startsWith('0001-01-01')
+          ? new Date(user.created_at)
+          : undefined,
     };
+  }
+
+  getRoleLabel(role: string): string {
+    return this.roleOptions.find((r) => r.value === role)?.label ?? role;
   }
 
   onRoleChange(event: any, user: UserRoleRow): void {

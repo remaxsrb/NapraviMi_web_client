@@ -1,7 +1,7 @@
 <div class="header" [class.logo-only]="logoOnly">
   @let state = (state$ | async);
   @if (state; as headerState) {
-  <a routerLink="/" class="logo-link">
+  <a [routerLink]="headerState.homeLink" class="logo-link">
     <img
       [src]="themeService.isDark() ? 'images/napravimi-logo-dark.svg' : 'images/napravimi-logo-light.svg'"
       alt="НаправиМи"
