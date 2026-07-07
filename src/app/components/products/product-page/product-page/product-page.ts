@@ -49,12 +49,12 @@ export class ProductPage {
     };
 
     this.cartService.addToCart(payload).subscribe({
-      next: (response: any) => {
+      next: (cart: any) => {
         const userDataString = localStorage.getItem('userData');
         if (!userDataString) return;
 
         const user: User = JSON.parse(userDataString);
-        user.cart = response.cart;
+        user.cart = cart;
         localStorage.setItem('userData', JSON.stringify(user));
       },
     });

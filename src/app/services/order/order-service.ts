@@ -15,8 +15,8 @@ export class OrderService {
     private http: HttpClient
   ) {}
 
-  getOrdersByCustomer(user_id: number, skip: number = 0, limit: number = 10) {
-    return this.http.get<{data: GetAllOrdersResponse}>(`${this.url}/customer/${user_id}`, {
+  getOrdersByCustomer(skip: number = 0, limit: number = 10) {
+    return this.http.get<{data: GetAllOrdersResponse}>(`${this.url}/customers/me`, {
       params: { skip: skip.toString(), limit: limit.toString() },
     });
   }

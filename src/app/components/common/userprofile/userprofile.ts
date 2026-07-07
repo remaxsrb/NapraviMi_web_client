@@ -89,7 +89,7 @@ export class Userprofile implements OnInit {
     const userId = Number(this.authService.get_id());
     if (!userId) return;
 
-    this.orderService.getOrdersByCustomer(userId, 0, 100).subscribe({
+    this.orderService.getOrdersByCustomer( 0, 100).subscribe({
       next: (response) => {
         const payload =
           (response as { data?: GetAllOrdersResponse }).data ??

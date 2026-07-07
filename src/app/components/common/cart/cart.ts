@@ -39,9 +39,9 @@ export class Cart {
     this.cartService
       .removeFromCart(payload)
       .pipe(
-        tap((response: any) => {
-          const newCartItems = response.cart?.items || [];
-          const newTotal = response.cart.total;
+        tap((cart: any) => {
+          const newCartItems = cart?.items || [];
+          const newTotal = cart?.total;
 
           // Update localStorage
           const userData = localStorage.getItem('userData');

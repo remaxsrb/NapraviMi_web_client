@@ -17,7 +17,6 @@ interface HeaderState {
   currentUser: User | undefined;
   isLoggedIn: boolean;
   isUser: boolean;
-  cartItemCount: number;
   homeLink: string;
 }
 
@@ -37,6 +36,7 @@ export class Header {
   private authService = inject(AuthService);
   private cartService = inject(CartService);
   readonly themeService = inject(ThemeService);
+  readonly cartItemCount = this.cartService.cartItemCount;
 
   readonly state$: Observable<HeaderState> = this.authService.authChanged$.pipe(
     map(() => this.buildState()),
@@ -53,7 +53,6 @@ export class Header {
       currentUser,
       isLoggedIn,
       isUser: role === 'user',
-      cartItemCount: this.cartService.cartItemCount(),
       homeLink: this.resolveHomeLink(isLoggedIn, role),
     };
   }
