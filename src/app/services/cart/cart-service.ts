@@ -20,16 +20,16 @@ export class CartService {
   constructor(private http: HttpClient) {}
 
   addToCart(payload: any) {
-    return this.http.post<{ data: Cart } | Cart>(`${this.apiUrl}/add`, payload).pipe(
+    return this.http.post<{ data: { cart: Cart } } | { cart: Cart }>(`${this.apiUrl}/add`, payload).pipe(
       map(unwrapEnvelope),
-      tap((cart) => this.cartItemCount.set(cart?.items?.length ?? 0)),
+      tap((response) => this.cartItemCount.set(response?.cart?.items?.length ?? 0)),
     );
   }
 
   removeFromCart(payload : any) {
-    return this.http.post<{ data: Cart } | Cart>(`${this.apiUrl}/remove`, payload).pipe(
+    return this.http.post<{ data: { cart: Cart } } | { cart: Cart }>(`${this.apiUrl}/remove`, payload).pipe(
       map(unwrapEnvelope),
-      tap((cart) => this.cartItemCount.set(cart?.items?.length ?? 0)),
+      tap((response) => this.cartItemCount.set(response?.cart?.items?.length ?? 0)),
     );
   }
 

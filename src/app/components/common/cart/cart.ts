@@ -34,7 +34,6 @@ export class Cart {
     const payload = {
       cart_id: currentState.cartId,
       product_id: item.product.id,
-      quantity: item.quantity,
     };
 
     this.cartService
