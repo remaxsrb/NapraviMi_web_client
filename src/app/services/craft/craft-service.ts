@@ -18,7 +18,7 @@ export class CraftService {
   getCraftOptions() {
     return this.crafts$.pipe(
       map((crafts) =>
-        crafts.map((c): CraftOption => ({
+        (Array.isArray(crafts) ? crafts : []).map((c): CraftOption => ({
           label: c.name,
           value: c.name,
           keywords: [...(c.Keywords || []), ...(c.SearchKeywords || [])],

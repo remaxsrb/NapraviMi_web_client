@@ -37,7 +37,7 @@ interface UserProfileState {
     ProductsByCraftsman,
     Navbar,
     RatingModule,
-    FormsModule
+    FormsModule,
   ],
   templateUrl: './userprofile.html',
   styleUrl: './userprofile.css',
@@ -52,7 +52,7 @@ export class Userprofile implements OnInit {
 
   readonly state$: Observable<UserProfileState> = this.authService.authChanged$.pipe(
     map(() => this.buildState()),
-    startWith(this.buildState())
+    startWith(this.buildState()),
   );
 
   readonly canRate = signal<boolean>(false);
@@ -74,16 +74,15 @@ export class Userprofile implements OnInit {
       return;
     }
 
-    this.craftsmanService.rateCraftsman(craftsmanID, this.ratingValue)
-      .subscribe({
-        next: (response: RatingResponse) => {
-          this.updateCachedUser(response);
-          this.canRate.set(false);
-        },
-        error: (error: any) => {
-          console.error('Error submitting rating:', error);
-        }
-      });
+    this.craftsmanService.rateCraftsman(craftsmanID, this.ratingValue).subscribe({
+      next: (response: RatingResponse) => {
+        this.updateCachedUser(response);
+        this.canRate.set(false);
+      },
+      error: (error: any) => {
+        console.error('Error submitting rating:', error);
+      },
+    });
   }
 
   private checkCanRate(craftsmanID: number): void {
@@ -101,7 +100,7 @@ export class Userprofile implements OnInit {
             o.craftsman_id === craftsmanID &&
             o.status?.trim().toUpperCase() === 'SHIPPED' &&
             o.completion_date != null &&
-            this.daysSinceDate(o.completion_date) >= 7
+            this.daysSinceDate(o.completion_date) >= 7,
         );
         this.canRate.set(eligible);
       },
@@ -128,11 +127,9 @@ export class Userprofile implements OnInit {
     const loggedInUser = userData ? JSON.parse(userData) : null;
 
     const isNotTheOwner = Boolean(
-      loggedInUser && usernameParam && loggedInUser.username !== usernameParam
+      loggedInUser && usernameParam && loggedInUser.username !== usernameParam,
     );
-    const isGuestView = Boolean(
-      usernameParam && loggedInUser?.username !== usernameParam
-    );
+    const isGuestView = Boolean(usernameParam && loggedInUser?.username !== usernameParam);
 
     let user: User;
     let userRole = '';
