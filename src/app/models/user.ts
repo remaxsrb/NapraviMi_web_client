@@ -9,7 +9,7 @@ export class User {
     gender: string = '';
     cart : Cart = new Cart()
 
-    craftsmanId?: number;
+    craftsmanID?: number;
     craft?: string;
     rating?: number;
     numberOfRatings?: number;

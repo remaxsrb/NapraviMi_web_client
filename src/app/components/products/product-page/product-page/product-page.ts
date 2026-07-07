@@ -89,7 +89,7 @@ export class ProductPage {
 
     const isOwner =
       this.authService.get_role() === 'craftsman' &&
-      Number(this.authService.get_craftsman_id()) === cachedProduct.craftsmanId;
+      Number(this.authService.get_craftsman_id()) === cachedProduct.craftsmanID;
 
     return new Observable((observer) => {
       observer.next({

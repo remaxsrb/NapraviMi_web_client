@@ -31,8 +31,8 @@ export class CraftsmanService {
     });
   }
 
-  rateCraftsman(craftsmanId: number, rating: number): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/rate`, { craftsmanId, rating });
+  rateCraftsman(craftsmanID: number, rating: number): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/rate`, { craftsmanID, rating });
   }
 
   setBiography(biography: string): Observable<any> {

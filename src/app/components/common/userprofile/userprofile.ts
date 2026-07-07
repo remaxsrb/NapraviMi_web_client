@@ -61,20 +61,20 @@ export class Userprofile implements OnInit {
   ngOnInit(): void {
     const state = this.buildState();
     const loggedInRole = this.authService.get_role();
-    if (state.isNotTheOwner && loggedInRole === 'user' && state.user.craftsmanId) {
-      this.checkCanRate(state.user.craftsmanId);
+    if (state.isNotTheOwner && loggedInRole === 'user' && state.user.craftsmanID) {
+      this.checkCanRate(state.user.craftsmanID);
     }
   }
 
   onRateCraftsman(): void {
     const previewUser = this.userService.getPreviewUser();
-    const craftsmanId = previewUser?.craftsmanId;
+    const craftsmanID = previewUser?.craftsmanID;
 
-    if (!craftsmanId || !this.ratingValue) {
+    if (!craftsmanID || !this.ratingValue) {
       return;
     }
 
-    this.craftsmanService.rateCraftsman(craftsmanId, this.ratingValue)
+    this.craftsmanService.rateCraftsman(craftsmanID, this.ratingValue)
       .subscribe({
         next: (response: RatingResponse) => {
           this.updateCachedUser(response);
@@ -86,7 +86,7 @@ export class Userprofile implements OnInit {
       });
   }
 
-  private checkCanRate(craftsmanId: number): void {
+  private checkCanRate(craftsmanID: number): void {
     const userId = Number(this.authService.get_id());
     if (!userId) return;
 
@@ -98,7 +98,7 @@ export class Userprofile implements OnInit {
         const orders: OrderResponse[] = payload?.orders ?? [];
         const eligible = orders.some(
           (o) =>
-            o.craftsman_id === craftsmanId &&
+            o.craftsman_id === craftsmanID &&
             o.status?.trim().toUpperCase() === 'SHIPPED' &&
             o.completion_date != null &&
             this.daysSinceDate(o.completion_date) >= 7
