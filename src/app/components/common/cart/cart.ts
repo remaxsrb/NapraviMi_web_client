@@ -1,7 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
-import { RatingModule } from 'primeng/rating';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { CartService } from '../../../services/cart/cart-service';
@@ -19,7 +17,7 @@ interface CartState {
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [ButtonModule, RatingModule, TableModule, TagModule, FormsModule, CommonModule],
+  imports: [ButtonModule, TableModule, TagModule, CommonModule],
   templateUrl: './cart.html',
   styleUrl: './cart.css',
 })

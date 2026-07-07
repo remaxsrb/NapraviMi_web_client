@@ -1,24 +1,22 @@
 <div class="card">
   @let state = (state$ | async);
-  <p-table [value]="state?.cartItems!" [tableStyle]="{ 'min-width': '60rem' }">
-   
+  <p-table class="cart-table" [value]="state?.cartItems!">
+
     <ng-template #header>
       <tr>
         <th>Назив</th>
         <th>Количина</th>
         <th>Цена</th>
-        <th>Оцена</th>
         <th></th>
       </tr>
     </ng-template>
     <ng-template #body let-item>
       <tr>
-        <td>{{ item.product.name }}</td>
-        <td>
-          {{item.quantity}}
+        <td data-label="Назив"><span class="cart-cell-value">{{ item.product.name }}</span></td>
+        <td data-label="Количина">
+          <span class="cart-cell-value">{{item.quantity}}</span>
         </td>
-        <td>{{ item.product.price }} РСД</td>
-        <td><p-rating [(ngModel)]="item.product.rating" [readonly]="true" /></td>
+        <td data-label="Цена"><span class="cart-cell-value">{{ item.product.price }} РСД</span></td>
         <td>
           <p-button label="Избаци из корпе" severity="danger" (onClick)="removeFromCart(item)" />
         </td>
@@ -26,7 +24,7 @@
     </ng-template>
     <ng-template #footer>
       <tr>
-        <td colspan="6">
+        <td colspan="4">
           <div class="cart-footer">
             <span>Укупна цена: {{ state?.total_price }}</span>
             <p-button label="Плаћање" severity="success" (onClick)="placeOrder()" />

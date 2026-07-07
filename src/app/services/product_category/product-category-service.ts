@@ -19,7 +19,7 @@ export class ProductCategoryService {
   getProductCategoryOptions(): Observable<ProductCategoryOption[]> {
     if (!this.categories$) {
       this.categories$ = this.http
-        .get<{ data: ProductCategory[] } | ProductCategory[]>(`${this.apiUrl}/craftsman`)
+        .get<{ data: ProductCategory[] } | ProductCategory[]>(`${this.apiUrl}/craftsman/me`)
         .pipe(
           map((response) => {
             const categories = unwrapArray(response);
