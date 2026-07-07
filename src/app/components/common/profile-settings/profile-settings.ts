@@ -18,6 +18,7 @@ import { DividerModule } from 'primeng/divider';
 import { TextareaModule } from 'primeng/textarea';
 import { Header } from "../header/header/header";
 import { BehaviorSubject } from 'rxjs';
+import { extractErrorMessage } from '../../../services/utils/response-envelope';
 
 interface ProfileSettingsState {
   uploadingFile: boolean;
@@ -124,7 +125,7 @@ export class ProfileSettings {
       error: (err) => {
         this.patchState({
           passwordSubmitting: false,
-          passwordErrorMessage: err?.error?.message || 'Дошло је до грешке при промени лозинке.',
+          passwordErrorMessage: extractErrorMessage(err, 'Дошло је до грешке при промени лозинке.'),
         });
       },
     });
@@ -154,7 +155,7 @@ export class ProfileSettings {
       error: (err) => {
         this.patchState({
           biographySubmitting: false,
-          biographyErrorMessage: err?.error?.message || 'Дошло је до грешке при промени биографије.',
+          biographyErrorMessage: extractErrorMessage(err, 'Дошло је до грешке при промени биографије.'),
         });
       },
     });
@@ -210,7 +211,7 @@ export class ProfileSettings {
             this.patchState({
               uploadingFile: false,
               fileUploadError:
-                err?.error?.message || 'Дошло је до грешке при промени профилне слике.',
+                extractErrorMessage(err, 'Дошло је до грешке при промени профилне слике.'),
             });
           },
         });
@@ -218,7 +219,7 @@ export class ProfileSettings {
       error: (err) => {
         this.patchState({
           uploadingFile: false,
-          fileUploadError: err?.error?.message || 'Дошло је до грешке при уплоаду фајла.',
+          fileUploadError: extractErrorMessage(err, 'Дошло је до грешке при уплоаду фајла.'),
         });
       },
     });
@@ -238,7 +239,7 @@ export class ProfileSettings {
       error: (err) => {
         this.patchState({
           deletingAccount: false,
-          deleteAccountError: err?.error?.message || 'Дошло је до грешке при брисању налога.',
+          deleteAccountError: extractErrorMessage(err, 'Дошло је до грешке при брисању налога.'),
         });
       },
     });

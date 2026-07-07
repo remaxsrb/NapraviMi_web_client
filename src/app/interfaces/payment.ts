@@ -20,9 +20,19 @@ export interface PaymentErrorDetails {
   timestamp: string;
 }
 
+/** Shape of the `error` field in the API's `{ data, meta, error }` response envelope. */
+export interface PaymentAPIError {
+  message: string;
+  code: string;
+  reason: string;
+  retryable: boolean;
+  timestamp: string;
+}
+
 export interface PaymentErrorResponse {
-  error: string;
-  details: PaymentErrorDetails;
+  data: null;
+  meta: null;
+  error: PaymentAPIError;
 }
 
 export interface UserAction {

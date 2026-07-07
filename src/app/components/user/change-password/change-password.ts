@@ -11,6 +11,7 @@ import { UserService } from '../../../services/user/user-service';
 import { RegexPatterns } from '../../../regexPatterns';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+import { extractErrorMessage } from '../../../services/utils/response-envelope';
 
 interface ChangePasswordState {
   submitting: boolean;
@@ -91,7 +92,7 @@ export class ChangePassword {
         this.stateSubject$.next({
           submitting: false,
           successMessage: '',
-          errorMessage: err?.error?.message || 'Дошло је до грешке при промени лозинке.',
+          errorMessage: extractErrorMessage(err, 'Дошло је до грешке при промени лозинке.'),
         });
       },
     });

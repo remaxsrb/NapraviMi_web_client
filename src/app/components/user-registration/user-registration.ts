@@ -14,6 +14,7 @@ import { UserService } from '../../services/user/user-service';
 import { Header } from '../common/header/header/header';
 import { BehaviorSubject } from 'rxjs';
 import { ENABLE_TURNSTILE, TURNSTILE_SITE_KEY } from '../../env';
+import { extractErrorMessage } from '../../services/utils/response-envelope';
 
 interface RegistrationState {
   submissionError: boolean;
@@ -198,8 +199,7 @@ export class UserRegistration implements AfterViewInit, OnDestroy {
   }
 
   private getSignupErrorMessage(error: any): string {
-    const { error: backendErrorMessage, message: backendMessage } = error?.error ?? {};
-    const effectiveMessage = backendErrorMessage || backendMessage || error?.message;
+    const effectiveMessage = extractErrorMessage(error, '') || error?.message;
 
     if (effectiveMessage) {
       return effectiveMessage;

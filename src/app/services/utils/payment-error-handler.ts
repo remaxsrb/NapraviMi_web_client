@@ -78,13 +78,13 @@ export class PaymentErrorHandler {
   isPaymentError(error: HttpErrorResponse): boolean {
     if (!error.error) return false;
 
-    const body = error.error;
+    const apiError = error.error.error;
     return (
-      body.details &&
-      typeof body.details === 'object' &&
-      body.details.code &&
-      body.details.reason &&
-      typeof body.details.retryable === 'boolean'
+      apiError &&
+      typeof apiError === 'object' &&
+      apiError.code &&
+      apiError.reason &&
+      typeof apiError.retryable === 'boolean'
     );
   }
 
@@ -95,11 +95,11 @@ export class PaymentErrorHandler {
     if (this.isPaymentError(error)) {
       const response = error.error as PaymentErrorResponse;
       return {
-        code: response.details.code,
-        reason: response.details.reason,
-        retryable: response.details.retryable,
-        timestamp: new Date(response.details.timestamp),
-        userMessage: response.error,
+        code: response.error.code,
+        reason: response.error.reason,
+        retryable: response.error.retryable,
+        timestamp: new Date(response.error.timestamp),
+        userMessage: response.error.message,
         actionItems: [],
         isPaymentError: true,
         httpStatus: error.status,

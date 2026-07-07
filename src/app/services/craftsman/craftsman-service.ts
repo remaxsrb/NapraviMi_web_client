@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { SortDirection } from '../../interfaces/sort';
 import { API_ADMIN_URL, API_BASE_URL } from '../../env';
+import { unwrapEnvelope } from '../utils/response-envelope';
 
 @Injectable({
   providedIn: 'root',
@@ -32,7 +33,9 @@ export class CraftsmanService {
   }
 
   rateCraftsman(craftsmanID: number, rating: number): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/rate`, { craftsmanID, rating });
+    return this.http
+      .post<any>(`${this.apiUrl}/rate`, { craftsmanID, rating })
+      .pipe(map(unwrapEnvelope));
   }
 
   setBiography(biography: string): Observable<any> {
