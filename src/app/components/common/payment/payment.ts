@@ -22,6 +22,7 @@ import { PaymentErrNotification } from '../payment-err-notification/payment-err-
 import { PaymentErrorHandler } from '../../../services/utils/payment-error-handler';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ToastModule } from 'primeng/toast';
+import { extractErrorMessage } from '../../../services/utils/response-envelope';
 
 export type PaymentType = 'CC' | 'COD' | null;
 export type CardType = 'VISA' | 'MASTERCARD' | 'DINERS' | null;
@@ -177,7 +178,7 @@ export class Payment {
           this.errorNotification()?.showPaymentError(enriched);
         } else {
           // Fallback for non-payment errors
-          this.errorMessage.set(err.error?.message || 'Грешка при креирању поруџбине');
+          this.errorMessage.set(extractErrorMessage(err, 'Грешка при креирању поруџбине'));
         }
       },
     });

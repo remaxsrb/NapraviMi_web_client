@@ -1,7 +1,7 @@
 export class Product {
     id: number | null = null;
     name: string = '';
-    craftsmanId: number | null = null;
+    craftsmanID: number | null = null;
     category: string = '';
     hidden: boolean = false;
     price: number | null = null;

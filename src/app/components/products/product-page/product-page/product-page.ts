@@ -49,12 +49,12 @@ export class ProductPage {
     };
 
     this.cartService.addToCart(payload).subscribe({
-      next: (response: any) => {
+      next: (cart: any) => {
         const userDataString = localStorage.getItem('userData');
         if (!userDataString) return;
 
         const user: User = JSON.parse(userDataString);
-        user.cart = response.cart;
+        user.cart = cart;
         localStorage.setItem('userData', JSON.stringify(user));
       },
     });
@@ -89,7 +89,7 @@ export class ProductPage {
 
     const isOwner =
       this.authService.get_role() === 'craftsman' &&
-      Number(this.authService.get_craftsman_id()) === cachedProduct.craftsmanId;
+      Number(this.authService.get_craftsman_id()) === cachedProduct.craftsmanID;
 
     return new Observable((observer) => {
       observer.next({

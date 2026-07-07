@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { map, Observable, shareReplay } from 'rxjs';
 import { ProductCategory, ProductCategoryOption } from '../../interfaces/product-category';
 import { API_BASE_URL } from '../../env';
+import { unwrapArray } from '../utils/response-envelope';
 
 
 @Injectable({
@@ -18,15 +19,16 @@ export class ProductCategoryService {
   getProductCategoryOptions(): Observable<ProductCategoryOption[]> {
     if (!this.categories$) {
       this.categories$ = this.http
-        .get<ProductCategory[]>(`${this.apiUrl}/craftsman`)
+        .get<{ data: ProductCategory[] } | ProductCategory[]>(`${this.apiUrl}/craftsman/me`)
         .pipe(
-          map((categories) =>
-            categories.map((c): ProductCategoryOption => ({
+          map((response) => {
+            const categories = unwrapArray(response);
+            return categories.map((c): ProductCategoryOption => ({
               label: c.name,
               value: c.name,
               keywords: [...(c.Keywords || []), ...(c.SearchKeywords || [])],
-            })),
-          ),
+            }));
+          }),
           shareReplay(1),
         );
     }

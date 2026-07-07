@@ -12,6 +12,7 @@ import { AuthService } from '../../../services/utils/auth-service';
 import { Header } from '../../common/header/header/header';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+import { extractErrorMessage } from '../../../services/utils/response-envelope';
 
 interface AdminLoginState {
   loginError: boolean;
@@ -94,8 +95,7 @@ export class AdminLogin {
   }
 
   private getLoginErrorMessage(error: any): string {
-    const { error: backendErrorMessage, message: backendMessage } = error?.error ?? {};
-    const effectiveMessage = backendErrorMessage || backendMessage || error?.message;
+    const effectiveMessage = extractErrorMessage(error, '') || error?.message;
 
     if (effectiveMessage) {
       return effectiveMessage;

@@ -11,6 +11,7 @@ import { UserService } from '../../services/user/user-service';
 import { AuthService } from '../../services/utils/auth-service';
 import { Header } from '../common/header/header/header';
 import { BehaviorSubject } from 'rxjs';
+import { extractErrorMessage } from '../../services/utils/response-envelope';
 
 interface SigninState {
   loginError: boolean;
@@ -93,7 +94,6 @@ export class Signin {
   }
 
   private getLoginErrorMessage(error: any): string {
-    const { error: backendErrorMessage, message: backendMessage } = error?.error ?? {};
-    return backendErrorMessage || backendMessage || 'Грешка при пријави. Покушајте поново.';
+    return extractErrorMessage(error, 'Грешка при пријави. Покушајте поново.');
   }
 }

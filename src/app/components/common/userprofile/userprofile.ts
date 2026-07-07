@@ -37,7 +37,7 @@ interface UserProfileState {
     ProductsByCraftsman,
     Navbar,
     RatingModule,
-    FormsModule
+    FormsModule,
   ],
   templateUrl: './userprofile.html',
   styleUrl: './userprofile.css',
@@ -52,7 +52,7 @@ export class Userprofile implements OnInit {
 
   readonly state$: Observable<UserProfileState> = this.authService.authChanged$.pipe(
     map(() => this.buildState()),
-    startWith(this.buildState())
+    startWith(this.buildState()),
   );
 
   readonly canRate = signal<boolean>(false);
@@ -61,36 +61,35 @@ export class Userprofile implements OnInit {
   ngOnInit(): void {
     const state = this.buildState();
     const loggedInRole = this.authService.get_role();
-    if (state.isNotTheOwner && loggedInRole === 'user' && state.user.craftsmanId) {
-      this.checkCanRate(state.user.craftsmanId);
+    if (state.isNotTheOwner && loggedInRole === 'user' && state.user.craftsmanID) {
+      this.checkCanRate(state.user.craftsmanID);
     }
   }
 
   onRateCraftsman(): void {
     const previewUser = this.userService.getPreviewUser();
-    const craftsmanId = previewUser?.craftsmanId;
+    const craftsmanID = previewUser?.craftsmanID;
 
-    if (!craftsmanId || !this.ratingValue) {
+    if (!craftsmanID || !this.ratingValue) {
       return;
     }
 
-    this.craftsmanService.rateCraftsman(craftsmanId, this.ratingValue)
-      .subscribe({
-        next: (response: RatingResponse) => {
-          this.updateCachedUser(response);
-          this.canRate.set(false);
-        },
-        error: (error: any) => {
-          console.error('Error submitting rating:', error);
-        }
-      });
+    this.craftsmanService.rateCraftsman(craftsmanID, this.ratingValue).subscribe({
+      next: (response: RatingResponse) => {
+        this.updateCachedUser(response);
+        this.canRate.set(false);
+      },
+      error: (error: any) => {
+        console.error('Error submitting rating:', error);
+      },
+    });
   }
 
-  private checkCanRate(craftsmanId: number): void {
+  private checkCanRate(craftsmanID: number): void {
     const userId = Number(this.authService.get_id());
     if (!userId) return;
 
-    this.orderService.getOrdersByCustomer(userId, 0, 100).subscribe({
+    this.orderService.getOrdersByCustomer( 0, 100).subscribe({
       next: (response) => {
         const payload =
           (response as { data?: GetAllOrdersResponse }).data ??
@@ -98,10 +97,10 @@ export class Userprofile implements OnInit {
         const orders: OrderResponse[] = payload?.orders ?? [];
         const eligible = orders.some(
           (o) =>
-            o.craftsman_id === craftsmanId &&
+            o.craftsman_id === craftsmanID &&
             o.status?.trim().toUpperCase() === 'SHIPPED' &&
             o.completion_date != null &&
-            this.daysSinceDate(o.completion_date) >= 7
+            this.daysSinceDate(o.completion_date) >= 7,
         );
         this.canRate.set(eligible);
       },
@@ -128,11 +127,9 @@ export class Userprofile implements OnInit {
     const loggedInUser = userData ? JSON.parse(userData) : null;
 
     const isNotTheOwner = Boolean(
-      loggedInUser && usernameParam && loggedInUser.username !== usernameParam
+      loggedInUser && usernameParam && loggedInUser.username !== usernameParam,
     );
-    const isGuestView = Boolean(
-      usernameParam && loggedInUser?.username !== usernameParam
-    );
+    const isGuestView = Boolean(usernameParam && loggedInUser?.username !== usernameParam);
 
     let user: User;
     let userRole = '';

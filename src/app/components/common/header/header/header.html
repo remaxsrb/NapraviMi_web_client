@@ -54,7 +54,7 @@
         @if (headerState.isUser) {
           <p-button
             icon="pi pi-shopping-cart"
-            [badge]="headerState.cartItemCount > 0 ? headerState.cartItemCount.toString() : ''"
+            [badge]="cartItemCount() > 0 ? cartItemCount().toString() : ''"
             badgeSeverity="danger"
             routerLink="/user/cart"
             text="true"

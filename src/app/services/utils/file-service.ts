@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { map } from 'rxjs';
 import { API_BASE_URL } from '../../env';
+import { unwrapEnvelope } from './response-envelope';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +21,7 @@ export class FileService {
     formData.append('file', file, file.name);
     formData.append('purpose', purpose);
 
-    return this.http.post<any>(`${this.apiUrl}/upload`, formData);
+    return this.http.post<any>(`${this.apiUrl}/upload`, formData).pipe(map(unwrapEnvelope));
   }
 
 }

@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
 import { map } from 'rxjs/operators';
+import { unwrapEnvelope } from '../utils/response-envelope';
 import { User } from '../../models/user';
 import { API_BASE_URL } from '../../env';
 
@@ -25,11 +26,11 @@ export class UserService {
   }
 
   register(user: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/register`, user);
+    return this.http.post<any>(`${this.apiUrl}/register`, user).pipe(map(unwrapEnvelope));
   }
 
   login(user: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/login`, user);
+    return this.http.post<any>(`${this.apiUrl}/login`, user).pipe(map(unwrapEnvelope));
   }
 
   changePassword(data: any): Observable<any> {

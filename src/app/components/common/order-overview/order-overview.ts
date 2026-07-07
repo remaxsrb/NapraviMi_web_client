@@ -61,7 +61,7 @@ export class OrderOverview implements OnInit {
         this.isLoading.set(false);
         return;
       }
-      request$ = this.orderService.getOrdersByCustomer(customerId, skip, this.PAGE_SIZE);
+      request$ = this.orderService.getOrdersByCustomer( skip, this.PAGE_SIZE);
     }
 
     request$
