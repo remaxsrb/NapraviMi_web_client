@@ -3,6 +3,8 @@ import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DialogModule } from 'primeng/dialog';
+import { TextareaModule } from 'primeng/textarea';
 import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { CraftsmanApplicationService } from '../../../services/craftsman-application/craftsman-application-service';
@@ -28,7 +30,17 @@ interface CraftsmanApplicationsState {
 @Component({
   selector: 'app-craftsman-applications',
   standalone: true,
-  imports: [CommonModule, FormsModule, TableModule, ButtonModule, SelectModule, ConfirmDialogModule, ToastModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    TableModule,
+    ButtonModule,
+    SelectModule,
+    ConfirmDialogModule,
+    DialogModule,
+    TextareaModule,
+    ToastModule,
+  ],
   providers: [ConfirmationService, MessageService, CraftsmanApplicationService, CraftsmanService],
   templateUrl: './craftsman-applications.html',
   styleUrl: './craftsman-applications.css',
@@ -38,6 +50,12 @@ export class CraftsmanApplications {
     { label: 'Одбиј', value: 'rejected' },
     { label: 'Одобри', value: 'approved' },
   ];
+
+  reasonDialogVisible = false;
+  reasonInput = '';
+  reasonSubmitted = false;
+  private pendingApp: ApplicationRow | null = null;
+  private pendingStatus: string | null = null;
 
   private craftsmanApplicationService = inject(CraftsmanApplicationService);
   private confirmationService = inject(ConfirmationService);
@@ -138,7 +156,32 @@ export class CraftsmanApplications {
       return;
     }
 
+    if (newStatus !== 'approved' && newStatus !== 'rejected') {
+      return;
+    }
+
+    this.pendingApp = app;
+    this.pendingStatus = newStatus;
+    this.reasonInput = '';
+    this.reasonSubmitted = false;
+    this.reasonDialogVisible = true;
+  }
+
+  confirmReason(): void {
+    this.reasonSubmitted = true;
+    if (!this.reasonInput.trim()) {
+      return;
+    }
+
+    const app = this.pendingApp;
+    const newStatus = this.pendingStatus;
+    if (!app || !newStatus) {
+      return;
+    }
+
     const statusLabel = this.statusOptions.find((s) => s.value === newStatus)?.label ?? newStatus;
+
+    this.reasonDialogVisible = false;
 
     this.confirmationService.confirm({
       message: `Да ли сте сигурни да желите да <b>${statusLabel.toLowerCase()}</b> захтев корисника <b>${app.email}</b>?`,
@@ -147,8 +190,9 @@ export class CraftsmanApplications {
       acceptLabel: 'Да',
       rejectLabel: 'Не',
       accept: () => {
+        const requestData = { id: app.id, message: this.reasonInput.trim() };
+
         if (newStatus === 'approved') {
-          const requestData = { id: app.id };
           this.craftsmanApplicationService.approveCA(requestData).subscribe({
             next: () => {
               this.messageService.add({
@@ -184,7 +228,6 @@ export class CraftsmanApplications {
             },
           });
         } else if (newStatus === 'rejected') {
-          const requestData = { id: app.id };
           this.craftsmanApplicationService.rejectCA(requestData).subscribe({
             next: () => {
               this.messageService.add({
@@ -204,11 +247,29 @@ export class CraftsmanApplications {
             },
           });
         }
+
+        this.clearPendingDecision();
       },
       reject: () => {
         app.newStatus = app.status;
+        this.clearPendingDecision();
       },
     });
+  }
+
+  cancelReason(): void {
+    if (this.pendingApp) {
+      this.pendingApp.newStatus = this.pendingApp.status;
+    }
+    this.reasonDialogVisible = false;
+    this.clearPendingDecision();
+  }
+
+  private clearPendingDecision(): void {
+    this.pendingApp = null;
+    this.pendingStatus = null;
+    this.reasonInput = '';
+    this.reasonSubmitted = false;
   }
 
   private refreshPage(): void {

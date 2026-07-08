@@ -35,3 +35,8 @@ export interface GetApplicationsResponse {
 export interface StatusChangeEvent {
   value?: string;
 }
+
+export interface ApplicationDecisionRequest {
+  id: number;
+  message: string;
+}
