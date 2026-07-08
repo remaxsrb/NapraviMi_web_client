@@ -4,6 +4,7 @@ import { map, Observable } from 'rxjs';
 import { SortDirection } from '../../interfaces/sort';
 import { API_ADMIN_URL, API_BASE_URL } from '../../env';
 import { unwrapEnvelope } from '../utils/response-envelope';
+import { MonthlyCountResponse } from '../../interfaces/stats';
 
 @Injectable({
   providedIn: 'root',
@@ -44,6 +45,12 @@ export class CraftsmanService {
 
   getApprovedCount(from: string, to: string): Observable<{ data: { total: number } }> {
     return this.http.get<{ data: { total: number } }>(`${this.adminUrl}/approved`, {
+      params: { from, to },
+    });
+  }
+
+  getApprovedByMonth(from: string, to: string): Observable<MonthlyCountResponse> {
+    return this.http.get<MonthlyCountResponse>(`${this.adminUrl}/approved/by-month`, {
       params: { from, to },
     });
   }

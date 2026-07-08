@@ -1,5 +1,29 @@
 <p-confirmDialog></p-confirmDialog>
 <p-toast></p-toast>
+
+<p-dialog
+  header="Разлог одлуке"
+  [(visible)]="reasonDialogVisible"
+  [modal]="true"
+  [closable]="false"
+  [style]="{ width: '30rem' }"
+>
+  <p>Молимо унесите разлог за промену статуса захтева. Ово поље је обавезно.</p>
+  <textarea
+    pTextarea
+    rows="4"
+    [(ngModel)]="reasonInput"
+    style="width: 100%"
+    placeholder="Унесите разлог..."
+  ></textarea>
+  @if (reasonSubmitted && !reasonInput.trim()) {
+    <small class="reason-error">Разлог је обавезан.</small>
+  }
+  <ng-template pTemplate="footer">
+    <p-button label="Откажи" severity="secondary" (onClick)="cancelReason()" />
+    <p-button label="Потврди" (onClick)="confirmReason()" />
+  </ng-template>
+</p-dialog>
 <div class="craftsman-applications-page">
   @let state = (state$ | async);
   <h2>Захтеви за улогу занатлије</h2>

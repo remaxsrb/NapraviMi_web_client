@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../../env';
+import { ApplicationDecisionRequest } from '../../interfaces/craftsman-application';
 
 @Injectable({
   providedIn: 'root',
@@ -25,11 +26,11 @@ export class CraftsmanApplicationService {
   }
 
   
-  approveCA(data:any): Observable<any> {
+  approveCA(data: ApplicationDecisionRequest): Observable<any> {
     return this.http.patch<any>(`${this.adminApiUrl}/approve`, data);
   }
 
-  rejectCA(data:any): Observable<any> {
+  rejectCA(data: ApplicationDecisionRequest): Observable<any> {
     return this.http.patch<any>(`${this.adminApiUrl}/reject`, data);
   }
 

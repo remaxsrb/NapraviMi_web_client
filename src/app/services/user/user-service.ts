@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { unwrapEnvelope } from '../utils/response-envelope';
 import { User } from '../../models/user';
 import { API_BASE_URL } from '../../env';
+import { MonthlyCountResponse } from '../../interfaces/stats';
 
 @Injectable({
   providedIn: 'root',
@@ -83,6 +84,12 @@ export class UserService {
 
   getRegisteredCount(from: string, to: string): Observable<{ data: { total: number } }> {
     return this.http.get<{ data: { total: number } }>(`${this.apiUrl}/registered`, {
+      params: { from, to },
+    });
+  }
+
+  getRegisteredByMonth(from: string, to: string): Observable<MonthlyCountResponse> {
+    return this.http.get<MonthlyCountResponse>(`${this.apiUrl}/registered/by-month`, {
       params: { from, to },
     });
   }
