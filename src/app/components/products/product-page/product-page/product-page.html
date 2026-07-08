@@ -11,7 +11,7 @@
     @if (product.images?.length) {
       <div class="product-gallery">
         @for (img of product.images; track img) {
-          <p-image [src]="img" [alt]="product.name" width="280" [preview]="true" />
+          <p-image [src]="mediaUrl(img)" [alt]="product.name" width="280" [preview]="true" />
         }
       </div>
     }
@@ -19,7 +19,7 @@
     @if (product.videos?.length) {
       <div class="product-videos">
         @for (vid of product.videos; track vid) {
-          <video [src]="vid" controls class="product-video"></video>
+          <video [src]="mediaUrl(vid)" controls class="product-video"></video>
         }
       </div>
     }

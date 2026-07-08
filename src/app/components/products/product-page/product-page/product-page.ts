@@ -1,5 +1,4 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, isDevMode } from '@angular/core';import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
 import { ImageModule } from 'primeng/image';
@@ -37,6 +36,25 @@ export class ProductPage {
   private cartService = inject(CartService);
 
   readonly state$: Observable<ProductPageState> = this.buildState();
+
+  mediaUrl(url: string): string {
+    if (!url) {
+      return '';
+    }
+    // In development the backend may return media URLs without a scheme
+    // (e.g. "localhost:8080/api/...") which the browser rejects with
+    // ERR_UNKNOWN_URL_SCHEME. Prefix a protocol-relative scheme so it resolves
+    // against the current page protocol.
+    if (
+      isDevMode() &&
+      !/^https?:\/\//i.test(url) &&
+      !url.startsWith('//') &&
+      !url.startsWith('/')
+    ) {
+      return `//${url}`;
+    }
+    return url;
+  }
 
   addToCart(): void {
     const cachedProduct = this.productService.getPreviewProduct();
