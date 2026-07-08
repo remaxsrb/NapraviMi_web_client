@@ -6,8 +6,9 @@ import { catchError, map } from 'rxjs/operators';
 import { UserService } from '../../../../services/user/user-service';
 import { CraftsmanService } from '../../../../services/craftsman/craftsman-service';
 import { ThemeService } from '../../../../services/utils/theme-service';
-import { lastNMonths } from '../../../common/charts/monthly-bar-chart';
+import { lastNMonths, MonthBucket } from '../../../common/charts/monthly-bar-chart';
 import { buildMonthlyLineChartData, buildMonthlyLineChartOptions } from '../../../common/charts/monthly-line-chart';
+import { MonthlyCountBucket } from '../../../../interfaces/stats';
 
 const MONTHS_TO_SHOW = 6;
 const USERS_LABEL = 'Нови корисници';
@@ -49,25 +50,28 @@ export class UserGrowthChart implements OnInit {
 
   ngOnInit(): void {
     const months = lastNMonths(MONTHS_TO_SHOW);
+    const from = months[0].from;
+    const to = months[months.length - 1].to;
 
-    const perMonth = months.map((m) =>
-      forkJoin({
-        users: this.userService.getRegisteredCount(m.from, m.to).pipe(
-          map((r) => r.data.total),
-          catchError(() => of(0)),
-        ),
-        craftsmen: this.craftsmanService.getApprovedCount(m.from, m.to).pipe(
-          map((r) => r.data.total),
-          catchError(() => of(0)),
-        ),
-      }),
-    );
-
-    forkJoin(perMonth).subscribe((results) => {
-      this.userCounts = results.map((r) => r.users);
-      this.craftsmenCounts = results.map((r) => r.craftsmen);
+    forkJoin({
+      users: this.userService.getRegisteredByMonth(from, to).pipe(
+        map((r) => r.data.buckets),
+        catchError(() => of([] as MonthlyCountBucket[])),
+      ),
+      craftsmen: this.craftsmanService.getApprovedByMonth(from, to).pipe(
+        map((r) => r.data.buckets),
+        catchError(() => of([] as MonthlyCountBucket[])),
+      ),
+    }).subscribe(({ users, craftsmen }) => {
+      this.userCounts = this.mapBucketsToMonths(months, users);
+      this.craftsmenCounts = this.mapBucketsToMonths(months, craftsmen);
       this.chartData.set(this.buildData());
     });
+  }
+
+  private mapBucketsToMonths(months: MonthBucket[], buckets: MonthlyCountBucket[]): number[] {
+    const totalsByMonth = new Map(buckets.map((b) => [b.month, b.total]));
+    return months.map((m) => totalsByMonth.get(m.key) ?? 0);
   }
 
   private buildData() {
