@@ -1,4 +1,4 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, Input, inject, isDevMode } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DataViewModule } from 'primeng/dataview';
@@ -126,7 +126,23 @@ export class ProductsByCraftsman {
   }
 
   getFirstImage(product: Product): string {
-    return product.images?.[0] ?? '';
+    const image = product.images?.[0] ?? '';
+    if (!image) {
+      return '';
+    }
+    // In development the backend may return image URLs without a scheme
+    // (e.g. "localhost:8080/api/...") which the browser rejects with
+    // ERR_UNKNOWN_URL_SCHEME. Prefix a protocol-relative scheme so it resolves
+    // against the current page protocol.
+    if (
+      isDevMode() &&
+      !/^https?:\/\//i.test(image) &&
+      !image.startsWith('//') &&
+      !image.startsWith('/')
+    ) {
+      return `//${image}`;
+    }
+    return image;
   }
 
   onSelectProduct(product: Product): void {

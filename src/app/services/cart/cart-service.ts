@@ -51,4 +51,8 @@ export class CartService {
       .post<{ data: CheckoutResponse } | CheckoutResponse>(`${this.apiUrl}/checkout`, payload)
       .pipe(map(unwrapEnvelope));
   }
+
+  resetCartItemCount(): void {
+    this.cartItemCount.set(0);
+  }
 }

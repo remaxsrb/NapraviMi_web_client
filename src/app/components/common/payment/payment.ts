@@ -240,6 +240,7 @@ export class Payment {
     user.cart.items = [];
     user.cart.total = 0;
     localStorage.setItem('userData', JSON.stringify(user));
+    this.cartService.resetCartItemCount();
   }
 
   private getDashboardRouteByRole(): string {
