@@ -1,7 +1,9 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { API_BASE_URL } from '../../env';
+import { unwrapEnvelope } from '../utils/response-envelope';
+import { RatingResponse } from '../../interfaces/rating';
 
 @Injectable({
   providedIn: 'root',
@@ -31,5 +33,11 @@ export class ProductService {
 
   delete(id: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/delete`, { body: { id } });
+  }
+
+  rate(productID: number, rating: number): Observable<RatingResponse> {
+    return this.http
+      .post<any>(`${this.apiUrl}/rate`, { productID, rating })
+      .pipe(map(unwrapEnvelope));
   }
 }
