@@ -28,11 +28,20 @@
       <p class="product-description">{{ product.description }}</p>
       <div class="product-meta">
         <span class="product-price">{{ product.price }} RSD</span>
-        @if (product.rating !== null) {
+        @if (product.rating !== null || productState.isCustomer) {
           <div class="product-rating">
-            <p-rating [ngModel]="product.rating" [readonly]="true" />
-            <small>({{ product.numberOfRatings }})</small>
+            <p-rating
+              [ngModel]="productState.isCustomer && !hasRated() ? ratingValue : product.rating"
+              (ngModelChange)="ratingValue = $event; onRateProduct()"
+              [readonly]="!productState.isCustomer || hasRated()" />
+            <small>({{ product.numberOfRatings ?? 0 }})</small>
           </div>
+          @if (ratingSuccess()) {
+            <small class="rating-success">Ваша оцена је сачувана!</small>
+          }
+          @if (ratingError()) {
+            <small class="rating-error">{{ ratingError() }}</small>
+          }
         }
         @if (productState.isOwner) {
           <p-button label="Обриши производ" severity="danger" (onClick)="deleteProduct()" />

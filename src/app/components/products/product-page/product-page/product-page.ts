@@ -1,4 +1,4 @@
-import { Component, inject, isDevMode } from '@angular/core';import { CommonModule } from '@angular/common';
+import { Component, inject, isDevMode, signal } from '@angular/core';import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
 import { ImageModule } from 'primeng/image';
@@ -13,6 +13,8 @@ import { CartService } from '../../../../services/cart/cart-service';
 import { User } from '../../../../models/user';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+import { RatingResponse } from '../../../../interfaces/rating';
+import { extractErrorMessage } from '../../../../services/utils/response-envelope';
 
 interface ProductPageState {
   product: Product | null;
@@ -36,6 +38,32 @@ export class ProductPage {
   private cartService = inject(CartService);
 
   readonly state$: Observable<ProductPageState> = this.buildState();
+
+  ratingValue: number = 0;
+  readonly hasRated = signal<boolean>(false);
+  readonly ratingError = signal<string>('');
+  readonly ratingSuccess = signal<boolean>(false);
+
+  onRateProduct(): void {
+    const cachedProduct = this.productService.getPreviewProduct();
+    if (!cachedProduct || !this.ratingValue) return;
+
+    this.ratingSuccess.set(false);
+
+    this.productService.rate(cachedProduct.id, this.ratingValue).subscribe({
+      next: (response: RatingResponse) => {
+        cachedProduct.rating = response.averageRating;
+        cachedProduct.numberOfRatings = response.numberOfRatings;
+        this.productService.setPreviewProduct(cachedProduct);
+        this.ratingError.set('');
+        this.hasRated.set(true);
+        this.ratingSuccess.set(true);
+      },
+      error: (error: any) => {
+        this.ratingError.set(extractErrorMessage(error, 'Дошло је до грешке приликом оцењивања производа.'));
+      },
+    });
+  }
 
   mediaUrl(url: string): string {
     if (!url) {

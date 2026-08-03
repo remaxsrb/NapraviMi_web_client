@@ -45,3 +45,11 @@
   align-items: center;
   gap: 0.4rem;
 }
+
+.rating-error {
+  color: var(--p-red-500, #e24c4c);
+}
+
+.rating-success {
+  color: var(--p-green-500, #22a35a);
+}
