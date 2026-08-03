@@ -32,7 +32,7 @@
           <div class="product-rating">
             <p-rating
               [ngModel]="productState.isCustomer && !hasRated() ? ratingValue : product.rating"
-              (ngModelChange)="ratingValue = $event; onRateProduct()"
+              (ngModelChange)="ratingValue = $event; onRateProduct(product)"
               [readonly]="!productState.isCustomer || hasRated()" />
             <small>({{ product.numberOfRatings ?? 0 }})</small>
           </div>
@@ -51,6 +51,105 @@
         }
       </div>
     </p-card>
+
+    <div class="product-comments">
+      <h3>Коментари</h3>
+
+      @if (commentsLoading()) {
+        <p>Учитавање коментара...</p>
+      } @else if (comments().length === 0) {
+        <p>Још увек нема коментара.</p>
+      } @else {
+        <ul class="comment-list">
+          @for (comment of comments(); track comment.username + comment.createdAt) {
+            <li class="comment-item">
+              <div class="comment-header">
+                <strong>{{ comment.username }}</strong>
+                <small>{{ comment.createdAt | date: 'dd.MM.yyyy HH:mm' }}</small>
+              </div>
+              <p class="comment-text">{{ comment.text }}</p>
+              @if (comment.photoLinks?.length) {
+                <div class="comment-media">
+                  @for (photo of comment.photoLinks; track photo) {
+                    <p-image [src]="mediaUrl(photo)" alt="Слика коментара" width="160" [preview]="true" />
+                  }
+                </div>
+              }
+              @if (comment.videoLinks?.length) {
+                <div class="comment-media">
+                  @for (video of comment.videoLinks; track video) {
+                    <video [src]="mediaUrl(video)" controls class="comment-video"></video>
+                  }
+                </div>
+              }
+            </li>
+          }
+        </ul>
+
+        <p-paginator
+          [rows]="COMMENTS_PAGE_SIZE"
+          [totalRecords]="commentsTotal()"
+          [first]="(commentsPage() - 1) * COMMENTS_PAGE_SIZE"
+          (onPageChange)="onCommentsPageChange($event)"
+        />
+      }
+
+      @if (productState.isCustomer) {
+        <div class="comment-form">
+          <textarea
+            pInputTextarea
+            rows="3"
+            placeholder="Напиши коментар..."
+            [(ngModel)]="commentText"
+          ></textarea>
+
+          <input
+            #commentFileInput
+            type="file"
+            accept="image/*,video/*"
+            multiple
+            style="display: none"
+            (change)="onCommentFileInputChange($event)"
+          />
+
+          <div class="comment-form-actions">
+            <p-button
+              label="Додај слику/видео"
+              icon="pi pi-paperclip"
+              severity="secondary"
+              (onClick)="commentFileInput.click()"
+            />
+            <p-button
+              label="Пошаљи коментар"
+              icon="pi pi-send"
+              (onClick)="onSubmitComment(product)"
+              [loading]="isSubmittingComment()"
+            />
+          </div>
+
+          @if (commentFiles().length > 0) {
+            <ul class="file-list">
+              @for (file of commentFiles(); track file.name + file.size; let i = $index) {
+                <li class="file-item">
+                  <span class="file-icon">{{ file.type.startsWith('image/') ? '🖼️' : '🎬' }}</span>
+                  <span class="file-name" [title]="file.name">{{ file.name }}</span>
+                  <button class="remove-btn" type="button" (click)="removeCommentFile(i)" title="Уклони">
+                    ✕
+                  </button>
+                </li>
+              }
+            </ul>
+          }
+
+          @if (commentSuccess()) {
+            <small class="rating-success">Коментар је успешно додат!</small>
+          }
+          @if (commentError()) {
+            <small class="rating-error">{{ commentError() }}</small>
+          }
+        </div>
+      }
+    </div>
   </div>
   }
 }
