@@ -31,7 +31,7 @@
         @if (product.rating !== null || productState.isCustomer) {
           <div class="product-rating">
             <p-rating
-              [ngModel]="productState.isCustomer && !hasRated() ? ratingValue : product.rating"
+              [ngModel]="product.rating"
               (ngModelChange)="ratingValue = $event; onRateProduct(product)"
               [readonly]="!productState.isCustomer || hasRated()" />
             <small>({{ product.numberOfRatings ?? 0 }})</small>
