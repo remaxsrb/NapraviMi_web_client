@@ -12,6 +12,7 @@ import { RegexPatterns } from '../../../regexPatterns';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { extractErrorMessage } from '../../../services/utils/response-envelope';
+import { Header } from '../../common/header/header/header';
 
 interface ChangePasswordState {
   submitting: boolean;
@@ -22,7 +23,7 @@ interface ChangePasswordState {
 @Component({
   selector: 'app-change-password',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, PasswordModule, ButtonModule, CardModule, MessageModule, InputTextModule],
+  imports: [CommonModule, ReactiveFormsModule, PasswordModule, ButtonModule, CardModule, MessageModule, InputTextModule, Header],
   templateUrl: './change-password.html',
   styleUrl: './change-password.css',
 })
